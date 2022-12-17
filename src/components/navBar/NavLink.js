@@ -13,7 +13,7 @@ const NavLink = ({onDelete, id, text, link, updateText}) => {
 
 NavLink.propTypes = {
   onDelete: PropTypes.func.isRequired,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   text: PropTypes.string,
   link: PropTypes.string
 }

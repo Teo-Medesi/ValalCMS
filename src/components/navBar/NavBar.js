@@ -7,16 +7,19 @@ import NavLinkBtn from "./NavLinkBtn.js"
 import TextField from '../TextField.js'
 import {db, storage} from "../../firebase.config"
 import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/firestore"
-import {ref, uploadBytes} from "firebase/storage"
+import {ref, uploadBytes, getDownloadURL, deleteObject, listAll} from "firebase/storage"
+import UploadPopUp from '../UploadPopUp'
 
 const NavBar = () => {
 
   const [navLinks, setNavLinks] = useState([]);
   const [navLogoUpload, setNavLogoUpload] = useState(null);
+  const [navLogoURL, setNavLogoURL] = useState("");
   const [title, setTitle] = useState([]);
 
   // Checks if nav links and navbtn are active
   const [isActive, setIsActive] = useState(true);
+  const [isUploadModalActive, setIsUploadModalActive] = useState(false);
   const [isAddBtnActive, setIsAddBtnActive] = useState(true);
 
   const navLinksCollection = collection(db, "navLinks");
@@ -33,10 +36,22 @@ const NavBar = () => {
     setTitle(data.docs.map(item => ({...item.data(), id: item.id})));
   }
 
+  const fetchLogo = () => {
+    const imagesRef = ref(storage, "images/logo");
+
+    // list through all images
+    listAll(imagesRef).then(list => {
+      list.items.map(itemRef => getDownloadURL(itemRef).then(url => {
+        setNavLogoURL(url);
+      }))
+    })
+  }
+
   // fetch values from database and load them into our navLinks state
   useEffect(() => {
     fetchNavLinks();
     fetchTitle();
+    fetchLogo();
   }, []);
 
   
@@ -80,26 +95,43 @@ const NavBar = () => {
     await updateDoc(navLinkDoc, {text: text});
   }
 
-  const uploadImage = () => {
-    document.getElementById("fileInput").click();       
-    if (navLogoUpload == null) return;
+  const uploadImage = async (file) => {
+    if (file == null){
+      console.log("no file found");
+      return;
+    }
+    
+    // here we reference the path to which we want to store our image, not the folder in which we want it to be
+    const imageRef = ref(storage, "images/logo/" + file.name);        
+    const imagesRef = ref(storage, "images/logo")
 
-    const imageRef = ref(storage, "images");        
-    uploadBytes(imageRef, navLogoUpload).then(() => (
-      console.log("Image uploaded")
-    ));
+    listAll(imagesRef).then(list => {
+      list.items.map(itemRef => deleteObject(itemRef))
+    });
+
+
+    uploadBytes(imageRef, file).then(() => {
+      console.log("Image uploaded");
+      fetchLogo();
+    }).catch(error => console.log("error occured upon upload"));
 
   }
 
+  const handleUploadClick = () => {
+    setIsUploadModalActive(true);
+  }
+
   return (
-    <nav className="flex flex-col md:flex-row md:items-center h-20 md:px-6 lg:px-12 bg-gradient-to-r from-gray-800 to-indigo-900 w-full text-white">
+    <div>
+      <UploadPopUp uploadFunction={uploadImage} hidden={isUploadModalActive ? false : true}/>
+      <nav className="flex flex-col md:flex-row md:items-center h-20 md:px-6 lg:px-12 bg-gradient-to-r from-gray-800 to-indigo-900 w-full text-white">
         
         <div className='basis-[10%] items-center md:mr-12 px-3'>  
           <a href="#" className='flex items-center justify-between'>
               <div className='inline-flex items-center'>
                 <input id="fileInput" onChange={event => setNavLogoUpload(event.target.files[0])} type="file" className="hidden"/>
-                <img src={Logo} onClick={uploadImage} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4"/>                
-                {title.map(title => <TextField collection={"title"} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
+                <img src={(navLogoURL == "") ? Logo : navLogoURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4"/>                
+                {title.map(title => <TextField key={1} collection={"title"} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
               </div>
               
               <button onClick={handleClick}  className="p-2 text-white mt-1 md:hidden ml-auto rounded-md hover:bg-gray-800"><img src={MenuIcon}/></button>
@@ -120,7 +152,11 @@ const NavBar = () => {
         <a href="#" className={isActive ? 'flex basis-[10%] text-xl justify-center bg-gray-800 md:rounded-md hover:text-white hover:brightness-125' : 'flex basis-[10%] p-3 text-xl md:justify-end bg-gray-800 md:justify-center md:rounded-md hover:text-white hover:brightness-125 hidden'}>
           <button className=' md:bg-gray-800 md:px-5 md:py-2 p-3 md:rounded-md text-gray-300 md:text-white'>LOGIN</button>
         </a>
-    </nav>
+
+      </nav>
+
+    </div>
+   
   )
 }
 

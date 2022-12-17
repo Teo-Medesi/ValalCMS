@@ -31,7 +31,7 @@ const Footer = () => {
         </div>
         
         <div className='basis-[60%] justify-start '>
-          {text.map(item => <TextField collection={"footerText"} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
+          {text.map(item => <TextField key={1} collection={"footerText"} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
         </div>
     </div>
   )

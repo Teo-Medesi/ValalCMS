@@ -99,7 +99,7 @@ const TextField = ({onDelete, id, defaultStyle, buttonStyle, editStyle, placeHol
 
 TextField.propTypes = {
   onDelete: PropTypes.func,
-  id: PropTypes.number,
+  id: PropTypes.string,
   defaultStyle: PropTypes.string,
   buttonStyle: PropTypes.string,
   editStyle: PropTypes.string,
