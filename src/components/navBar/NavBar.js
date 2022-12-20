@@ -8,7 +8,7 @@ import TextField from '../TextField.js'
 import {db, storage} from "../../firebase.config"
 import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL, deleteObject, listAll} from "firebase/storage"
-import UploadPopUp from '../UploadPopUp'
+import UploadModal from '../UploadModal'
 
 const NavBar = () => {
 
@@ -130,7 +130,7 @@ const NavBar = () => {
   {
     return (
       <div>
-        <UploadPopUp uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
+        <UploadModal uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
         <nav className="flex flex-col md:flex-row md:items-center h-20 md:px-6 lg:px-12 bg-gradient-to-r from-gray-800 to-indigo-900 w-full text-white">
           
           <div className='basis-[10%] items-center md:mr-12 px-3'>  

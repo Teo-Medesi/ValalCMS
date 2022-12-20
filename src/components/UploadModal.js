@@ -57,7 +57,7 @@ const UploadModal = ({uploadFunction, isHidden, setIsActive}) => {
 
                 <div className='flex flex-col gap-12 justify-center items-center mt-5 border-gray-500 border rounded-xl w-full h-full py-5'>
                     <div className={(file == 0) ? 'text-2xl text-gray-600 italic' : 'text-2xl text-gray-600 italic hidden'}>Your image will be displayed here!</div>
-                    <img src={(file === 0 && file === null) ? BirdImage : previewFileURL} className={(file == 0) ? "w-56 h-56 " : "max-w-[250px] max-h-[250px]"}/>
+                    <img src={(file === 0 || file === null) ? BirdImage : previewFileURL} className={(file == 0) ? "w-56 h-56 " : "max-w-[250px] max-h-[250px]"}/>
 
                     <button onClick={handleUploadClick} className={isUploaded ? 'h-min w-96 bg-gradient-to-r from-[#2d388a] to-[#00aeef] text-xl text-white rounded-md p-4' : 'h-min w-96 bg-gray-800 text-xl text-white rounded-md p-4'}>{isUploaded ? "Image uploaded!" : "Upload"}</button>
                 </div>

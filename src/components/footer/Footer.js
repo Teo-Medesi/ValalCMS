@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import TextField from '../TextField'
-import Logo from "./images/logo.png"
+import Logo from "./images/logoIcon.png"
 import {db} from "../../firebase.config"
 import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/firestore"
 import { storage } from '../../firebase.config'
-import { ref, deleteObject, listAll, uploadBytes} from "firebase/storage"
+import { ref, deleteObject, listAll, uploadBytes, getDownloadURL} from "firebase/storage"
 import UploadModal from '../UploadModal'
 
 const Footer = () => {
@@ -89,7 +89,7 @@ const Footer = () => {
         <UploadModal uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
         <div className='flex px-16 justify-center items-center bg-gray-800 h-20'>
             <div className='basis-[40%]'>
-              <img src={Logo} className="w-12 h-12" />
+              <img src={(imageURL === InitialState.imageURL) ? Logo : imageURL} className="w-12 h-12" />
             </div>
             {/* h */}
             <div className='basis-[60%] justify-start '>
@@ -103,7 +103,7 @@ const Footer = () => {
     return (
       <div className='flex px-16 justify-center items-center bg-gray-800 h-20'>
           <div className='basis-[40%]'>
-            <img src={Logo} onClick={handleUploadClick} className="w-12 h-12" />
+            <img src={(imageURL === InitialState.imageURL) ? Logo : imageURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4 cursor-pointer" />
           </div>
           {/* h */}
           <div className='basis-[60%] justify-start '>
