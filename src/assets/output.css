@@ -525,8 +525,8 @@ video {
 .h-\[66px\] {
   height: 66px;
 }
-.h-60 {
-  height: 15rem;
+.h-56 {
+  height: 14rem;
 }
 .h-max {
   height: max-content;
@@ -555,9 +555,6 @@ video {
 .h-8 {
   height: 2rem;
 }
-.h-56 {
-  height: 14rem;
-}
 .max-h-\[250px\] {
   max-height: 250px;
 }
@@ -576,8 +573,8 @@ video {
 .w-\[66px\] {
   width: 66px;
 }
-.w-60 {
-  width: 15rem;
+.w-56 {
+  width: 14rem;
 }
 .w-96 {
   width: 24rem;
@@ -611,9 +608,6 @@ video {
 }
 .w-8 {
   width: 2rem;
-}
-.w-56 {
-  width: 14rem;
 }
 .max-w-\[250px\] {
   max-width: 250px;

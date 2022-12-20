@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Logo from "./images/addIcon.png"
 import { storage } from '../../firebase.config'
 import { getDownloadURL, listAll, ref, uploadBytes, deleteObject } from "firebase/storage"
-import UploadPopUp from '../UploadPopUp'
+import UploadModal from '../UploadModal'
 
 
 const Header = () => {
@@ -67,7 +67,7 @@ const Header = () => {
     {
       return (
         <div>
-          <UploadPopUp uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
+          <UploadModal uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
           <div onClick={handleUploadClick} className={isUploadModalActive ? 'h-[800px] bg-gray-100 py-8 px-16' : 'h-[800px] bg-gray-100 py-8 px-16 transition ease-in-out duration-300 hover:brightness-50 cursor-pointer'}>
               <div className='flex flex-col justify-center items-center border-2 rounded border-gray-300 w-full h-full'>
                   <img src={Logo} className="w-36 h-36"/>
@@ -81,7 +81,7 @@ const Header = () => {
     else {
       return (
         <div>
-          <UploadPopUp uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>  
+          <UploadModal uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>  
           <div onClick={handleUploadClick} className={isUploadModalActive ? "bg-no-repeat bg-cover h-[800px] max-h-[800px] w-full" : "bg-no-repeat transition ease-in-out duration-300 hover:brightness-50 cursor-pointer bg-cover h-[800px] max-h-[800px] w-full"} style={{backgroundImage: "url(" + imageURL + ")"}}>
           </div>
         </div>
