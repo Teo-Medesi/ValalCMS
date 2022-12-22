@@ -10,7 +10,7 @@ import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/f
 import {ref, uploadBytes, getDownloadURL, deleteObject, listAll} from "firebase/storage"
 import UploadModal from '../UploadModal'
 
-const NavBar = () => {
+const NavBar = (project) => {
 
   const [navLinks, setNavLinks] = useState([]);
   const [navLogoUpload, setNavLogoUpload] = useState(null);
@@ -22,8 +22,10 @@ const NavBar = () => {
   const [isUploadModalActive, setIsUploadModalActive] = useState(false);
   const [isAddBtnActive, setIsAddBtnActive] = useState(true);
 
-  const navLinksCollection = collection(db, "navLinks");
-  const titleCollection = collection(db, "title");
+  const navLinksCollectionPath = `Projects/Project_${project.project}/navLinks`;
+  const titleCollectionPath = `Projects/Project_${project.project}/navbarTitleText`;
+  const navLinksCollection = collection(db, navLinksCollectionPath);
+  const titleCollection = collection(db, titleCollectionPath);
 
   const fetchNavLinks = async () => {
     const data = await getDocs(navLinksCollection);
@@ -56,7 +58,7 @@ const NavBar = () => {
 
   
   const deleteNavLink = async (id) => {
-    const navLinkDoc = doc(db, "navLinks", id);
+    const navLinkDoc = doc(db, navLinksCollectionPath, id);
     await deleteDoc(navLinkDoc);
     fetchNavLinks();
   }   
@@ -138,7 +140,7 @@ const NavBar = () => {
                 <div className='inline-flex items-center'>
                   <input id="fileInput" onChange={event => setNavLogoUpload(event.target.files[0])} type="file" className="hidden"/>
                   <img src={(navLogoURL == "") ? Logo : navLogoURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4"/>                
-                  {title.map(title => <TextField key={1} collection={"title"} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
+                  {title.map(title => <TextField key={1} collection={titleCollectionPath} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
                 </div>
                 
                 <button onClick={handleClick}  className="p-2 text-white mt-1 md:hidden ml-auto rounded-md hover:bg-gray-800"><img src={MenuIcon}/></button>
@@ -176,7 +178,7 @@ const NavBar = () => {
                 <div className='inline-flex items-center'>
                   <input id="fileInput" onChange={event => setNavLogoUpload(event.target.files[0])} type="file" className="hidden"/>
                   <img src={(navLogoURL == "") ? Logo : navLogoURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4"/>                
-                  {title.map(title => <TextField key={1} collection={"title"} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
+                  {title.map(title => <TextField key={1} collection={titleCollectionPath} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
                 </div>
                 
                 <button onClick={handleClick}  className="p-2 text-white mt-1 md:hidden ml-auto rounded-md hover:bg-gray-800"><img src={MenuIcon}/></button>
@@ -187,7 +189,7 @@ const NavBar = () => {
   
   
             <ul className='flex flex-col md:inline-flex md:flex-row'>
-              {navLinks.map(navLink => <NavLink updateText={updateText} onDelete={deleteNavLink} text={navLink.text} link={navLink.link} id={navLink.id} key={navLink.key}/>)}
+              {navLinks.map(navLink => <NavLink collection={navLinksCollectionPath} updateText={updateText} onDelete={deleteNavLink} text={navLink.text} link={navLink.link} id={navLink.id} key={navLink.key}/>)}
   
               <NavLinkBtn addFunction={addNavLink} isActive={isAddBtnActive} checkIfActive={handleIfAddBtnActive}/>
   

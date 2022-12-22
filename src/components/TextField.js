@@ -52,7 +52,6 @@ const TextField = ({onDelete, id, defaultStyle, buttonStyle, editStyle, placeHol
       }
       else {
         updateText(id, text, collection)
-        console.log(id);
       }
 
 

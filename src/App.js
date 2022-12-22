@@ -1,10 +1,8 @@
 import React from "react"
-import NavBar from "./components/navBar/NavBar.js"
 import "./assets/output.css";
-import ArticleSection from "./components/featuredArticles/ArticleSection.js";
-import Footer from "./components/footer/Footer.js";
-import Header from "./components/header/Header.js";
-import CommenntBoard from "./components/commentBoard/CommentBoard.js";
+import Home from "./Home.js";
+import ProjectBoard from "./ProjectBoard";
+import {Routes, Route} from "react-router-dom"
 
 /* 
 Todo list
@@ -31,13 +29,13 @@ Todo list
 
 function App() {
   return (
-    <div className="">
-      <NavBar />
-      <Header />
-      <CommenntBoard />
-      <ArticleSection />
-      <Footer />
-    </div>
+    <Routes>
+      <Route path="/" element={<ProjectBoard />}/>
+      <Route path="/project_one" element={<Home projectNumber="one"/>}/>
+      <Route path="/project_two" element={<Home projectNumber="two"/>}/>
+      <Route path="/project_three" element={<Home projectNumber="three"/>}/>
+      <Route path="/project_four" element={<Home projectNumber="four"/>}/>
+    </Routes>
   );
 }
 

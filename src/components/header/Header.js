@@ -5,7 +5,7 @@ import { getDownloadURL, listAll, ref, uploadBytes, deleteObject } from "firebas
 import UploadModal from '../UploadModal'
 
 
-const Header = () => {
+const Header = (project) => {
 
   const InitialState = {
     imageURL: "",
@@ -15,16 +15,16 @@ const Header = () => {
   // first off, we need to fetch the image from our storage, we need an imageURL state
   const [imageURL, setImageURL] = useState(InitialState.imageURL);
   const [isUploadModalActive, setIsUploadModalActive] = useState(InitialState.isUploadModalActive);
+  const storagePath = `Projects/Project_${project.project}/images/headerImage/`;
 
   const fetchImage = () => {
-    const imagesRef = ref(storage, "images/headerImage" );
+    const imagesRef = ref(storage, storagePath);
 
     listAll(imagesRef).then(list => {
       list.items.map(itemRef => getDownloadURL(itemRef).then(url => {
         setImageURL(url);
       }));
     })
-    console.log(imageURL)
   }
 
   useEffect(() => {
@@ -38,8 +38,8 @@ const Header = () => {
     }
     
     // here we reference the path to which we want to store our image, not the folder in which we want it to be
-    const imageRef = ref(storage, "images/headerImage/" + file.name);        
-    const imagesRef = ref(storage, "images/headerImage")
+    const imageRef = ref(storage, storagePath + file.name);        
+    const imagesRef = ref(storage, storagePath)
 
     listAll(imagesRef).then(list => {
       list.items.map(itemRef => deleteObject(itemRef))

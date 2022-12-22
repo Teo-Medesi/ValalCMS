@@ -7,7 +7,7 @@ import { storage } from '../../firebase.config'
 import { ref, deleteObject, listAll, uploadBytes, getDownloadURL} from "firebase/storage"
 import UploadModal from '../UploadModal'
 
-const Footer = () => {
+const Footer = (project) => {
   
   const InitialState = {
     imageURL: "",
@@ -18,7 +18,8 @@ const Footer = () => {
   const [imageURL, setImageURL] = useState(InitialState.imageURL);
   const [isUploadModalActive, setIsUploadModalActive] = useState(InitialState.isUploadModalActive);
   const [text, setText] = useState([]);
-  const footerCollection = collection(db, "footerText");
+  const footerCollectionPath = `Projects/Project_${project.project}/footerText`;
+  const footerCollection = collection(db, footerCollectionPath);
 
   const fetchText = async () => {
     const data = await getDocs(footerCollection);
@@ -27,8 +28,8 @@ const Footer = () => {
   }
 
   const updateText = async (id, text, collection) => {
-    const navLinkDoc = doc(db, collection, id);
-    await updateDoc(navLinkDoc, {text: text});
+    const docRef = doc(db, collection, id);
+    await updateDoc(docRef, {text: text});
   }
 
   useEffect(() => {
@@ -44,12 +45,7 @@ const Footer = () => {
         setImageURL(url);
       }));
     })
-    console.log(imageURL)
   }
-
-  useEffect(() => {
-    fetchImage();
-  },[]);
   
   const uploadImage = async (file, setIsUploaded) => {
     if (file == 0){
@@ -93,7 +89,7 @@ const Footer = () => {
             </div>
             {/* h */}
             <div className='basis-[60%] justify-start '>
-              {text.map(item => <TextField key={1} collection={"footerText"} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
+              {text.map(item => <TextField key={1} collection={footerCollectionPath} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
             </div>
         </div>
       </div>
@@ -107,7 +103,7 @@ const Footer = () => {
           </div>
           {/* h */}
           <div className='basis-[60%] justify-start '>
-            {text.map(item => <TextField key={1} collection={"footerText"} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
+            {text.map(item => <TextField key={1} collection={footerCollectionPath} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
           </div>
       </div>
     )

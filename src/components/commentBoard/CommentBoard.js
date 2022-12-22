@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import AddComment from './AddComment'
 import Comment from './Comment'
 
-const CommentBoard = () => {
+const CommentBoard = (project) => {
   const [comments, setComments] = useState([
     <Comment key={1}/>
   ])

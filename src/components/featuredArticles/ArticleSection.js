@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ArticleCard from './ArticleCard.js'
 import AddArticleButton from './AddArticleButton.js'
 
-const ArticleSection = () => {
+const ArticleSection = (project) => {
 
   const [isAddBtnActive, setIsAddBtnActive] = useState(true);
   const [articleCards, setArticleCards] = useState([

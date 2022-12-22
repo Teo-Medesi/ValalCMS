@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 import TextField from '../TextField.js'
 
-const NavLink = ({onDelete, id, text, link, updateText}) => {
+const NavLink = ({onDelete, id, text, link, updateText, collection}) => {
   return (
     <a href={link}>
-      <TextField collection={"navLinks"} updateText={updateText} placeHolderText={text} onDelete={onDelete} id={id} defaultStyle={'p-3 text-xl w-max hover:text-white hover:bg-gray-800 text-gray-300 rounded-md md:m-3 w-full'} buttonStyle={'p-2 text-xl bg-gray-800 rounded-md md:m-3 w-full'} editStyle={"p-1 bg-gray-800 text-gray-300 rounded-md w-24 text-center italic outline-none"} />
+      <TextField collection={collection} updateText={updateText} placeHolderText={text} onDelete={onDelete} id={id} defaultStyle={'p-3 text-xl w-max hover:text-white hover:bg-gray-800 text-gray-300 rounded-md md:m-3 w-full'} buttonStyle={'p-2 text-xl bg-gray-800 rounded-md md:m-3 w-full'} editStyle={"p-1 bg-gray-800 text-gray-300 rounded-md w-24 text-center italic outline-none"} />
     </a>
   )
 }
