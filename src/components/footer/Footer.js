@@ -37,7 +37,7 @@ const Footer = () => {
   }, [])
   
   const fetchImage = () => {
-    const imagesRef = ref(storage, "images/headerImage" );
+    const imagesRef = ref(storage, "images/footerImage" );
 
     listAll(imagesRef).then(list => {
       list.items.map(itemRef => getDownloadURL(itemRef).then(url => {
@@ -58,8 +58,8 @@ const Footer = () => {
     }
     
     // here we reference the path to which we want to store our image, not the folder in which we want it to be
-    const imageRef = ref(storage, "images/headerImage/" + file.name);        
-    const imagesRef = ref(storage, "images/headerImage")
+    const imageRef = ref(storage, "images/footerImage/" + file.name);        
+    const imagesRef = ref(storage, "images/footerImage")
 
     listAll(imagesRef).then(list => {
       list.items.map(itemRef => deleteObject(itemRef))
