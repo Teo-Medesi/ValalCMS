@@ -22,6 +22,7 @@ const NavBar = (project) => {
   const [isUploadModalActive, setIsUploadModalActive] = useState(false);
   const [isAddBtnActive, setIsAddBtnActive] = useState(true);
 
+  const storagePath = `Projects/Project_${project.project}/images/logo/`
   const navLinksCollectionPath = `Projects/Project_${project.project}/navLinks`;
   const titleCollectionPath = `Projects/Project_${project.project}/navbarTitleText`;
   const navLinksCollection = collection(db, navLinksCollectionPath);
@@ -39,7 +40,7 @@ const NavBar = (project) => {
   }
 
   const fetchLogo = () => {
-    const imagesRef = ref(storage, "images/logo");
+    const imagesRef = ref(storage, storagePath);
 
     // list through all images
     listAll(imagesRef).then(list => {
@@ -104,8 +105,8 @@ const NavBar = (project) => {
     }
     
     // here we reference the path to which we want to store our image, not the folder in which we want it to be
-    const imageRef = ref(storage, "images/logo/" + file.name);        
-    const imagesRef = ref(storage, "images/logo")
+    const imageRef = ref(storage, storagePath + file.name);        
+    const imagesRef = ref(storage, storagePath)
 
     listAll(imagesRef).then(list => {
       list.items.map(itemRef => deleteObject(itemRef))

@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "autoprefixer": "^10.4.13",
     "firebase": "^9.15.0",
+    "html2canvas": "^1.4.1",
     "postcss": "^8.4.19",
     "postcss-cli": "^10.0.0",
     "react": "^18.2.0",

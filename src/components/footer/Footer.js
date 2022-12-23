@@ -18,6 +18,8 @@ const Footer = (project) => {
   const [imageURL, setImageURL] = useState(InitialState.imageURL);
   const [isUploadModalActive, setIsUploadModalActive] = useState(InitialState.isUploadModalActive);
   const [text, setText] = useState([]);
+
+  const storagePath = `Projects/Project_${project.project}/images/footerImage/`
   const footerCollectionPath = `Projects/Project_${project.project}/footerText`;
   const footerCollection = collection(db, footerCollectionPath);
 
@@ -38,7 +40,7 @@ const Footer = (project) => {
   }, [])
   
   const fetchImage = () => {
-    const imagesRef = ref(storage, "images/footerImage" );
+    const imagesRef = ref(storage, storagePath );
 
     listAll(imagesRef).then(list => {
       list.items.map(itemRef => getDownloadURL(itemRef).then(url => {
@@ -54,8 +56,8 @@ const Footer = (project) => {
     }
     
     // here we reference the path to which we want to store our image, not the folder in which we want it to be
-    const imageRef = ref(storage, "images/footerImage/" + file.name);        
-    const imagesRef = ref(storage, "images/footerImage")
+    const imageRef = ref(storage, storagePath + file.name);        
+    const imagesRef = ref(storage, storagePath)
 
     listAll(imagesRef).then(list => {
       list.items.map(itemRef => deleteObject(itemRef))
