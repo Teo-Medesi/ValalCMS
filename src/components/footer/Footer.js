@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import TextField from '../TextField'
 import Logo from "./images/logoIcon.png"
 import {db} from "../../firebase.config"
@@ -6,9 +6,12 @@ import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/f
 import { storage } from '../../firebase.config'
 import { ref, deleteObject, listAll, uploadBytes, getDownloadURL} from "firebase/storage"
 import UploadModal from '../UploadModal'
+import { ProjectContext } from '../../Home'
 
-const Footer = (project) => {
-  
+const Footer = () => {
+
+  const project = useContext(ProjectContext);
+
   const InitialState = {
     imageURL: "",
     isUploadModalActive: false
@@ -19,8 +22,8 @@ const Footer = (project) => {
   const [isUploadModalActive, setIsUploadModalActive] = useState(InitialState.isUploadModalActive);
   const [text, setText] = useState([]);
 
-  const storagePath = `Projects/Project_${project.project}/images/footerImage/`
-  const footerCollectionPath = `Projects/Project_${project.project}/footerText`;
+  const storagePath = `Projects/Project_${project}/images/footerImage/`
+  const footerCollectionPath = `Projects/Project_${project}/footerText`;
   const footerCollection = collection(db, footerCollectionPath);
 
   const fetchText = async () => {

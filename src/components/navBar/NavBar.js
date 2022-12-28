@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Logo from "./images/logoIcon.png"
 import MenuIcon from "./images/menuIcon.png"
-import { useState } from 'react'
 import NavLink from './NavLink.js'
 import NavLinkBtn from "./NavLinkBtn.js"
 import TextField from '../TextField.js'
@@ -9,8 +8,12 @@ import {db, storage} from "../../firebase.config"
 import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL, deleteObject, listAll} from "firebase/storage"
 import UploadModal from '../UploadModal'
+import { ProjectContext } from '../../Home'
 
-const NavBar = (project) => {
+const NavBar = () => {
+
+  const project = useContext(ProjectContext);
+  console.log(project)
 
   const [navLinks, setNavLinks] = useState([]);
   const [navLogoUpload, setNavLogoUpload] = useState(null);
@@ -22,9 +25,9 @@ const NavBar = (project) => {
   const [isUploadModalActive, setIsUploadModalActive] = useState(false);
   const [isAddBtnActive, setIsAddBtnActive] = useState(true);
 
-  const storagePath = `Projects/Project_${project.project}/images/logo/`
-  const navLinksCollectionPath = `Projects/Project_${project.project}/navLinks`;
-  const titleCollectionPath = `Projects/Project_${project.project}/navbarTitleText`;
+  const storagePath = `Projects/Project_${project}/images/logo/`
+  const navLinksCollectionPath = `Projects/Project_${project}/navLinks`;
+  const titleCollectionPath = `Projects/Project_${project}/navbarTitleText`;
   const navLinksCollection = collection(db, navLinksCollectionPath);
   const titleCollection = collection(db, titleCollectionPath);
 

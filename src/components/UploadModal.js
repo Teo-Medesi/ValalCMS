@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useRef } from 'react'
 import BirdImage from "./images/bird.png"
 import CloseIcon from "./images/close.png"
 
@@ -16,9 +17,13 @@ const UploadModal = ({uploadFunction, isHidden, setIsActive}) => {
     const [previewFileURL, setPreviewFileURL] = useState(initialState.previewFileURL)
     const [isUploaded, setIsUploaded] = useState(initialState.isUploaded);
     const [uploadText, setUploadText] = useState(initialState.uploadText);
-
+    
+    // useRef koristimo kad hocemo referencat DOM element direktno, kao ovdje kad hocemo click() callat na input
+    // mogli smo ovo napravit s document.getElementById() ali je useRef reactov nacin jer je opasno koristiti id u reactu
+    const inputRef = useRef();
+    
     const handleClick = () => {
-        document.getElementById("input").click();
+        inputRef.current.click();
     }
 
     useEffect(() => {
@@ -52,7 +57,7 @@ const UploadModal = ({uploadFunction, isHidden, setIsActive}) => {
         <div className={isHidden ? 'w-screen h-screen fixed justify-center bg-[rgb(0,0,0,0.2)] hidden' : 'w-screen h-screen fixed top-0 left-0 right-0 bottom-0 py-12 justify-center flex bg-[rgb(0,0,0,0.1)]'}>
             <div className='flex flex-col gap-24 bg-gray-100 w-[75%] xl:w-[50%] rounded-xl p-6 h-full'>
                 <div className='flex justify-between'>
-                    <input id="input" onChange={event => setFile(event.target.files[0])} type="file" className="hidden"/>
+                    <input ref={inputRef} onChange={event => setFile(event.target.files[0])} type="file" className="hidden"/>
                     <button onClick={handleClick} className='basis-[28%] h-min bg-gradient-to-r from-gray-800 to-indigo-900 text-xl text-white rounded-md p-4'>Select Image</button>
                     <div className='text-center italic text-gray-600 bg-white border rounded-md border-gray-200 text-xl p-4 h-min w-full basis-[60%]'>{(file.name == null) ? "Click on the select image button" : file.name}</div>
                     <img src={CloseIcon} onClick={handleClose} className="w-[66px] h-[66px] basis-[5%] cursor-pointer hover:bg-gray-300 p-1 rounded-md"/>

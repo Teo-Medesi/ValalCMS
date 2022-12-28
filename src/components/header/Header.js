@@ -3,9 +3,13 @@ import Logo from "./images/addIcon.png"
 import { storage } from '../../firebase.config'
 import { getDownloadURL, listAll, ref, uploadBytes, deleteObject } from "firebase/storage"
 import UploadModal from '../UploadModal'
+import { useContext } from 'react'
+import { ProjectContext } from '../../Home'
 
 
-const Header = (project) => {
+const Header = () => {
+
+  const project = useContext(ProjectContext);
 
   const InitialState = {
     imageURL: "",
@@ -15,7 +19,7 @@ const Header = (project) => {
   // first off, we need to fetch the image from our storage, we need an imageURL state
   const [imageURL, setImageURL] = useState(InitialState.imageURL);
   const [isUploadModalActive, setIsUploadModalActive] = useState(InitialState.isUploadModalActive);
-  const storagePath = `Projects/Project_${project.project}/images/headerImage/`;
+  const storagePath = `Projects/Project_${project}/images/headerImage/`;
 
   const fetchImage = () => {
     const imagesRef = ref(storage, storagePath);

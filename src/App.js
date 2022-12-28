@@ -11,9 +11,10 @@ Todo list
   add database to comment board
   finish featured articles, add article modal
 
+  add custom color themes to tailwind
   add more variations of each component
-  make draft functionality
-    => make project board window
+  // DONE ----- make draft functionality
+    =>  DONE ----- make project board window
   basic CMS functionality, the option to replace one component with another
   make it so the user can choose between atleast 3 navbar components, with different themes
     => make modal for selecting which navbar the user wants to be displayed
