@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from  "./images/uploadImage.png"
+import Image from  "../../assets/images/uploadImage.png"
 import TextField from '../TextField.js'
 
 const defaultText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "

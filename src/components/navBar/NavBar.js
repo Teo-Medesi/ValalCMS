@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Logo from "./images/logoIcon.png"
-import MenuIcon from "./images/menuIcon.png"
+import Logo from "../../assets/images/addIcon2.png"
+import MenuIcon from "../../assets/images/menuIcon.png"
 import NavLink from './NavLink.js'
 import NavLinkBtn from "./NavLinkBtn.js"
 import TextField from '../TextField.js'

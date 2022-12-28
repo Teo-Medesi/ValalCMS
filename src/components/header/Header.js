@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Logo from "./images/addIcon.png"
+import Logo from "../../assets/images/addIcon.png"
 import { storage } from '../../firebase.config'
 import { getDownloadURL, listAll, ref, uploadBytes, deleteObject } from "firebase/storage"
 import UploadModal from '../UploadModal'

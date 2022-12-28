@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Logo from "./images/addIcon.png"
+import Logo from "../../assets/images/addIcon3.png"
 import PropTypes from "prop-types"
 
 const NavLinkBtn = ({addFunction, isActive, checkIfActive}) => {

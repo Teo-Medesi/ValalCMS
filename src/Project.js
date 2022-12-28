@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Link} from "react-router-dom"
-import PreviewPicture from "./images/Capture.PNG"
+import PreviewPicture from "./assets/images/Capture.PNG"
 import { storage } from './firebase.config'
 import { ref, listAll, getDownloadURL } from 'firebase/storage'
 

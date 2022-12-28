@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { useRef } from 'react'
-import BirdImage from "./images/bird.png"
-import CloseIcon from "./images/close.png"
+import BirdImage from "../assets/images/bird.png"
+import CloseIcon from "../assets/images/close.png"
 
 // ONLY ONE INSTANCE OF UPLOAD MODAL CAN EXIST UPON RENDER
 const UploadModal = ({uploadFunction, isHidden, setIsActive}) => {

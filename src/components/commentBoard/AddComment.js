@@ -1,6 +1,6 @@
 import React from 'react'
 import TextField from '../TextField'
-import Logo from "./images/addIcon.png"
+import Logo from "../../assets/images/addIcon.png"
 
 const AddComment = ({onClick}) => {
   return (

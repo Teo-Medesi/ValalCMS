@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import TextField from '../TextField'
-import Logo from "./images/logoIcon.png"
+import Logo from "../../assets/images/addIcon2.png"
 import {db} from "../../firebase.config"
 import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/firestore"
 import { storage } from '../../firebase.config'

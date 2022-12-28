@@ -1,5 +1,5 @@
 import React from 'react'
-import Logo from "./images/addIcon.png"
+import Logo from "../../assets/images/addIcon.png"
 import PropTypes from "prop-types"
 
 const AddArticleButton = ({onClick, isActive}) => {

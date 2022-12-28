@@ -1,5 +1,4 @@
-import React from 'react'
-import AddIcon from "./images/addIcon.png"  
+import React from 'react'  
 import Project from './Project'
 
 const ProjectBoard = () => {
