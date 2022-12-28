@@ -6,19 +6,14 @@ import CommenntBoard from "./components/commentBoard/CommentBoard.js";
 import NavBar from './components/navBar/NavBar.js';
 import PropTypes from "prop-types"
 
-export const ProjectContext = createContext();
-
-const Home = ({projectNumber}) => {
-
+const Home = ({className}) => {
   return (
-    <ProjectContext.Provider value={projectNumber}>
-      <div>
+      <div className={className}>
           <NavBar/>
           <Header/>
           <ArticleSection/>
           <Footer/>
       </div>
-    </ProjectContext.Provider>
   )
 }
 

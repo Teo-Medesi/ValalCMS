@@ -1,5 +1,5 @@
 import React from 'react'  
-import Project from './Project'
+import ProjectPreview from './ProjectPreview'
 
 const ProjectBoard = () => {
   return (
@@ -8,10 +8,10 @@ const ProjectBoard = () => {
             <div className='text-4xl italic'>Welcome back user!👋 </div>
 
             <div className='flex justify-between flex-wrap'>
-                <div className='basis-[30%]'><Project projectNumber="one"/></div>
-                <div className='basis-[30%]'><Project projectNumber="two"/></div>
-                <div className='basis-[30%]'><Project projectNumber="three"/></div>
-                <div className='mt-6'><Project projectNumber="four"/></div>
+                <div className='basis-[30%]'><ProjectPreview projectNumber="one"/></div>
+                <div className='basis-[30%]'><ProjectPreview projectNumber="two"/></div>
+                <div className='basis-[30%]'><ProjectPreview projectNumber="three"/></div>
+                <div className='mt-6'><ProjectPreview projectNumber="four"/></div>
             </div>
 
         </div>

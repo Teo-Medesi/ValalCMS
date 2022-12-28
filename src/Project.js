@@ -1,37 +1,42 @@
-import React, {useState, useEffect} from 'react'
-import {Link} from "react-router-dom"
-import PreviewPicture from "./assets/images/Capture.PNG"
-import { storage } from './firebase.config'
-import { ref, listAll, getDownloadURL } from 'firebase/storage'
+import React from 'react'
+import Home from './Home'
+import { createContext } from 'react';
+import Logo from "./assets/images/settingsBlack.png"
+import navLogo from "./assets/images/directionsWhite.png"
+import headerLogo from "./assets/images/image.png"
+import footerLogo from "./assets/images/footerIconWhite.png"
 
+export const ProjectContext = createContext();
 
-const Project = (projectNumber) => {
-
-  const initialState = {
-    previewURL: ""
-  }
-
-  const [previewURL, setPreviewURL] = useState(initialState.previewURL);
-
-  const fetchPreviewURL = () => {
-    const imagesRef = ref(storage, `Projects/Project_${projectNumber.projectNumber}/images/headerImage/`);
-
-    listAll(imagesRef).then(list => {
-      list.items.map(itemRef => getDownloadURL(itemRef).then(url => {
-        setPreviewURL(url);
-      }));
-    })
-  }
-
-  useEffect(() => {
-    fetchPreviewURL();
-  })
-
+const Project = ({projectNumber}) => {
   return (
-    <Link to={`project_${projectNumber.projectNumber}`}>
-        <div className='border-2 transition ease-in-out duration-200 hover:brightness-75 cursor-pointer w-96 h-48 border-gray-700'><img className="w-96 h-[188px]" src={(previewURL !== initialState.previewURL) ? previewURL : PreviewPicture}/></div>
-        <div className='text-xl'>Project_{projectNumber.projectNumber}</div>
-    </Link>
+    <ProjectContext.Provider value={projectNumber}>
+        <div className='flex'>
+            <div className="flex flex-col gap-3 min-h-screen basis-[20%] bg-gray-200 shadow-2xl p-4">
+                <div className='flex gap-2 flex-row items-center'>
+                    <img className="w-12 h-12 transition duration-300 cursor-pointer hover:rotate-45" src={Logo}/>
+                    <p className='uppercase font-bold text-xl underline underline-offset-4 hover:shadow-xl cursor-pointer'>Untitled Project</p>
+                </div>
+
+                <div className='flex bg-gray-800 justify-between cursor-pointer hover:shadow-xl items-center p-3 text-white text-xl font-semibold uppercase rounded-md'>
+                    <p>Navbar</p>
+                    <img className="w-10 h-10" src={navLogo}/>
+                </div>
+
+                <div className='flex justify-between cursor-pointer hover:shadow-xl items-center border-2 border-gray-500 p-3 text-xl font-semibold uppercase rounded-md'>
+                    <p>Header</p>
+                    <img className="w-10 h-10" src={headerLogo}/>
+                </div>
+
+                <div className='flex bg-gray-800 justify-between cursor-pointer hover:shadow-xl items-center p-3 text-white text-xl font-semibold uppercase rounded-md'>
+                    <p>Footer</p>
+                    <img className="w-10 h-10" src={footerLogo}/>
+                </div>
+
+            </div>
+            <Home className={"basis-[80%]"}/>
+        </div>
+    </ProjectContext.Provider>
   )
 }
 

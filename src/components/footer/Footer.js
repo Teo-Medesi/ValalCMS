@@ -6,7 +6,7 @@ import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/f
 import { storage } from '../../firebase.config'
 import { ref, deleteObject, listAll, uploadBytes, getDownloadURL} from "firebase/storage"
 import UploadModal from '../UploadModal'
-import { ProjectContext } from '../../Home'
+import { ProjectContext } from '../../Project'
 
 const Footer = () => {
 
@@ -53,7 +53,7 @@ const Footer = () => {
   }
   
   const uploadImage = async (file, setIsUploaded) => {
-    if (file == 0){
+    if (file === 0 && file === null){
       console.log("no file found");
       return;
     }
@@ -82,27 +82,10 @@ const Footer = () => {
     setIsUploadModalActive(true);
   }
 
-
-  if (isUploadModalActive === true)
-  {
-    return (
+  return (
       <div>
         <UploadModal uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
         <div className='flex px-16 justify-center items-center bg-gray-800 h-20'>
-            <div className='basis-[40%]'>
-              <img src={(imageURL === InitialState.imageURL) ? Logo : imageURL} className="w-12 h-12" />
-            </div>
-            {/* h */}
-            <div className='basis-[60%] justify-start '>
-              {text.map(item => <TextField key={1} collection={footerCollectionPath} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
-            </div>
-        </div>
-      </div>
-    )
-  }
-  else {
-    return (
-      <div className='flex px-16 justify-center items-center bg-gray-800 h-20'>
           <div className='basis-[40%]'>
             <img src={(imageURL === InitialState.imageURL) ? Logo : imageURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4 cursor-pointer" />
           </div>
@@ -111,8 +94,8 @@ const Footer = () => {
             {text.map(item => <TextField key={1} collection={footerCollectionPath} placeHolderText={item.text} id={item.id} updateText={updateText} defaultStyle={"text-xl text-white rounded-md hover:bg-gray-900 p-3"} editStyle={"text-xl outline-none text-white bg-gray-800 italic"} />)}
           </div>
       </div>
+      </div>
     )
-  }
 
 }
 

@@ -10,7 +10,7 @@ const NavLinkBtn = ({addFunction, isActive, checkIfActive}) => {
   })
 
   return (
-    <button onClick={addFunction}className={isActive ? 'flex justify-center md:ml-3 hover:bg-gray-700 md:hover:bg-gray-800 py-3 md:py-4 px-4 w-full' : 'ml-3 hover:bg-gray-800 py-3 px-4 hidden'}>
+    <button onClick={addFunction}className={isActive ? 'rounded flex justify-center md:ml-3 hover:bg-gray-700 md:hover:bg-gray-800 py-3 md:py-4 px-4 w-full' : 'ml-3 hover:bg-gray-800 py-3 px-4 hidden'}>
       <img className="w-11 h-11" src={Logo}></img>
     </button>
   )

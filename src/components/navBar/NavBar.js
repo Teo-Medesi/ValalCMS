@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Logo from "../../assets/images/addIcon2.png"
+import addIcon from "../../assets/images/addIcon2.png"
 import MenuIcon from "../../assets/images/menuIcon.png"
 import NavLink from './NavLink.js'
 import NavLinkBtn from "./NavLinkBtn.js"
@@ -8,7 +8,7 @@ import {db, storage} from "../../firebase.config"
 import {doc, addDoc, collection, deleteDoc, getDocs, updateDoc} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL, deleteObject, listAll} from "firebase/storage"
 import UploadModal from '../UploadModal'
-import { ProjectContext } from '../../Home'
+import { ProjectContext } from '../../Project'
 
 const NavBar = () => {
 
@@ -131,87 +131,44 @@ const NavBar = () => {
     setIsUploadModalActive(true);
   }
 
-
-  if (isUploadModalActive === true)
-  {
-    return (
-      <div>
-        <UploadModal uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
-        <nav className="flex flex-col md:flex-row md:items-center h-20 md:px-6 lg:px-12 bg-gradient-to-r from-gray-800 to-indigo-900 w-full text-white">
-          
-          <div className='basis-[10%] items-center md:mr-12 px-3'>  
-            <a href="#" className='flex items-center justify-between'>
-                <div className='inline-flex items-center'>
-                  <input id="fileInput" onChange={event => setNavLogoUpload(event.target.files[0])} type="file" className="hidden"/>
-                  <img src={(navLogoURL == "") ? Logo : navLogoURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4"/>                
-                  {title.map(title => <TextField key={1} collection={titleCollectionPath} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
-                </div>
-                
-                <button onClick={handleClick}  className="p-2 text-white mt-1 md:hidden ml-auto rounded-md hover:bg-gray-800"><img src={MenuIcon}/></button>
-            </a>
-  
-          </div>
-          <div className={isActive ? "basis-[80%] md:justify-start bg-gradient-to-r from-gray-800 to-indigo-900 md:from-transparent md:to-transparent" : "basis-[80%] md:justify-start bg-gradient-to-r from-gray-800 to-indigo-900 md:from-transparent md:to-transparent hidden"}>
-  
-  
-            <ul className='flex flex-col md:inline-flex md:flex-row'>
-              {navLinks.map(navLink => <NavLink updateText={updateText} onDelete={deleteNavLink} text={navLink.text} link={navLink.link} id={navLink.id} key={navLink.key}/>)}
-  
-              <NavLinkBtn addFunction={addNavLink} isActive={isAddBtnActive} checkIfActive={handleIfAddBtnActive}/>
-  
-            </ul>
-          </div>
-  
-          <a href="#" className={isActive ? 'flex basis-[10%] text-xl justify-center bg-gray-800 md:rounded-md hover:text-white hover:brightness-125' : 'flex basis-[10%] p-3 text-xl md:justify-end bg-gray-800 md:justify-center md:rounded-md hover:text-white hover:brightness-125 hidden'}>
-            <button className=' md:bg-gray-800 md:px-5 md:py-2 p-3 md:rounded-md text-gray-300 md:text-white'>LOGIN</button>
+  return (
+    <div>
+      <UploadModal uploadFunction={uploadImage} setIsActive={setIsUploadModalActive} isHidden={isUploadModalActive ? false : true}/>
+      <nav className="flex flex-col md:flex-row md:items-center h-20 md:px-6 lg:px-12 bg-gradient-to-r from-gray-800 to-indigo-900 w-full text-white">
+        
+        <div className='basis-[10%] items-center md:mr-12 px-3'>  
+          <a href="#" className='flex items-center justify-between'>
+              <div className='inline-flex items-center'>
+                <input id="fileInput" onChange={event => setNavLogoUpload(event.target.files[0])} type="file" className="hidden"/>
+                <img src={(navLogoURL == "") ? addIcon : navLogoURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4"/>                
+                {title.map(title => <TextField key={1} collection={titleCollectionPath} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
+              </div>
+              
+              <button onClick={handleClick}  className="p-2 text-white mt-1 md:hidden ml-auto rounded-md hover:bg-gray-800"><img src={MenuIcon}/></button>
           </a>
-  
-        </nav>
-  
-      </div>
-     
-    )
-  }
-  else {
-    return (
-      <div>
-        <nav className="flex flex-col md:flex-row md:items-center h-20 md:px-6 lg:px-12 bg-gradient-to-r from-gray-800 to-indigo-900 w-full text-white">
-          
-          <div className='basis-[10%] items-center md:mr-12 px-3'>  
-            <a href="#" className='flex items-center justify-between'>
-                <div className='inline-flex items-center'>
-                  <input id="fileInput" onChange={event => setNavLogoUpload(event.target.files[0])} type="file" className="hidden"/>
-                  <img src={(navLogoURL == "") ? Logo : navLogoURL} onClick={handleUploadClick} className="w-20 h-20 hover:bg-gray-700 p-4 mr-2 md:mr-4"/>                
-                  {title.map(title => <TextField key={1} collection={titleCollectionPath} id={title.id} updateText={updateText} placeHolderText={title.text} defaultStyle={"text-2xl uppercase tracking-wide font-bold"} buttonStyle={'p-3 bg-gray-800 rounded-md md:m-3'} editStyle={"bg-gray-800 w-44 text-gray-300 text-2xl uppercase tracking-wide font-bold rounded-md  text-center italic outline-none"}/>)}
-                </div>
-                
-                <button onClick={handleClick}  className="p-2 text-white mt-1 md:hidden ml-auto rounded-md hover:bg-gray-800"><img src={MenuIcon}/></button>
-            </a>
-  
-          </div>
-          <div className={isActive ? "basis-[80%] md:justify-start bg-gradient-to-r from-gray-800 to-indigo-900 md:from-transparent md:to-transparent" : "basis-[80%] md:justify-start bg-gradient-to-r from-gray-800 to-indigo-900 md:from-transparent md:to-transparent hidden"}>
-  
-  
-            <ul className='flex flex-col md:inline-flex md:flex-row'>
-              {navLinks.map(navLink => <NavLink collection={navLinksCollectionPath} updateText={updateText} onDelete={deleteNavLink} text={navLink.text} link={navLink.link} id={navLink.id} key={navLink.key}/>)}
-  
-              <NavLinkBtn addFunction={addNavLink} isActive={isAddBtnActive} checkIfActive={handleIfAddBtnActive}/>
-  
-            </ul>
-          </div>
-  
-          <a href="#" className={isActive ? 'flex basis-[10%] text-xl justify-center bg-gray-800 md:rounded-md hover:text-white hover:brightness-125' : 'flex basis-[10%] p-3 text-xl md:justify-end bg-gray-800 md:justify-center md:rounded-md hover:text-white hover:brightness-125 hidden'}>
-            <button className=' md:bg-gray-800 md:px-5 md:py-2 p-3 md:rounded-md text-gray-300 md:text-white'>LOGIN</button>
-          </a>
-  
-        </nav>
-  
-      </div>
-     
-    )
-  }
 
-  }
+        </div>
+        <div className={isActive ? "basis-[80%] md:justify-start bg-gradient-to-r from-gray-800 to-indigo-900 md:from-transparent md:to-transparent" : "basis-[80%] md:justify-start bg-gradient-to-r from-gray-800 to-indigo-900 md:from-transparent md:to-transparent hidden"}>
 
+
+          <ul className='flex flex-col md:inline-flex md:flex-row'>
+            {navLinks.map(navLink => <NavLink updateText={updateText} onDelete={deleteNavLink} text={navLink.text} link={navLink.link} id={navLink.id} key={navLink.key}/>)}
+
+            <NavLinkBtn addFunction={addNavLink} isActive={isAddBtnActive} checkIfActive={handleIfAddBtnActive}/>
+
+          </ul>
+        </div>
+
+        <a href="#" className={isActive ? 'flex basis-[10%] text-xl justify-center bg-gray-800 md:rounded-md hover:text-white hover:brightness-125' : 'flex basis-[10%] p-3 text-xl md:justify-end bg-gray-800 md:justify-center md:rounded-md hover:text-white hover:brightness-125 hidden'}>
+          <button className=' md:bg-gray-800 md:px-5  md:py-2 p-3 md:rounded-md text-gray-300 md:text-white'>LOGIN</button>
+        </a>
+        
+      </nav>
+
+    </div>
+   
+  )
+  
+}
 
 export default NavBar

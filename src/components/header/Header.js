@@ -4,7 +4,7 @@ import { storage } from '../../firebase.config'
 import { getDownloadURL, listAll, ref, uploadBytes, deleteObject } from "firebase/storage"
 import UploadModal from '../UploadModal'
 import { useContext } from 'react'
-import { ProjectContext } from '../../Home'
+import { ProjectContext } from '../../Project'
 
 
 const Header = () => {
