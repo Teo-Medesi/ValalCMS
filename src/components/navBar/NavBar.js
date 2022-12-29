@@ -13,7 +13,6 @@ import { ProjectContext } from '../../Project'
 const NavBar = () => {
 
   const project = useContext(ProjectContext);
-  console.log(project)
 
   const [navLinks, setNavLinks] = useState([]);
   const [navLogoUpload, setNavLogoUpload] = useState(null);

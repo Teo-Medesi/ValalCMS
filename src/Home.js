@@ -17,8 +17,4 @@ const Home = ({className}) => {
   )
 }
 
-Home.propTypes = {
-  projectNumber: PropTypes.string.isRequired
-}
-
 export default Home
