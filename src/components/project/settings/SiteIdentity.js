@@ -3,7 +3,7 @@ import Logo from "../../../assets/images/siteIdentity.png"
 
 const SiteIdentity = () => {
   return (
-    <div>
+    <div className="">
       <div className='flex bg-gray-800 justify-between items-center p-3 text-white text-xl border-y-2 border-gray-900 font-semibold uppercase'>
         <p>Site Identity</p>
         <img src={Logo} className="w-10 h-10"/>
