@@ -11,7 +11,6 @@ const ProjectBoard = () => {
                 <div className='basis-[30%]'><ProjectPreview projectNumber="one"/></div>
                 <div className='basis-[30%]'><ProjectPreview projectNumber="two"/></div>
                 <div className='basis-[30%]'><ProjectPreview projectNumber="three"/></div>
-                <div className='mt-6'><ProjectPreview projectNumber="four"/></div>
             </div>
 
         </div>

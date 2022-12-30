@@ -3,15 +3,19 @@ import "./assets/css/output.css";
 import Project from "./Project"
 import ProjectBoard from "./ProjectBoard";
 import {Routes, Route} from "react-router-dom"
+import SignUp from "./SignUp";
+import SignIn from "./SignIn";
 
 /* 
 Todo list
+
+  
 
   add database to featured articles
   add database to comment board
   finish featured articles, add article modal
 
-  make side menu for project settings
+  // DONE make side menu for project settings
   add custom color themes to tailwind
   add more variations of each component
   // DONE ----- make draft functionality
@@ -33,10 +37,11 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<ProjectBoard />}/>
+      <Route path="/sign-in" element={<SignIn />}/>
+      <Route path="/sign-up" element={<SignUp />}/>
       <Route path="/project_one" element={<Project projectNumber="one"/>}/>
       <Route path="/project_two" element={<Project projectNumber="two"/>}/>
       <Route path="/project_three" element={<Project projectNumber="three"/>}/>
-      <Route path="/project_four" element={<Project projectNumber="four"/>}/>
     </Routes>
   );
 }
