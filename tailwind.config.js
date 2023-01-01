@@ -16,7 +16,6 @@ module.exports = {
       inherit: colors.inherit,
       current: colors.current,
       transparent: colors.transparent,
-      black: colors.black,
       white: colors.white,
       slate: colors.slate,
       gray: colors.gray,
@@ -40,6 +39,20 @@ module.exports = {
       fuchsia: colors.fuchsia,
       pink: colors.pink,
       rose: colors.rose,
+      primary: "#1E293B",
+      secondary: "#609AF7",
+      tertiary: "#3F6199",
+      "black": {
+        900: "#111316",
+        800: "#46484C",
+        700: "#7B7D80",
+        600: "#B0B2B6",
+        500: "#D1D2D6",
+        400: "#DADCE0"  
+      },
+      error: "#CD291D",
+      valid: "#00943D",
+      background: "#F5F5F5"
     }),
     columns: {
       auto: 'auto',
@@ -112,6 +125,8 @@ module.exports = {
       ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
       pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       bounce: 'bounce 1s infinite',
+      switchRight: "switchRight 0.4s",
+      switchLeft: "switchLeft 0.4s"
     },
     aria: {
       checked: 'checked="true"',
@@ -376,6 +391,7 @@ module.exports = {
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
         '"Noto Color Emoji"',
+        '"Helvetica"'
       ],
       serif: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
       mono: [
@@ -593,6 +609,22 @@ module.exports = {
           animationTimingFunction: 'cubic-bezier(0,0,0.2,1)',
         },
       },
+      switchRight: {
+        from: {
+          transform: "none"
+        },
+        to: {
+          transform: "translate(100%)"
+        }
+      },
+      switchLeft: {
+          "0%": {
+            transform: "none"
+          },
+          "100%": {
+            transform: "translate(-100%)"
+          }
+      }
     },
     letterSpacing: {
       tighter: '-0.05em',

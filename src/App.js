@@ -37,15 +37,17 @@ Todo list
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Loading />}/>
-      <Route path="/dash-board"  element={<Protected><ProjectBoard /></Protected>} />
-      <Route path="/sign-in" element={<SignIn />}/>
-      <Route path="/sign-up" element={<SignUp />}/>
-      <Route path="/project_one" element={<Protected><Project projectNumber="one"/></Protected>}/>
-      <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
-      <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
-    </Routes>
+    <div className="">
+      <Routes>
+        <Route path="/" element={<Loading />}/>
+        <Route path="/dash-board"  element={<Protected><ProjectBoard /></Protected>} />
+        <Route path="/sign-in" element={<SignIn />}/>
+        <Route path="/sign-up" element={<SignUp />}/>
+        <Route path="/project_one" element={<Protected><Project projectNumber="one"/></Protected>}/>
+        <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
+        <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
+      </Routes>
+    </div>
   );
 }
 
