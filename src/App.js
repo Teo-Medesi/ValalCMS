@@ -5,6 +5,8 @@ import ProjectBoard from "./ProjectBoard";
 import {Routes, Route} from "react-router-dom"
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
+import Loading from "./Loading"
+import Protected from "./components/Protected";
 
 /* 
 Todo list
@@ -36,12 +38,13 @@ Todo list
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<ProjectBoard />}/>
+      <Route path="/" element={<Loading />}/>
+      <Route path="/dash-board"  element={<Protected><ProjectBoard /></Protected>} />
       <Route path="/sign-in" element={<SignIn />}/>
       <Route path="/sign-up" element={<SignUp />}/>
-      <Route path="/project_one" element={<Project projectNumber="one"/>}/>
-      <Route path="/project_two" element={<Project projectNumber="two"/>}/>
-      <Route path="/project_three" element={<Project projectNumber="three"/>}/>
+      <Route path="/project_one" element={<Protected><Project projectNumber="one"/></Protected>}/>
+      <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
+      <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
     </Routes>
   );
 }
