@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Background from "./assets/images/bluegrad.jpg"
 import ElonTweet from "./assets/images/tweet.png"
 import TopgTweet from "./assets/images/gtweet.png"
@@ -9,13 +9,21 @@ import FacebookLogo from "./assets/images/facebook.png"
 import GoogleLogo from "./assets/images/google.png"
 import BillTweet from "./assets/images/bill.png"
 import Eye from "./assets/images/eye.png"
+import Error from "./assets/images/error.png"
+import { auth } from './firebase.config'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { UserContext } from './App'
 
-const SignUp = () => {
+const SignUp = ({setUser}) => {
+
   const navigate = useNavigate();
+  const user = useContext(UserContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSwitch, setIsSwitch] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
   const isEmailValid = email => {
     const validExp =  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ ;
@@ -27,45 +35,76 @@ const SignUp = () => {
     return validExp.test(password);
   }
 
+  useEffect(() => {
+    if (user) navigate("/dashboard")
+  }, [])
 
   const handleClick = () => {
-    if (isEmailValid(email))
+    // create new user when sign up button clicked
+    if (isEmailValid(email) && isPasswordValid(password))
     {
-      console.log("valid email")
-    }
-    else {
-      console.log("invalid email")
-    }
+      createUserWithEmailAndPassword(auth, email, password).then(userCredential => {
+        // user created and signed in
+        // passing user to state and then navigating to the user dashboard
+       setUser(userCredential.user);
+       navigate("/dashboard");
 
-    if (isPasswordValid(password))
-    {
-      console.log("valid password")
+      }).catch(error => {
+        console.error(error);
+      })
     }
-    else {
-      console.log("invalid password")
-    }
+  }
+
+  const handleEmailInput = event => {
+    setEmail(event.target.value);
+
+    // if the user corrected their mistake we want to reset the error message
+    isEmailValid(email) ? setEmailErrorMessage("") : setEmailErrorMessage("Invalid Email!");
+  }
+
+  const handlePasswordInput = event => {
+    setPassword(event.target.value);
+
+    // if the user corrected their mistake we want to reset the error message
+    isPasswordValid(password) ? setPasswordErrorMessage("") : setPasswordErrorMessage("Password must contain atleast 8 characters, one capital letter, one number and one special character!")
   }
 
 
   return (
     <div className='flex justify-start min-h-screen'>
-      <div onAnimationEnd={() => navigate("/sign-in")} className={isSwitch ? 'animate-switchRight translate-x-full flex basis-full lg:basis-1/2 bg-background flex-col' : 'flex basis-full lg:basis-1/2 bg-background flex-col'}>
+      <div onAnimationEnd={() => navigate("/signIn")} className={isSwitch ? 'animate-switchRight translate-x-full justify-center flex basis-full lg:basis-1/2 bg-background flex-col' : 'flex justify-center basis-full lg:basis-1/2 bg-background flex-col'}>
           <div className=' flex-col gap-10 px-4 sm:px-28 lg:px-16 text-gray-800'>
             <div className='flex justify-center w-full'><img src={Logo}  className="scale-75"/></div>
             
             <div className='flex flex-col gap-7'>
               <div className='flex flex-col gap-2'>
+
                 <p className='text-xl font-semibold '>Email</p>
-                <input onChange={event => setEmail(event.target.value)} placeholder='example@domain.com' type="email" className='placeholder:italic hover:shadow-md py-1 px-3 min-w-full outline-none border-b border-gray-300 rounded' />
+                <input onChange={handleEmailInput} placeholder='example@domain.com' type="email" className='placeholder:italic hover:shadow-md py-1 px-3 min-w-full outline-none border-b border-gray-300 rounded' />
+
+                <div className="flex flex-row justify-start items-center w-full">
+                  <img src={Error} className={(emailErrorMessage !== "") ? "w-5 h-5" : "w-5 h-5 hidden"} />
+                  <p className='text-error px-2 font-semibold'>{(emailErrorMessage !== "") ? emailErrorMessage : ""}</p>
+                </div>
+                
               </div>
 
               <div className='flex flex-col gap-2'>
+                
                 <p className='text-xl font-semibold '>Password</p>
-                <div className='flex flex-row'>
-                  <input onChange={event => setPassword(event.target.value)} placeholder='Password123' type="password" className='placeholder:italic hover:shadow-md py-1 px-3 min-w-full outline-none border-b border-gray-300 rounded' />
-                  {/* <img src={Eye} className="w-8 h-8 absolute"/> */}
-                </div>
+
+                  <div className='flex flex-row'>                 
+                    <input onChange={handlePasswordInput} placeholder='Password123' type="password" className='placeholder:italic hover:shadow-md py-1 px-3 min-w-full outline-none border-b border-gray-300 rounded' />
+                    {/* <img src={Eye} className="w-8 h-8 absolute"/> */}  
+                  </div>
+
+                  <div className="flex flex-row justify-start items-center w-full">
+                    <img src={Error} className={(passwordErrorMessage !== "") ? "w-5 h-5" : "w-5 h-5 hidden"} />
+                    <p className='text-error px-2 font-semibold'>{(passwordErrorMessage !== "") ? passwordErrorMessage : ""}</p>
+                  </div>
+                  
               </div>
+
             </div>
             
             <div className='w-full flex mt-12 justify-center'><button onClick={handleClick} className='bg-primary w-full md:w-1/2 hover:shadow-xl uppercase font-semibold texl-xl rounded text-background p-3'>Sign Up</button></div>

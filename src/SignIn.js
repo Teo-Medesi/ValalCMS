@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Background from "./assets/images/bluegrad.jpg"
 import ElonTweet from "./assets/images/tweet.png"
 import TopgTweet from "./assets/images/gtweet.png"
@@ -10,14 +10,20 @@ import FacebookLogo from "./assets/images/facebook.png"
 import GoogleLogo from "./assets/images/google.png"
 import BillTweet from "./assets/images/bill.png"
 import Eye from "./assets/images/eye.png"
+import { auth } from './firebase.config'
+import { UserContext } from './App'
+import Error from "./assets/images/error.png"
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
-const SignIn = () => {
+const SignIn = ({setUser}) => {
 
   const navigate = useNavigate();
+  const user = useContext(UserContext);
 
   const [isSwitch, setIsSwitch] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isEmailValid = email => {
     const validExp =  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ ;
@@ -29,23 +35,20 @@ const SignIn = () => {
     return validExp.test(password);
   }
 
+  useEffect(() => {
+    if (user) navigate("/dashboard")
+  }, [user])
 
   const handleClick = () => {
-    if (isEmailValid(email))
-    {
-      console.log("valid email")
-    }
-    else {
-      console.log("invalid email")
-    }
-
-    if (isPasswordValid(password))
-    {
-      console.log("valid password")
-    }
-    else {
-      console.log("invalid password")
-    }
+    signInWithEmailAndPassword(auth, email, password).then(userCredential => {
+      // user signed in
+      // passing user to state and navigating to user dashboard
+      setUser(userCredential.user);
+      navigate("/dashboard");
+    }).catch(error => {
+      console.error(error);
+      setErrorMessage("Invalid email or password, please check for typos.")
+    })
   }
 
   return (
@@ -55,7 +58,7 @@ const SignIn = () => {
         <img src={ElonTweet} className="h-[30%]"/>
         <img src={TopgTweet} className="h-[30%]"/>
       </div>
-      <div onAnimationEnd={() => navigate("/sign-up")} className={isSwitch ? 'animate-switchLeft -translate-x-full flex basis-full lg:basis-1/2 bg-background flex-col' : 'flex basis-full lg:basis-1/2 bg-background flex-col'}>
+      <div onAnimationEnd={() => navigate("/signUp")} className={isSwitch ? 'animate-switchLeft -translate-x-full flex basis-full justify-center lg:basis-1/2 bg-background flex-col' : 'flex justify-center basis-full lg:basis-1/2 bg-background flex-col'}>
           <div className='flex-col gap-10 px-4 sm:px-28   lg:px-16 text-gray-800'>
             <div className='flex justify-center w-full'><img src={Logo}  className="scale-75"/></div>
             
@@ -67,14 +70,21 @@ const SignIn = () => {
 
               <div className='flex flex-col gap-2'>
                 <p className='text-xl font-semibold '>Password</p>
+
                 <div className='flex flex-row'>
                   <input onChange={event => setPassword(event.target.value)} placeholder='Password123' type="password" className='placeholder:italic hover:shadow-md py-1 px-3 min-w-full outline-none border-b border-gray-300 rounded' />
                   {/* <img src={Eye} className="w-8 h-8 absolute"/> */}
                 </div>
+
+                <div className="flex flex-row justify-start items-center w-full">
+                  <img src={Error} className={(errorMessage !== "") ? "w-5 h-5" : "w-5 h-5 hidden"} />
+                  <p className='text-error px-2 font-semibold'>{(errorMessage !== "") ? errorMessage : ""}</p>
+                </div>
+
               </div>
             </div>
             
-            <div className='w-full flex mt-12 justify-center'><button onClick={handleClick} className='bg-primary w-full md:w-1/2 hover:shadow-xl uppercase font-semibold texl-xl rounded text-background p-3'>Sign Up</button></div>
+            <div className='w-full flex mt-12 justify-center'><button onClick={handleClick} className='bg-primary w-full md:w-1/2 hover:shadow-xl uppercase font-semibold texl-xl rounded text-background p-3'>Sign in</button></div>
 
             <div className='w-full px-3 border-b-2 mt-16 border-black-600'></div>
 

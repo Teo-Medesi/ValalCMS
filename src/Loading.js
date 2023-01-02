@@ -1,8 +1,17 @@
-import React from 'react'
+import React, {useEffect, useContext} from 'react'
+import { UserContext } from './App'
+import { useNavigate } from 'react-router-dom'
 
 const Loading = () => {
 
+  const navigate = useNavigate();
+  const user = useContext(UserContext);
 
+  useEffect(() => {
+      if (user === [] || user === null) navigate("/signIn")
+      else navigate ("/dashboard")
+
+  }, [user]);
 
 
   return (

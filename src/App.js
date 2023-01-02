@@ -1,4 +1,4 @@
-import React from "react"
+import React, { createContext } from "react"
 import "./assets/css/output.css";
 import Project from "./Project"
 import ProjectBoard from "./ProjectBoard";
@@ -7,11 +7,12 @@ import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 import Loading from "./Loading"
 import Protected from "./components/Protected";
+import { useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import {auth} from "./firebase.config"
 
 /* 
 Todo list
-
-  
 
   add database to featured articles
   add database to comment board
@@ -34,20 +35,27 @@ Todo list
 
 */
 
+export const UserContext = createContext({user: {}})
 
 function App() {
+  const [user, setUser] = useState([]);
+
+  onAuthStateChanged(auth, (userRef => {
+    if (userRef) setUser(userRef);
+  }))
+
   return (
-    <div className="">
-      <Routes>
-        <Route path="/" element={<Loading />}/>
-        <Route path="/dash-board"  element={<Protected><ProjectBoard /></Protected>} />
-        <Route path="/sign-in" element={<SignIn />}/>
-        <Route path="/sign-up" element={<SignUp />}/>
-        <Route path="/project_one" element={<Protected><Project projectNumber="one"/></Protected>}/>
-        <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
-        <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
-      </Routes>
-    </div>
+      <UserContext.Provider value={user}>
+        <Routes>
+          <Route path="/" element={<Loading />}/>
+          <Route path="/dashboard"  element={<Protected><ProjectBoard /></Protected>} />
+          <Route path="/signIn" element={<SignIn setUser={setUser} />}/>
+          <Route path="/signUp" element={<SignUp setUser={setUser}/>}/>
+          <Route path="/project_one" element={<Protected><Project project="one"/></Protected>}/>
+          <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
+          <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
+        </Routes>
+      </UserContext.Provider>
   );
 }
 
