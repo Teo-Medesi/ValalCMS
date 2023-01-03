@@ -1,7 +1,7 @@
 import React, { createContext } from "react"
 import "./assets/css/output.css";
 import Project from "./Project"
-import ProjectBoard from "./ProjectBoard";
+import Dashboard from "./Dashboard";
 import {Routes, Route} from "react-router-dom"
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
@@ -42,13 +42,14 @@ function App() {
 
   onAuthStateChanged(auth, (userRef => {
     if (userRef) setUser(userRef);
+    else setUser(null)
   }))
 
   return (
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={[user, setUser]}>
         <Routes>
           <Route path="/" element={<Loading />}/>
-          <Route path="/dashboard"  element={<Protected><ProjectBoard /></Protected>} />
+          <Route path="/dashboard"  element={<Protected><Dashboard /></Protected>} />
           <Route path="/signIn" element={<SignIn setUser={setUser} />}/>
           <Route path="/signUp" element={<SignUp setUser={setUser}/>}/>
           <Route path="/project_one" element={<Protected><Project project="one"/></Protected>}/>

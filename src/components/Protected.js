@@ -1,13 +1,11 @@
 import React, { useContext } from 'react'
-import { auth } from '../firebase.config'
 import { useNavigate } from 'react-router-dom'
-import { onAuthStateChanged } from 'firebase/auth'
 import { UserContext } from '../App'
 import { useEffect } from 'react'
 
 const Protected = ({children}) => {
     const navigate = useNavigate();
-    const user = useContext(UserContext);
+    const [user, setUser] = useContext(UserContext);
 
     useEffect(() => {
         if (user !== [])

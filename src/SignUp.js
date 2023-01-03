@@ -10,14 +10,15 @@ import GoogleLogo from "./assets/images/google.png"
 import BillTweet from "./assets/images/bill.png"
 import Eye from "./assets/images/eye.png"
 import Error from "./assets/images/error.png"
-import { auth } from './firebase.config'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth, db, provider } from './firebase.config'
+import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { UserContext } from './App'
+import { addDoc, doc, setDoc } from 'firebase/firestore'
 
-const SignUp = ({setUser}) => {
+const SignUp = () => {
 
   const navigate = useNavigate();
-  const user = useContext(UserContext);
+  const [user, setUser] = useContext(UserContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,15 +40,40 @@ const SignUp = ({setUser}) => {
     if (user) navigate("/dashboard")
   }, [])
 
+  const handleGoogleSignIn = () => {
+    signInWithPopup(auth, provider).then(userCredential => {
+
+      // signed in 
+      setUser(userCredential.user);
+      setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {}).then(async () => {
+        console.log("done")
+        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footerText`), {text: "Click to add text"});
+        await addDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navLinks`), {text: "Home", link: "#", key: 1});
+        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbarTitleText`), {text: "Title"});
+        navigate("/dashboard");
+       })
+
+    }).catch(error => {
+      console.log(error);
+    })
+  }
+
   const handleClick = () => {
     // create new user when sign up button clicked
     if (isEmailValid(email) && isPasswordValid(password))
     {
-      createUserWithEmailAndPassword(auth, email, password).then(userCredential => {
-        // user created and signed in
-        // passing user to state and then navigating to the user dashboard
-       setUser(userCredential.user);
-       navigate("/dashboard");
+      createUserWithEmailAndPassword(auth, email, password).then(async userCredential => {
+        // user created and signed ins
+
+        // passing user to state and then creating user collections and storage
+        setUser(userCredential.user);
+        setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {}).then(async () => {
+          console.log("done")
+          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footerText`), {text: "Click to add text"});
+          await addDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navLinks`), {text: "Home", link: "#", key: 1});
+          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbarTitleText`), {text: "Title"});
+          navigate("/dashboard");
+         })
 
       }).catch(error => {
         console.error(error);
@@ -112,7 +138,7 @@ const SignUp = ({setUser}) => {
             <div className='w-full px-3 border-b-2 mt-16 border-black-600'></div>
 
             <div className='w-full flex justify-center flex-row gap-8 mt-16'>
-              <img src={GoogleLogo} alt=""  className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2'/>
+              <img onClick={handleGoogleSignIn}  src={GoogleLogo} alt=""  className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2'/>
               <img src={FacebookLogo} alt="" className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2' />
               <img src={GithubLogo} alt="" className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2'/>
             </div>
@@ -121,7 +147,7 @@ const SignUp = ({setUser}) => {
           </div>
 
       </div>
-      <div className={isSwitch ? "animate-switchLeft -translate-x-full lg:flex h-screen items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-tertiary to-primary" : "lg:flex h-screen hidden items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-tertiary to-primary"}>
+      <div className={isSwitch ? "animate-switchLeft -translate-x-full lg:flex h-screen items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-secondary to-primary" : "lg:flex h-screen hidden items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-secondary to-primary"}>
         <img src={BillTweet} className="h-[30%]"/>
         <img src={ElonTweet} className="h-[30%]"/>
         <img src={TopgTweet} className="h-[30%]"/>

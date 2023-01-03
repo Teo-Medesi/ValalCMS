@@ -10,34 +10,34 @@ import FacebookLogo from "./assets/images/facebook.png"
 import GoogleLogo from "./assets/images/google.png"
 import BillTweet from "./assets/images/bill.png"
 import Eye from "./assets/images/eye.png"
-import { auth } from './firebase.config'
+import { auth, provider } from './firebase.config'
 import { UserContext } from './App'
 import Error from "./assets/images/error.png"
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 
-const SignIn = ({setUser}) => {
+const SignIn = () => {
 
   const navigate = useNavigate();
-  const user = useContext(UserContext);
+  const [user, setUser] = useContext(UserContext);
 
   const [isSwitch, setIsSwitch] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const isEmailValid = email => {
-    const validExp =  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ ;
-    return validExp.test(email);
-  }
-
-  const isPasswordValid = password => {
-    const validExp =  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/ ;
-    return validExp.test(password);
-  }
-
   useEffect(() => {
     if (user) navigate("/dashboard")
   }, [user])
+
+  const handleGoogleSignIn = () => {
+    signInWithPopup(auth, provider).then(userCredential => {
+      // signed in 
+      setUser(userCredential.user);
+      navigate("/dashboard");
+    }).catch(error => {
+      console.log(error);
+    })
+  }
 
   const handleClick = () => {
     signInWithEmailAndPassword(auth, email, password).then(userCredential => {
@@ -53,7 +53,7 @@ const SignIn = ({setUser}) => {
 
   return (
     <div className='flex justify-start min-h-screen'>
-      <div className={isSwitch ? "animate-switchRight translate-x-full lg:flex h-screen items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-tertiary to-primary" : "lg:flex h-screen hidden items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-tertiary to-primary"}>
+      <div className={isSwitch ? "animate-switchRight translate-x-full lg:flex h-screen items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-secondary to-primary" : "lg:flex h-screen hidden items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-secondary to-primary"}>
         <img src={BillTweet} className="h-[30%]"/>
         <img src={ElonTweet} className="h-[30%]"/>
         <img src={TopgTweet} className="h-[30%]"/>
@@ -89,7 +89,7 @@ const SignIn = ({setUser}) => {
             <div className='w-full px-3 border-b-2 mt-16 border-black-600'></div>
 
             <div className='w-full flex justify-center flex-row gap-8 mt-16'>
-              <img src={GoogleLogo} alt=""  className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2'/>
+              <img onClick={handleGoogleSignIn} src={GoogleLogo} alt=""  className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2'/>
               <img src={FacebookLogo} alt="" className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2' />
               <img src={GithubLogo} alt="" className='transition ease-in-out duration-200 cursor-pointer hover:translate-x-2'/>
             </div>

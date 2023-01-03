@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 const Loading = () => {
 
   const navigate = useNavigate();
-  const user = useContext(UserContext);
+  const [user, setUser] = useContext(UserContext);
 
   useEffect(() => {
       if (user === [] || user === null) navigate("/signIn")
