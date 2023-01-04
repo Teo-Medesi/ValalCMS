@@ -13,7 +13,7 @@ import Error from "./assets/images/error.png"
 import { auth, db, provider } from './firebase.config'
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { UserContext } from './App'
-import { addDoc, doc, setDoc } from 'firebase/firestore'
+import { addDoc, doc, setDoc, collection } from 'firebase/firestore'
 
 const SignUp = () => {
 
@@ -47,9 +47,14 @@ const SignUp = () => {
       setUser(userCredential.user);
       setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {}).then(async () => {
         console.log("done")
-        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footerText`), {text: "Click to add text"});
-        await addDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navLinks`), {text: "Home", link: "#", key: 1});
-        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbarTitleText`), {text: "Title"});
+        // TO-DO --- FIX THIS SHIT ---  for some reason it doesn't work for the google sign up
+        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
+        await addDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
+        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
+
+        // we do not need to create storage folders here because we can't create empty folders or empty collections
+        // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
+
         navigate("/dashboard");
        })
 
@@ -68,10 +73,14 @@ const SignUp = () => {
         // passing user to state and then creating user collections and storage
         setUser(userCredential.user);
         setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {}).then(async () => {
-          console.log("done")
-          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footerText`), {text: "Click to add text"});
-          await addDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navLinks`), {text: "Home", link: "#", key: 1});
-          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbarTitleText`), {text: "Title"});
+          
+          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
+          await addDoc(collection(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
+          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
+          
+          // we do not need to create storage folders here because we can't create empty folders or empty collections
+          // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
+          
           navigate("/dashboard");
          })
 
@@ -82,17 +91,15 @@ const SignUp = () => {
   }
 
   const handleEmailInput = event => {
-    setEmail(event.target.value);
-
     // if the user corrected their mistake we want to reset the error message
-    isEmailValid(email) ? setEmailErrorMessage("") : setEmailErrorMessage("Invalid Email!");
+    isEmailValid(event.target.value) ? setEmailErrorMessage("") : setEmailErrorMessage("Invalid Email!");
+    setEmail(event.target.value);
   }
 
   const handlePasswordInput = event => {
-    setPassword(event.target.value);
-
     // if the user corrected their mistake we want to reset the error message
-    isPasswordValid(password) ? setPasswordErrorMessage("") : setPasswordErrorMessage("Password must contain atleast 8 characters, one capital letter, one number and one special character!")
+    isPasswordValid(event.target.value) ? setPasswordErrorMessage("") : setPasswordErrorMessage("Password must contain atleast 8 characters, one capital letter, one number and one special character!")
+    setPassword(event.target.value);
   }
 
 

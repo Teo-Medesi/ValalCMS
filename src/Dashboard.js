@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'  
+import React, {useContext, useState} from 'react'  
 import { UserContext } from './App'
 import ProjectPreview from './ProjectPreview'
 import Logo from "./assets/images/Valal1.png"
@@ -8,9 +8,11 @@ import HomeIcon from "./assets/images/home.png"
 import Settings from "./assets/images/settingsWhite.png"
 import { signOut } from 'firebase/auth'
 import { auth } from "./firebase.config"
+import { useEffect } from 'react'
 
 const Dashboard = () => {
   const [user, setUser] = useContext(UserContext)
+  const [formattedEmail, setFormattedEmail] = useState("");
 
   const handleSignOut = () => {
     signOut(auth).then(() => {
@@ -20,6 +22,19 @@ const Dashboard = () => {
     })
   }
 
+  useEffect(() => {
+    if (user.email)
+    {
+      setFormattedEmail(formatEmail(user.email));
+    }
+  }, [user.email]);
+
+  const formatEmail = email => {
+    const formattedEmail = email;
+    formattedEmail.replace("@gmail.com", "");
+    return formattedEmail;
+  }
+
   return (
     <div className='flex flex-row justify-start bg-background h-screen'>
 
@@ -27,7 +42,7 @@ const Dashboard = () => {
 
           <div className='flex basis-[9%] flex-row gap-6 bg-primary-700 border-b-4 border-black-400 px-3 py-8 w-full items-center'>
             <img src={user.photoURL ? user.photoURL : ProfileIcon} className="w-10 h-10 rounded-[50%]"/>
-            <p className='text-background text-xl'>{user.displayName ? user.displayName : user.email}</p>
+            <p className='text-background text-xl'>{user.displayName ? user.displayName : formattedEmail}</p>
           </div>
 
           <div className='basis-[84%]'>

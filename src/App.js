@@ -14,23 +14,31 @@ import {auth} from "./firebase.config"
 /* 
 Todo list
 
+  COMPLAINTS / BUGS
+    - entire website is just generally unresponsive and janky
+    - designs are inconsistent and don't follow any proper convention
+    - sign up and sign in pages have different spacings for some reason which makes the transition from one to another a bit unsatisfying 
+
+  ------- TASKS AT THE TOP ARE THE MOST IMPORTANT -------
+    // update dashboard and the projects to use the newly created database structure
+    // make functionality for adding new projects, upon making a new project the user is directed towards a simple setup page 
+    where he declares his preferred color theme, fonts, project name and website title,  set of icons he will be using...
+
+  make an account page
+  make a settings page
+  make a config file in firebase for user preferences 
+
+
   add database to featured articles
-  add database to comment board
   finish featured articles, add article modal
 
-  // DONE make side menu for project settings
-  add custom color themes to tailwind
   add more variations of each component
-  // DONE ----- make draft functionality
-    =>  DONE ----- make project board window
   basic CMS functionality, the option to replace one component with another
   make it so the user can choose between atleast 3 navbar components, with different themes
     => make modal for selecting which navbar the user wants to be displayed
 
-  add user authentication
-  make a landing page for the CMS which takes to user to a login page, after the user is authenticated he can access the editor
+  make a landing page for the CMS
   make a few themes for the already existing components, make these themes global
-  in order for themes to apply to the entire project, we must have a project, that is we need to add the option of having more different editing templates that is projects
   make font themes
 
 */
