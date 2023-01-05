@@ -42,21 +42,20 @@ const SignUp = () => {
 
   const handleGoogleSignIn = () => {
     signInWithPopup(auth, provider).then(userCredential => {
-
       // signed in 
       setUser(userCredential.user);
-      setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {}).then(async () => {
-        console.log("done")
-        // TO-DO --- FIX THIS SHIT ---  for some reason it doesn't work for the google sign up
-        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
-        await addDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
-        await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
-
-        // we do not need to create storage folders here because we can't create empty folders or empty collections
-        // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
-
-        navigate("/dashboard");
-       })
+      setDoc(doc(db, `users/${userCredential.user.uid}`), {email: userCredential.user.email, displayName: userCredential.user.displayName}).then(() => {
+        setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {project_id: 1, project_name: "untitled_project"}).then(async () => {
+          // creating user collections in firestore
+          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
+          await addDoc(collection(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
+          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
+          // we do not need to create storage folders here because we can't create empty folders or empty collections
+          // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
+  
+          navigate("/dashboard");
+         })
+      })
 
     }).catch(error => {
       console.log(error);
@@ -65,31 +64,29 @@ const SignUp = () => {
 
   const handleClick = () => {
     // create new user when sign up button clicked
-    if (isEmailValid(email) && isPasswordValid(password))
-    {
+    if (isEmailValid(email) && isPasswordValid(password)) {
       createUserWithEmailAndPassword(auth, email, password).then(async userCredential => {
-        // user created and signed ins
-
-        // passing user to state and then creating user collections and storage
-        setUser(userCredential.user);
-        setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {}).then(async () => {
-          
-          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
-          await addDoc(collection(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
-          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
-          
-          // we do not need to create storage folders here because we can't create empty folders or empty collections
-          // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
-          
-          navigate("/dashboard");
+         // signed in 
+         setUser(userCredential.user);
+         setDoc(doc(db, `users/${userCredential.user.uid}`), {email: userCredential.user.email, displayName: userCredential.user.displayName}).then(() => {
+           setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {project_id: 1, project_name: "untitled_project"}).then(async () => {
+             // creating user collections in firestore
+             await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
+             await addDoc(collection(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
+             await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
+             // we do not need to create storage folders here because we can't create empty folders or empty collections
+             // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
+     
+             navigate("/dashboard");
+            })
          })
-
-      }).catch(error => {
-        console.error(error);
-      })
+   
+       }).catch(error => {
+         console.log(error);
+       })
+      }
     }
-  }
-
+  
   const handleEmailInput = event => {
     // if the user corrected their mistake we want to reset the error message
     isEmailValid(event.target.value) ? setEmailErrorMessage("") : setEmailErrorMessage("Invalid Email!");

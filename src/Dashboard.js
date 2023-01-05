@@ -7,12 +7,27 @@ import ProfileIcon2 from "./assets/images/user2.png"
 import HomeIcon from "./assets/images/home.png"
 import Settings from "./assets/images/settingsWhite.png"
 import { signOut } from 'firebase/auth'
-import { auth } from "./firebase.config"
+import { auth, db } from "./firebase.config"
 import { useEffect } from 'react'
+import { collection, doc, getDocs } from 'firebase/firestore'
 
 const Dashboard = () => {
   const [user, setUser] = useContext(UserContext)
   const [formattedEmail, setFormattedEmail] = useState("");
+  const [projects, setProjects] = useState([]);
+  const projectsRef = collection(db, `users/${user.uid}/Projects`);
+
+  const fetchProjects = async () => {
+    const snapshot = await getDocs(projectsRef);
+    setProjects(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
+    console.log(projects.map(project => project.project_name));
+  }
+
+  // in initial render user is still null
+  useEffect(() => {
+    if (user !== [] && user !== null) fetchProjects();
+  }, [user]);
+
 
   const handleSignOut = () => {
     signOut(auth).then(() => {
@@ -42,7 +57,7 @@ const Dashboard = () => {
 
           <div className='flex basis-[9%] flex-row gap-6 bg-primary-700 border-b-4 border-black-400 px-3 py-8 w-full items-center'>
             <img src={user.photoURL ? user.photoURL : ProfileIcon} className="w-10 h-10 rounded-[50%]"/>
-            <p className='text-background text-xl'>{user.displayName ? user.displayName : formattedEmail}</p>
+            <p className='text-background text-xl w-full'>{user.displayName ? user.displayName : formattedEmail}</p>
           </div>
 
           <div className='basis-[84%]'>
@@ -74,9 +89,8 @@ const Dashboard = () => {
 
             <div className='flex flex-col h-screen'>
               <div className='flex flex-row justify-start gap-12 flex-wrap'>
-                  <div><ProjectPreview projectNumber="one"/></div>
-                  <div><ProjectPreview projectNumber="two"/></div>
-                  <div><ProjectPreview projectNumber="three"/></div>
+                {/*for each project in projects (make a reference to projects users/userUID/projects), we want to list all documents inside projects and for each returrn a project card */}
+                
               </div>
               
               
