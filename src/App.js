@@ -15,11 +15,13 @@ import {auth} from "./firebase.config"
 Todo list
 
   COMPLAINTS / BUGS
+    - creating an account with google is not different from signing in with google, therefore creating an accoutn on the sign in page will not be treated as if a new account has been registered
     - entire website is just generally unresponsive and janky
     - designs are inconsistent and don't follow any proper convention
     - sign up and sign in pages have different spacings for some reason which makes the transition from one to another a bit unsatisfying 
 
   ------- TASKS AT THE TOP ARE THE MOST IMPORTANT -------
+    
     // update dashboard and the projects to use the newly created database structure
     // make functionality for adding new projects, upon making a new project the user is directed towards a simple setup page 
     where he declares his preferred color theme, fonts, project name and website title,  set of icons he will be using...
