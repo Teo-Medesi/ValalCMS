@@ -11,6 +11,15 @@ const ProjectPreview = ({id, name}) => {
     <Link to={`/project_${id}`}>
         <div className='transition p-6 ease-in-out duration-200 hover:brightness-75 cursor-pointer w-80 h-44 shadow-md shadow-black-700 bg-black-100 rounded-2xl'> 
           <p className='text-2xl text-black-900'>{name}</p>
+
+          <div className='w-full h-full flex justify-end items-end pb-8'>
+            <div className='flex flex-row gap-1'>
+              <div className='rounded-full w-8 h-8 bg-primary'></div>
+              <div className='rounded-full w-8 h-8 bg-secondary'></div>
+              <div className='rounded-full w-8 h-8 bg-tertiary'></div>
+              <div className='rounded-full w-8 h-8 bg-gradient-to-tr from-primary to-secondary'></div>
+            </div>
+          </div>
         </div>
     </Link>
   )
