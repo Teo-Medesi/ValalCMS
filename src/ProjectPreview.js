@@ -9,8 +9,8 @@ const ProjectPreview = ({id, name}) => {
 
   return (
     <Link to={`/project_${id}`}>
-        <div className='transition p-6 ease-in-out duration-200 hover:brightness-75 cursor-pointer w-80 h-44 bg-gradient-to-tl from-secondary to-primary rounded-2xl'> 
-          <p className='text-2xl font-semibold text-white'>{name}</p>
+        <div className='transition p-6 ease-in-out duration-200 hover:brightness-75 cursor-pointer w-80 h-44 shadow-md shadow-black-700 bg-black-100 rounded-2xl'> 
+          <p className='text-2xl text-black-900'>{name}</p>
         </div>
     </Link>
   )

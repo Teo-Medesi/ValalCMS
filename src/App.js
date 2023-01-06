@@ -57,15 +57,17 @@ function App() {
 
   return (
       <UserContext.Provider value={[user, setUser]}>
-        <Routes>
-          <Route path="/" element={<Loading />}/>
-          <Route path="/dashboard"  element={<Protected><Dashboard /></Protected>} />
-          <Route path="/signIn" element={<SignIn setUser={setUser} />}/>
-          <Route path="/signUp" element={<SignUp setUser={setUser}/>}/>
-          <Route path="/project_one" element={<Protected><Project project="one"/></Protected>}/>
-          <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
-          <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
-        </Routes>
+        <div className="font-inter">
+          <Routes>
+            <Route path="/" element={<Loading />}/>
+            <Route path="/dashboard"  element={<Protected><Dashboard /></Protected>} />
+            <Route path="/signIn" element={<SignIn setUser={setUser} />}/>
+            <Route path="/signUp" element={<SignUp setUser={setUser}/>}/>
+            <Route path="/project_one" element={<Protected><Project project="one"/></Protected>}/>
+            <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
+            <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
+          </Routes>
+        </div>
       </UserContext.Provider>
   );
 }

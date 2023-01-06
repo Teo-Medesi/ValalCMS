@@ -49,7 +49,8 @@ module.exports = {
         700: "#7B7D80",
         600: "#B0B2B6",
         500: "#D1D2D6",
-        400: "#DADCE0"  
+        400: "#DADCE0",
+        100: "#D9D9D9"
       },
       error: "#CD291D",
       valid: "#00943D",
@@ -377,22 +378,24 @@ module.exports = {
       DEFAULT: '1',
     },
     fontFamily: {
+
+      inter: ['Inter', 'sans-serif'],
       sans: [
         'ui-sans-serif',
+        'sans-serif',
+        "'Roboto'",
+        'Arial',
+        '"Helvetica Neue"',
         'system-ui',
         '-apple-system',
         'BlinkMacSystemFont',
         '"Segoe UI"',
-        'Roboto',
-        '"Helvetica Neue"',
-        'Arial',
         '"Noto Sans"',
-        'sans-serif',
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
         '"Noto Color Emoji"',
-        '"Helvetica"'
+        'Inter'
       ],
       serif: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
       mono: [
