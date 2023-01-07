@@ -51,8 +51,15 @@ const SignIn = () => {
     })
   }
 
+  const handleKeyDown = event => {
+    if (event.key === "Enter")
+    {
+      handleClick();
+    }
+  }
+
   return (
-    <div className='flex justify-start min-h-screen'>
+    <div onKeyDown={handleKeyDown} className='flex justify-start min-h-screen'>
       <div className={isSwitch ? "animate-switchRight translate-x-full lg:flex h-screen items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-secondary to-primary" : "lg:flex h-screen hidden items-center flex-col p-8 justify-between basis-[50%] text-3xl text-white bg-gradient-to-tr from-secondary to-primary"}>
         <img src={BillTweet} className="h-[30%]"/>
         <img src={ElonTweet} className="h-[30%]"/>

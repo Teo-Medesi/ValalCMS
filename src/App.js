@@ -10,6 +10,7 @@ import Protected from "./components/Protected";
 import { useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import {auth} from "./firebase.config"
+import ProjectCreation from "./ProjectCreation";
 
 /* 
 Todo list
@@ -66,6 +67,7 @@ function App() {
             <Route path="/project_one" element={<Protected><Project project="one"/></Protected>}/>
             <Route path="/project_two" element={<Protected><Project projectNumber="two"/></Protected>}/>
             <Route path="/project_three" element={<Protected><Project projectNumber="three"/></Protected>}/>
+            <Route path="/createProject" element={<Protected><ProjectCreation /></Protected>} />
           </Routes>
         </div>
       </UserContext.Provider>

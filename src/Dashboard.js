@@ -9,18 +9,20 @@ import Settings from "./assets/images/settingsWhite.png"
 import { signOut } from 'firebase/auth'
 import { auth, db } from "./firebase.config"
 import { useEffect } from 'react'
-import { collection, doc, getDocs } from 'firebase/firestore'
+import { collection, doc, getDocs, setDoc, addDoc } from 'firebase/firestore'
+import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
   const [user, setUser] = useContext(UserContext)
   const [formattedEmail, setFormattedEmail] = useState("");
   const [projects, setProjects] = useState([]);
+
+  const navigate = useNavigate()
   const projectsRef = collection(db, `users/${user.uid}/Projects`);
 
   const fetchProjects = async () => {
     const snapshot = await getDocs(projectsRef);
     setProjects(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
-    console.log(projects.map(project => project.project_name));
   }
 
   // in initial render user is still null
@@ -51,7 +53,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className='flex flex-row justify-start overflow-y-scroll bg-background h-auto'>
+    <div className='flex flex-row justify-start overflow-y-scroll bg-black-100 h-auto'>
 
         <div className='flex flex-col h-screen basis-1/5 bg-primary'>
 
@@ -88,20 +90,23 @@ const Dashboard = () => {
             <div className='bg-secondary basis-1/4 p-12'>
 
               <div className='flex flex-row gap-10 flex-nowrap'>
-                <ProjectPreview name="Shabolt"/>
-                <ProjectPreview name="Shartify"/>
-                <ProjectPreview name="Untitled"/>
-                <ProjectPreview name="Untitled"/>
-                <ProjectPreview name="Untitled"/>
+                {projects.map(project => <ProjectPreview name={project.project_name} id={project.project_id} key={project.project_id} />)}
+                
+                <div onClick={() => navigate("/createProject")} className='transition flex justify-center items-center ease-in-out duration-200 hover:brightness-75 cursor-pointer w-80 h-44 shadow-md shadow-black-700 bg-black-100 rounded-2xl'> 
+
+                  <div className='text-5xl text-primary'>+</div>
+
+                </div>
+
               </div>
 
             </div>
 
             <div className='basis-3/4 relative'>
 
-              <div class="absolute top-0 left-0 w-full overflow-hidden leading-none">
+              <div className="absolute top-0 left-0 w-full overflow-hidden leading-none">
                 <svg className='w-[calc(193% + 1.3px)] block relative' data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                  <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="fill-secondary"></path>
+                  <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-secondary"></path>
                 </svg>  
               </div>
 
@@ -110,7 +115,7 @@ const Dashboard = () => {
 
                 <div className='pt-12 pb-6 flex flex-row gap-6'>
 
-                  <div className='h-80 basis-1/2 shadow-md shadow-black-600 rounded-md bg-black-100'>
+                  <div className='h-80 basis-1/2 shadow-md shadow-black-500 rounded-md bg-black-600'>
                   </div>
 
                   <p className='text-xl basis-1/2 text-black-900' >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.atem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam  </p>

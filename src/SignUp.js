@@ -99,9 +99,15 @@ const SignUp = () => {
     setPassword(event.target.value);
   }
 
+  const handleKeyDown = event => {
+    if (event.key === "Enter")
+    {
+      handleClick();
+    }
+  }
 
   return (
-    <div className='flex justify-start min-h-screen'>
+    <div onKeyDown={handleKeyDown} className='flex justify-start min-h-screen'>
       <div onAnimationEnd={() => navigate("/signIn")} className={isSwitch ? 'animate-switchRight translate-x-full justify-center flex basis-full lg:basis-1/2 bg-background flex-col' : 'flex justify-center basis-full lg:basis-1/2 bg-background flex-col'}>
           <div className=' flex-col gap-10 px-4 sm:px-28 lg:px-16 text-gray-800'>
             <div className='flex justify-center w-full'><img src={Logo}  className="scale-75"/></div>
