@@ -3,13 +3,140 @@ import { db } from './firebase.config'
 import { setDoc, addDoc } from 'firebase/firestore'
 
 
-const ColorScheme = ({colors, theme, setScheme, colorSchemes, index}) => {
+const ColorScheme = ({colors, theme, setScheme, colorSchemes, index, setIndex}) => {
+    const handleClick = () => {
+        setScheme(colorSchemes[index]);
+        setIndex(index);
+    }
+
     return (
-        <div onClick={() => setScheme(colorSchemes[index])} className='flex flex-row items-center gap-4 hover:border-white border-4 border-black-100 cursor-pointer p-2 rounded-md'>
+        <div onClick={handleClick} className='flex flex-row items-center gap-4 hover:border-white border-4 border-black-100 cursor-pointer p-2 rounded-md'>
             {Object.values(colors).map((color, index) => <div key={index} style={{background: color}} className="w-24 h-24 rounded-full"></div>)}
         </div>
     )
 }     
+
+const Preview = ({selectedColorScheme, selectedIndex}) => {
+
+    let colors = {};
+    console.log(selectedIndex)
+    switch(selectedIndex) {
+        case 0: 
+            colors = {
+                BG: selectedColorScheme.colors.primary,
+                navbarBG: selectedColorScheme.colors.quinary,
+                navbarText: "#ffffff",
+                loginBG: selectedColorScheme.colors.secondary,
+                loginText: "#ffffff",
+                headerOneBG: selectedColorScheme.colors.quaternary,
+                headerOneText: selectedColorScheme.colors.primary,
+                headerTwoText: selectedColorScheme.colors.quaternary,
+                sectionBG: selectedColorScheme.colors.tertiary,
+                sectionText: selectedColorScheme.colors.primary,
+                articleCardBG: selectedColorScheme.colors.quinary
+            }
+            break;
+        case 1:
+            colors = {
+                BG: selectedColorScheme.colors.quinary,
+                navbarBG: selectedColorScheme.colors.tertiary,
+                navbarText: selectedColorScheme.colors.secondary,
+                loginBG: selectedColorScheme.colors.quaternary,
+                loginText: selectedColorScheme.colors.secondary,
+                headerOneBG: selectedColorScheme.colors.quaternary,
+                headerOneText: selectedColorScheme.colors.primary,
+                headerTwoText: selectedColorScheme.colors.quaternary,
+                sectionBG: selectedColorScheme.colors.secondary,
+                sectionText: selectedColorScheme.colors.quaternary,
+                articleCardBG: selectedColorScheme.colors.quaternary
+            }
+            break;
+        case 2:
+            colors = {
+                BG: selectedColorScheme.colors.secondary,
+                navbarBG: selectedColorScheme.colors.quaternary,
+                navbarText: selectedColorScheme.colors.quinary,
+                loginBG: selectedColorScheme.colors.quinary,
+                loginText: selectedColorScheme.colors.quaternary,
+                headerOneBG: selectedColorScheme.colors.primary,
+                headerOneText: selectedColorScheme.colors.quaternary,
+                headerTwoText: selectedColorScheme.colors.primary,
+                sectionBG: selectedColorScheme.colors.quinary,
+                sectionText: selectedColorScheme.colors.quaternary,
+                articleCardBG: selectedColorScheme.colors.primary
+            }
+            break;
+        case 3:
+            colors = {
+                BG: selectedColorScheme.colors.primary,
+                navbarBG: selectedColorScheme.colors.tertiary,
+                navbarText: "#ffffff",
+                loginBG: selectedColorScheme.colors.quaternary,
+                loginText: "#ffffff",
+                headerOneBG: selectedColorScheme.colors.quaternary,
+                headerOneText: selectedColorScheme.colors.primary,
+                headerTwoText: selectedColorScheme.colors.quaternary,
+                sectionBG: selectedColorScheme.colors.secondary,
+                sectionText: selectedColorScheme.colors.quinary,
+                articleCardBG: selectedColorScheme.colors.quinary
+            }
+            break;
+        case 4:
+            colors = {
+                BG: selectedColorScheme.colors.tertiary,
+                navbarBG: selectedColorScheme.colors.primary,
+                navbarText: selectedColorScheme.colors.secondary,
+                loginBG: selectedColorScheme.colors.secondary,
+                loginText: selectedColorScheme.colors.primary,
+                headerOneBG: selectedColorScheme.colors.secondary,
+                headerOneText: selectedColorScheme.colors.primary,
+                headerTwoText: selectedColorScheme.colors.quaternary,
+                sectionBG: selectedColorScheme.colors.primary,
+                sectionText: selectedColorScheme.colors.quaternary,
+                articleCardBG: selectedColorScheme.colors.secondary
+            }
+            break;
+    }
+
+    return (
+        <div className="basis-1/2 h-full">
+            <div style={{background: colors.BG}} className='flex flex-col border-black w-full h-full rounded-md shadow-md shadow-black-500'>
+
+                <div style={{background: colors.navbarBG}} className="basis-[10%] font-medium px-6  justify-between items-center flex flex-row">
+                    <ul style={{color: colors.navbarText}} className='flex uppercase flex-row gap-6'>
+                        <li>Home</li>
+                        <li>Über uns</li>
+                        <li>Kontakt</li>
+                    </ul>
+
+                    <div style={{background: colors.loginBG, color: colors.loginText}} className='uppercase text-white p-2 rounded'>Login</div>
+                </div>
+
+                <div className='basis-[45%] flex flex-row'>
+                    <div style={{background: colors.headerOneBG}} className='basis-1/2 flex flex-col justify-between p-12'>
+                        <h1 style={{color: colors.headerOneText}} className='text-white text-3xl'>Wir machen den Unterschied</h1>
+                        <p  style={{color: colors.headerOneText}} className='text-white'>Nachbarin ehrenhalben zuteilte, ein Stich durchs Herz ging. Beim dritten englischen Tanz waren wir da angelangt, als Lotte beschäftigt war</p>
+                    </div>
+                    <div className='basis-1/2 p-12 flex flex-col gap-4'>
+                        <h1 style={{color: colors.headerTwoText}} className='text-3xl'>Begleiten Sie uns</h1>
+                        <p style={{color: colors.headerTwoText}}>Ich sage dir, Wilhelm, ich habe dir, denk' ich, übertrieben finden; es ist wieder in der tiefen Nacht, wenn der hohe Vollmond über mir steht.</p>
+                    </div>
+                </div>
+
+                <div style={{background: colors.sectionBG, color: colors.sectionText}} className='basis-[20%] text-white flex items-center text-sm p-6 px-20'>
+                    <p>Glase Wasser sehr beschäftigt zu sein schienen, alle die unergründlichen Kräfte; und nun nach und sah Lottens Kopfputz sich zum Schlage herauslehnen. Das Wort hasse ich auf die Wiese hinaus zu den Arbeitern, und der Mensch ist </p>
+                </div>
+
+                <div className='basis-[25%] flex flex-row justify-between p-12 pb-0 h-full w-full'>
+                    <div style={{background: colors.articleCardBG}} className='w-[30%] h-full rounded-md shadow-md'></div>
+                    <div style={{background: colors.articleCardBG}} className='w-[30%] h-full rounded-md shadow-md'></div>
+                    <div style={{background: colors.articleCardBG}} className='w-[30%] h-full rounded-md shadow-md'></div>
+                </div>
+
+            </div>
+        </div>
+    )
+}
 
 const Page = () => {
     const colorSchemes = [
@@ -36,9 +163,9 @@ const Page = () => {
         {
             theme: "trustworthy, reliable",
             colors: {
-                tertiary: "#52ab98",
+                quinary: "#52ab98",
                 quaternary: "#f2f2f2",
-                quinary: "#ffffff",
+                tertiary: "#ffffff",
                 secondary:"#c8d8e4",
                 primary: "#2b6777" 
             }
@@ -106,6 +233,7 @@ const Page = () => {
     const [siteName, setSiteName] = useState("");
     const [pageNumber, setPageNumber] = useState(1);    
     const [selectedColorScheme, setSelectedColorScheme] = useState(colorSchemes[0]);
+    const [selectedIndex, setSelectedIndex] = useState(0);
     
     const handleKeyDown = event => {
         if (event.key === "Enter")
@@ -130,44 +258,9 @@ const Page = () => {
         case 2: 
             return (
                 <div className='w-full h-full items-center p-24 flex flex-row justify-between'>
-                    <div className="basis-1/2 h-full">
-                        <div className='bg-white flex flex-col border-black w-full h-full rounded-md shadow-md shadow-black-500'>
-
-                            <div style={{background: selectedColorScheme.colors.primary}} className="basis-[10%] font-medium px-6  justify-between items-center flex flex-row">
-                                <ul style={{color: selectedColorScheme.colors.secondary}} className='flex uppercase flex-row gap-6'>
-                                    <li>Home</li>
-                                    <li>Über uns</li>
-                                    <li>Kontakt</li>
-                                </ul>
-
-                                <div style={{background: selectedColorScheme.colors.secondary, color: selectedColorScheme.colors.quaternary}} className='uppercase text-white p-2 rounded'>Login</div>
-                            </div>
-
-                            <div className='basis-[45%] flex flex-row'>
-                                <div style={{background: selectedColorScheme.colors.quaternary}} className='basis-1/2 flex flex-col justify-between p-12'>
-                                    <h1 className='text-white text-3xl'>Wir machen den Unterschied</h1>
-                                    <p className='text-white'>Nachbarin ehrenhalben zuteilte, ein Stich durchs Herz ging. Beim dritten englischen Tanz waren wir da angelangt, als Lotte beschäftigt war</p>
-                                </div>
-                                <div className='basis-1/2 p-12 flex flex-col gap-4'>
-                                    <h1 style={{color: selectedColorScheme.colors.quaternary}} className='text-3xl'>Begleiten Sie uns</h1>
-                                    <p style={{color: selectedColorScheme.colors.quaternary}}>Ich sage dir, Wilhelm, ich habe dir, denk' ich, übertrieben finden; es ist wieder in der tiefen Nacht, wenn der hohe Vollmond über mir steht.</p>
-                                </div>
-                            </div>
-
-                            <div style={{background: selectedColorScheme.colors.tertiary}} className='basis-[20%] text-white flex items-center text-sm p-6 px-20'>
-                                <p>Glase Wasser sehr beschäftigt zu sein schienen, alle die unergründlichen Kräfte; und nun nach und sah Lottens Kopfputz sich zum Schlage herauslehnen. Das Wort hasse ich auf die Wiese hinaus zu den Arbeitern, und der Mensch ist </p>
-                            </div>
-
-                            <div className='basis-[25%] flex flex-row justify-between p-12 pb-0 h-full w-full'>
-                                <div style={{background: selectedColorScheme.colors.quinary, boxShadow: selectedColorScheme.colors.quaternary}} className='w-[30%] h-full rounded-md shadow-md'></div>
-                                <div style={{background: selectedColorScheme.colors.quinary, boxShadow: selectedColorScheme.colors.quaternary}} className='w-[30%] h-full rounded-md shadow-md'></div>
-                                <div style={{background: selectedColorScheme.colors.quinary, boxShadow: selectedColorScheme.colors.quaternary}} className='w-[30%] h-full rounded-md shadow-md'></div>
-                            </div>
-
-                        </div>
-                    </div>
+                    <Preview selectedColorScheme={selectedColorScheme} selectedIndex={selectedIndex} />
                     <div className='basis-1/2 flex flex-col h-full justify-between items-end'>
-                        {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme index={index} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
+                        {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
                     </div>
                 </div>
             );
