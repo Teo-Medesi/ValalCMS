@@ -3,15 +3,15 @@ import { db } from './firebase.config'
 import { setDoc, addDoc } from 'firebase/firestore'
 
 
-const ColorScheme = ({colors, theme, setScheme, colorSchemes, index, setIndex}) => {
+const ColorScheme = ({colors, theme, setScheme, colorSchemes, index, setIndex, selectedIndex}) => {
     const handleClick = () => {
         setScheme(colorSchemes[index]);
         setIndex(index);
     }
 
     return (
-        <div onClick={handleClick} className='flex flex-row items-center gap-4 hover:border-white border-4 border-black-100 cursor-pointer p-2 rounded-md'>
-            {Object.values(colors).map((color, index) => <div key={index} style={{background: color}} className="w-24 h-24 rounded-full"></div>)}
+        <div onClick={handleClick} className={(selectedIndex === index) ? 'flex flex-row items-center gap-4 border-white border-4 cursor-pointer p-2 rounded-md' : 'flex flex-row items-center gap-4 hover:border-white border-4 border-black-100 cursor-pointer p-2 rounded-md'}>
+            {Object.values(colors).map((color, index) => <div key={index} style={{background: color}} className="2xl:w-24 2xl:h-24 xl:w-20 xl:h-20 rounded-full"></div>)}
         </div>
     )
 }     
@@ -19,7 +19,6 @@ const ColorScheme = ({colors, theme, setScheme, colorSchemes, index, setIndex}) 
 const Preview = ({selectedColorScheme, selectedIndex}) => {
 
     let colors = {};
-    console.log(selectedIndex)
     switch(selectedIndex) {
         case 0: 
             colors = {
@@ -230,10 +229,13 @@ const Page = () => {
 
     ]
 
+    const pageCategories = ["E-commerce", "Business", "Blog", "Portfolio", "Event", "Personal Website", "Tribute", "Nonprofit"]
+
     const [siteName, setSiteName] = useState("");
     const [pageNumber, setPageNumber] = useState(1);    
     const [selectedColorScheme, setSelectedColorScheme] = useState(colorSchemes[0]);
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [selectedCategory, setSelectedCategory] = useState("");
     
     const handleKeyDown = event => {
         if (event.key === "Enter")
@@ -258,17 +260,26 @@ const Page = () => {
         case 2: 
             return (
                 <div className='w-full h-full items-center p-24 flex flex-row justify-between'>
-                    <Preview selectedColorScheme={selectedColorScheme} selectedIndex={selectedIndex} />
-                    <div className='basis-1/2 flex flex-col h-full justify-between items-end'>
-                        {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
+                    <div className="basis-2/3 p-12">
+                        <h1 className='text-5xl text-black-900'>What will your website be for?</h1>
                     </div>
-                </div>
+                    <div className='basis-1/3 flex flex-col h-full justify-between'>
+                        {pageCategories.map(category => <div onClick={() => setSelectedCategory(category)} className={(selectedCategory === category) ? "p-4 border-2 border-primary rounded cursor-pointer text-primary text-4xl" : "p-4 border-2 border-black-100 rounded cursor-pointer text-black-900 hover:border-black-900 text-4xl"}>{category}</div>)}
+                        <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Continue</div>
+                    </div>
+                </div>     
             );
     
         case 3: 
             return (
-                <div>
-                    3
+                <div className='w-full h-full items-center p-24 flex flex-row justify-between'>
+                    <Preview selectedColorScheme={selectedColorScheme} selectedIndex={selectedIndex} />
+                    <div className='basis-1/2 flex h-full w-full justify-end'>
+                        <div className='flex flex-col justify-between'>
+                            {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
+                            <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Continue</div>
+                        </div>
+                    </div>
                 </div>
             )
         case 4: 
@@ -306,8 +317,11 @@ const ProjectCreation = () => {
 
             
 */
-
-    // first up we need to ask to for the website name, color pallette, fonts, languages supported, website category 
+    // next step would be to ask for the website category and provide some templates for each category
+    // website category should on page 2 since the purpose of the website will dictate the color scheme and general design of the web page
+    // TO-DO create a template for each website category, ideally the design would be first made in a web design tool such as figma
+    // TO-DO try and survive coding in school :(
+    // website name, color scheme, fonts, languages supported, website category 
     return (
     <div>
         <div className='bg-black-100 w-screen h-screen relative'>
