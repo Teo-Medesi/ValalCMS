@@ -113,44 +113,7 @@ const Preview = ({selectedColorScheme, selectedIndex}) => {
             break;
     }
 
-    /* 
-        ok, let me collect my thoughts here before we go on forward
-        we want to focus more on functionality and for now just forget a bit about design
 
-        in these 4 days of non-stop work I have organize myself and assign a clear goal and quota that is to be met at the end
-        of the day
-
-        Since we are still lacking a lot of functionality I would like to dedicate 3 days to just expanding our app's capabilities
-
-        The goal for day 1 will be setting up our backend for our projects in firebase
-            no matter the design, the create project section is complete
-            uppon completion of the create project questions, all of the users answers should be stored and used to create a new project collection
-            after the project is created, the user should be redirected to the new project and a project link should be added to the dashboard
-            for each project a new Route should be created
-            reorganize the sidepanel, make it toggleable, if it's not toggled make it show only icons
-            pretty much copy the sidepanel of wix, not in design but in content
-            
-            --TEMPLATE--
-            the template we made will be our theme for pretty much every template we make in the future because of it's simplicity
-            for now I want to keep the template preview and editable template separate
-            that way, once the user is happy with his editable template, he can choose to see it in action, and we will just pass in all the 
-            prefferences and content into a new preview template
-
-            let's start with first making the text editable, we may want to update our Textbox component for this or quite possibly rewrite it
-            upon clicking on a textbox, the sidemenu will open and navigate to text editing, giving control over font, font size, color, text decoration and the such
-
-            --DATABASE--
-            for each page of the project we want to create a collection, in that collection we will have a prefferences document and collections for each component
-            for each textbox in the page we want to create a new textbox document, we'll make it self-numerating and in the future the user will have access to 
-            a mock-up of the current page collection where he will be able to manipulate the documents and collections in a file explorer kind of way
-
-        the fourth day will be something like a maintenance day, fixing redundancies in code, documenting code, organizing our working directories
-        adding naming conventions among many more conventions (remember, 10% means a lot, even a 5% makes a difference in a competition)
-        
-        the design part of the process would hopefully be done to some extent by Ivano, but I can't yet count on him for sure
-        therefore, the fifth day would be atleast half dedicated to making more templates and components
-
-    */
     return (
         <div className="h-full">
             <div style={{background: colors.BG}} className='flex flex-col border-black w-full h-full rounded-md shadow-md shadow-black-500'>

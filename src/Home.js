@@ -5,14 +5,14 @@ import Header from "./components/header/Header.js";
 import CommenntBoard from "./components/commentBoard/CommentBoard.js";
 import NavBar from './components/navBar/NavBar.js';
 import PropTypes from "prop-types"
-import PortfolioTemplate from './components/websiteTemplates/PortfolioTemplate.js';
+import PortfolioTemplateEditable from './components/websiteTemplates/PortfolioTemplateEditable.js';
 
 const Content = ({category}) => {
 
   useEffect(() => {console.log(category)}, [])
   
   switch (category) {
-    case "Portfolio": return <PortfolioTemplate />
+    case "Portfolio": return <PortfolioTemplateEditable />
   } 
   
 }
