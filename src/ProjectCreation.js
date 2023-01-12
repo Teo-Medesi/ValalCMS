@@ -1,7 +1,21 @@
 import React, { useState } from 'react'
 import { db } from './firebase.config'
 import { setDoc, addDoc } from 'firebase/firestore'
+import PortfolioTemplate from './components/websiteTemplates/PortfolioTemplate';
+import Arrow from "./assets/images/arrow.png"
 
+const TemplatePage = ({selectedCategory}) => {
+
+    const templates = [<PortfolioTemplate />];
+    switch(selectedCategory) {
+        case "Portfolio":
+            return (
+                <div className=''>
+                    {templates.map((template, index) => <div className='h-0 cursor-pointer scale-50' key={index}>{template}</div>)}
+                </div>
+            )
+    }
+}
 
 const ColorScheme = ({colors, theme, setScheme, colorSchemes, index, setIndex, selectedIndex}) => {
     const handleClick = () => {
@@ -98,7 +112,7 @@ const Preview = ({selectedColorScheme, selectedIndex}) => {
     }
 
     return (
-        <div className="basis-1/2 h-full">
+        <div className="h-full">
             <div style={{background: colors.BG}} className='flex flex-col border-black w-full h-full rounded-md shadow-md shadow-black-500'>
 
                 <div style={{background: colors.navbarBG}} className="basis-[10%] font-medium px-6  justify-between items-center flex flex-row">
@@ -272,20 +286,29 @@ const Page = () => {
     
         case 3: 
             return (
-                <div className='w-full h-full items-center p-24 flex flex-row justify-between'>
-                    <Preview selectedColorScheme={selectedColorScheme} selectedIndex={selectedIndex} />
-                    <div className='basis-1/2 flex h-full w-full justify-end'>
-                        <div className='flex flex-col justify-between'>
-                            {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
-                            <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Continue</div>
-                        </div>
+                <div className='w-full h-full flex flex-col items-center gap-6 p-24 text-black-900'>
+                    <div className="flex flex-row h-full justify-between">
+                        <img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer bg-primary p-3" />
+                        <TemplatePage selectedCategory={selectedCategory}/>
+                        <img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer rotate-180 bg-primary p-3"/>
                     </div>
                 </div>
             )
         case 4: 
             return (
                 <div>
-                    4
+                    <div className='w-full h-full items-center p-24 flex flex-row justify-between'>
+                        <div className='h-full flex flex-col items-center gap-6 basis-1/2'>
+                            <Preview selectedColorScheme={selectedColorScheme} selectedIndex={selectedIndex} />
+                            <button className='text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' onClick={() => setPageNumber(current => current - 1)} >Previous</button>
+                        </div>
+                        <div className='basis-1/2 flex h-full w-full justify-end'>
+                            <div className='flex flex-col justify-between'>
+                                {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
+                                <button onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )
         case 5: 

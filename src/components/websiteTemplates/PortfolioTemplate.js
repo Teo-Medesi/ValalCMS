@@ -1,9 +1,10 @@
 import React from 'react'
 import Kanye from "./images/kanye2.jpg"
+import Upload from "./images/upload2.png"
 
 const PortfolioTemplate = () => {
   return (
-    <div className='text-white z-0 relative flex flex-col bg-[#000000] min-h-screen'>
+    <div className='text-white z-0 relative flex flex-col bg-[#000000] min-h-full'>
       <nav className='basis-[10%] text-xl items-center p-6 flex flex-row justify-between'>
         <h1>Portfolio</h1>
         <div>
@@ -39,17 +40,20 @@ const PortfolioTemplate = () => {
 
             <div className='flex flex-row md:justify-between xl:justify-center xl:gap-12'>
 
-            <div className='bg-black-900 p-6 px-12 relative after:absolute after:bg-gradient-to-r after:from- flex flex-col gap-6 rounded-md md:basis-[30%] xl:basis-[25%]'>
+            <div className='bg-black-900 p-6 px-12 relative after:absolute after:bg-gradient-to-r after:from-[] flex flex-col gap-6 rounded-md md:basis-[30%] xl:basis-[25%]'>
+                <img src={Upload} className="w-20 h-20"/>
                 <h3 className='text-2xl font-bold'>Website Design</h3>
                 <p className='text-sm text-black-700'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
               </div>
 
-              <div className='bg-black-900 p-6 px-12 relative after:absolute after:bg-gradient-to-r after:from- flex flex-col gap-6 rounded-md md:basis-[30%] xl:basis-[25%]'>
+              <div className='bg-black-900 p-6 px-12 relative after:absolute after:bg-gradient-to-r after:content-[""] after:from-[#bf08c1] after:to-[#eb7c99] flex flex-col gap-6 rounded-md md:basis-[30%] xl:basis-[25%]'>
+                <img src={Upload} className="w-20 h-20"/>
                 <h3 className='text-2xl font-bold'>SEO Marketing</h3>
                 <p className='text-sm text-black-700'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
               </div>
 
-              <div className='bg-black-900 p-6 px-12 relative after:absolute after:bg-gradient-to-r after:from- flex flex-col gap-6 rounded-md md:basis-[30%] xl:basis-[25%]'>
+              <div className='bg-black-900 p-6 px-12 relative after:bottom-10 after:left-10 after:absolute after:bg-gradient-to-r after:z-[-1] after:w-full after:content-[""] after:top after:h-1 flex flex-col gap-6 rounded-md md:basis-[30%] xl:basis-[25%]'>
+                <img src={Upload} className="w-20 h-20"/>
                 <h3 className='text-2xl font-bold'>WF Development</h3>
                 <p className='text-sm text-black-700'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
               </div>
