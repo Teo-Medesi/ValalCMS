@@ -1,68 +1,26 @@
 import React, { createContext } from 'react'
-import {Link} from "react-router-dom"
-import navLogo from "./assets/images/directionsWhite.png"
-import headerLogo from "./assets/images/imageWhite.png"
-import ExitLogo from "./assets/images/arrow.png"
-import footerLogo from "./assets/images/footerIconWhite.png"
-import SettingsWidget from './components/project/SettingsWidget'
-import Document from "./assets/images/siteIdentity.png"
-import TypographyLogo from "./assets/images/typography.png"
-import ThemeLogo from "./assets/images/paint.png"
-import SideMenuLogo from "./assets/images/menu.png"
-import BlogLogo from "./assets/images/blog.png"
-import ForumLogo from "./assets/images/forum.png"
-import SiteIdentity from './components/project/settings/SiteIdentity'
-import Footer from "./components/project/settings/Footer"
-import Header from "./components/project/settings/Header"
-import Themes from "./components/project/settings/Themes"
-import Navbar from "./components/project/settings/Navbar"
-import Sidebar from "./components/project/settings/Sidebar"
-import Typography from "./components/project/settings/Typography"
-import Forum from "./components/project/settings/Forum"
-import Blog from "./components/project/settings/Blog"
+import SettingsIcon from "./assets/images/svgs/gearIcon.svg"
+import SectionsIcon from "./assets/images/svgs/sectionsIcon.svg"
+import MediaIcon from "./assets/images/svgs/mediaIcon.svg"
+import AddIcon from "./assets/images/svgs/addIcon.svg"
+import PagesIcon from "./assets/images/svgs/pagesIcon.svg"
+import DesignIcon from "./assets/images/svgs/designIcon.svg"
 
 
 export const SettingsContext = createContext();
 
-const Settings = ({setSettingsComponent, settingsComponent}) => {
-    if (settingsComponent === "") 
-    {
-        return (
-            <SettingsContext.Provider value={setSettingsComponent}>
-                <div className='flex flex-col bg-primary'>
-                    <div>
-                    
-                    </div>
-                    <Link to="/" className='flex bg-red-800 justify-between cursor-pointer hover:border-r-4 hover:border-r-red-600 hover:shadow-xl items-center p-2 text-white text-xl border-y-2 border-red-900 font-semibold uppercase'>
-                        <img src={ExitLogo} className="w-10 h-10 "/>
-                        <p>Go back</p>
-                    </Link>
-                </div>
-            </SettingsContext.Provider>
-      )
-    }
-    else {
-        switch (settingsComponent) {
-            case "SiteIdentity":
-                return <SiteIdentity />
-            case "Typography":
-                return <Typography />
-            case "Themes": 
-                return <Themes />
-            case "Navbar":
-                return <Navbar />
-            case "Sidebar":
-                return <Sidebar />
-            case "Header": 
-                return <Header />
-            case "Footer":
-                return <Footer />
-            case "Forum":
-                return <Forum />
-            case "Blog": 
-                return <Blog />
-        }
-    }
+const Settings = () => {
+
+    return (
+        <div className='flex flex-col items-center'>
+            <div className='w-full p-3 h-full flex justify-center cursor-pointer hover:bg-gray-900'><img src={AddIcon} alt="add icon"  className='w-12 h-12 p-1'/></div>
+            <div className='w-full p-3 h-full flex justify-center cursor-pointer hover:bg-gray-900'><img src={SectionsIcon} alt="sections icon"  className='w-12 h-12 p-1'/></div>
+            <div className='w-full p-3 h-full flex justify-center cursor-pointer hover:bg-gray-900'><img src={PagesIcon} alt="pages icon"  className='w-12 h-12 p-1'/></div>
+            <div className='w-full p-3 h-full flex justify-center cursor-pointer hover:bg-gray-900'><img src={DesignIcon} alt="design icon"  className='w-12 h-12 p-1'/></div>
+            <div className='w-full p-3 h-full flex justify-center cursor-pointer hover:bg-gray-900'><img src={MediaIcon} alt="media icon"  className='w-12 h-12 p-1'/></div>            
+            <div className='w-full p-3 h-full flex justify-center cursor-pointer hover:bg-gray-900'><img src={SettingsIcon} alt="settings icon"  className='w-12 h-12 p-1'/></div>
+        </div>
+    )
 }
 
 export default Settings
