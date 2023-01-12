@@ -5,14 +5,23 @@ import Header from "./components/header/Header.js";
 import CommenntBoard from "./components/commentBoard/CommentBoard.js";
 import NavBar from './components/navBar/NavBar.js';
 import PropTypes from "prop-types"
+import PortfolioTemplate from './components/websiteTemplates/PortfolioTemplate.js';
 
-const Home = ({className}) => {
+const Content = ({category}) => {
+
+  useEffect(() => {console.log(category)}, [])
+  
+  switch (category) {
+    case "Portfolio": return <PortfolioTemplate />
+  } 
+  
+}
+
+const Home = ({className, category}) => {
+
   return (
       <div className={className}>
-          <NavBar/>
-          <Header/>
-          <ArticleSection/>
-          <Footer/>
+        <Content category={category} />
       </div>
   )
 }

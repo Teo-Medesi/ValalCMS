@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { collection, doc } from 'firebase/firestore';
 import { db } from './firebase.config'
 import { setDoc, addDoc } from 'firebase/firestore'
 import PortfolioTemplate from './components/websiteTemplates/PortfolioTemplate';
 import Arrow from "./assets/images/arrow.png"
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from './App';
 
 const TemplatePage = ({selectedCategory}) => {
     const templates = [<PortfolioTemplate />];
@@ -282,22 +285,63 @@ const Page = () => {
 
     const pageCategories = ["E-commerce", "Business", "Blog", "Portfolio", "Event", "Personal Website", "Tribute", "Nonprofit"]
 
+    const [user] = useContext(UserContext);
+
     const [isLoading, setIsLoading] = useState(false);
     const [siteName, setSiteName] = useState("");
     const [pageNumber, setPageNumber] = useState(1);    
     const [selectedColorScheme, setSelectedColorScheme] = useState(colorSchemes[0]);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedTheme, setSelectedTheme] = useState("Minimalist Black")
     
+    const navigate = useNavigate();
+
     const handleKeyDown = event => {
         if (event.key === "Enter")
         {
-            setPageNumber(current => current + 1)
+            if (siteName !== "")
+            {
+                setPageNumber(current => current + 1)
+            }
         }
     }
 
     const createProject = () => {
         setIsLoading(true);
+
+        setDoc(doc(db, `users/${user.uid}/projects/${siteName}`), {name: siteName, theme: selectedTheme, color_scheme: "", category: selectedCategory}).then(async () => {
+            console.log("created project")
+            await setDoc(doc(db, `users/${user.uid}/projects/${siteName}/pages/home`),{});
+            setIsLoading(false);
+
+            navigate(`/${siteName}`);
+        }).catch(error => {
+            console.log(error);
+        })
+
+
+
+        /*
+            users > user > projects
+
+            here we will make a new project
+                users > user > projects > project_title 
+
+            project_title will have fields of id, name, theme, color_scheme, category 
+
+            inside of it we will make a pages collection
+                users > user > projects > project_title > pages 
+
+            inside of pages we'll make it so the default is just a home page document
+                users > user > projects > project_title > pages > home 
+
+            each component and it's properties will be stored inside of components        
+                users > user > projects > project_title > pages > home > components 
+            
+                after we made the project we will redirect the user to that project
+
+        */
     }
 
     switch (pageNumber) {
@@ -320,7 +364,7 @@ const Page = () => {
                         <h1 className='text-5xl text-black-900'>What will your website be for?</h1>
                     </div>
                     <div className='basis-1/3 flex flex-col h-full justify-between'>
-                        {pageCategories.map(category => <div onClick={() => setSelectedCategory(category)} className={(selectedCategory === category) ? "p-4 border-2 border-primary rounded cursor-pointer text-primary text-4xl" : "p-4 border-2 border-black-100 rounded cursor-pointer text-black-900 hover:border-black-900 text-4xl"}>{category}</div>)}
+                        {pageCategories.map((category, index) => <div key={index} onClick={() => setSelectedCategory(category)} className={(selectedCategory === category) ? "p-4 border-2 border-primary rounded cursor-pointer text-primary text-4xl" : "p-4 border-2 border-black-100 rounded cursor-pointer text-black-900 hover:border-black-900 text-4xl"}>{category}</div>)}
                         <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</div>
                     </div>
                 </div>     
@@ -347,7 +391,7 @@ const Page = () => {
                         </div>
                         <div className='basis-1/2 flex h-full w-full justify-end'>
                             <div className='flex flex-col justify-between'>
-                                {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
+                                {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme key={index} selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
                                 <button onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</button>
                             </div>
                         </div>

@@ -18,9 +18,9 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
 
   const navigate = useNavigate()
-  const projectsRef = collection(db, `users/${user.uid}/Projects`);
-
+  
   const fetchProjects = async () => {
+    const projectsRef = collection(db, `users/${user.uid}/projects`);
     const snapshot = await getDocs(projectsRef);
     setProjects(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
   }
@@ -28,6 +28,7 @@ const Dashboard = () => {
   // in initial render user is still null
   useEffect(() => {
     if (user !== [] && user !== null) fetchProjects();
+    if (user === null) navigate("/");
   }, [user]);
 
 
@@ -90,7 +91,7 @@ const Dashboard = () => {
             <div className='bg-secondary basis-1/4 p-12'>
 
               <div className='flex flex-row gap-10 flex-nowrap'>
-                {projects.map(project => <ProjectPreview name={project.project_name} id={project.project_id} key={project.project_id} />)}
+                {projects.map((project, index) => <ProjectPreview name={project.name} key={index} />)}
                 
                 <div onClick={() => navigate("/createProject")} className='transition flex justify-center items-center ease-in-out duration-200 hover:brightness-75 cursor-pointer w-80 h-44 shadow-md shadow-black-700 bg-black-100 rounded-2xl'> 
 

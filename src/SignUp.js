@@ -45,16 +45,7 @@ const SignUp = () => {
       // signed in 
       setUser(userCredential.user);
       setDoc(doc(db, `users/${userCredential.user.uid}`), {email: userCredential.user.email, displayName: userCredential.user.displayName}).then(() => {
-        setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {project_id: 1, project_name: "untitled_project"}).then(async () => {
-          // creating user collections in firestore
-          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
-          await addDoc(collection(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
-          await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
-          // we do not need to create storage folders here because we can't create empty folders or empty collections
-          // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
-  
           navigate("/dashboard");
-         })
       })
 
     }).catch(error => {
@@ -69,16 +60,7 @@ const SignUp = () => {
          // signed in 
          setUser(userCredential.user);
          setDoc(doc(db, `users/${userCredential.user.uid}`), {email: userCredential.user.email, displayName: userCredential.user.displayName}).then(() => {
-           setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1`), {project_id: 1, project_name: "untitled_project"}).then(async () => {
-             // creating user collections in firestore
-             await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/footer/text`), {text: "Click to add text"});
-             await addDoc(collection(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/navLinks/navLinks`), {text: "Home", link: "#", key: 1});
-             await setDoc(doc(db, `users/${userCredential.user.uid}/Projects/Project1/navbar/title`), {text: "Title"});
-             // we do not need to create storage folders here because we can't create empty folders or empty collections
-             // once the user wishes to upload a file to storage, the directories for that file will be created as we reference them in our path
-     
              navigate("/dashboard");
-            })
          })
    
        }).catch(error => {
