@@ -1,17 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { db } from './firebase.config'
 import { setDoc, addDoc } from 'firebase/firestore'
 import PortfolioTemplate from './components/websiteTemplates/PortfolioTemplate';
 import Arrow from "./assets/images/arrow.png"
 
 const TemplatePage = ({selectedCategory}) => {
-
     const templates = [<PortfolioTemplate />];
     switch(selectedCategory) {
         case "Portfolio":
             return (
                 <div className=''>
-                    {templates.map((template, index) => <div className='h-0 cursor-pointer scale-50' key={index}>{template}</div>)}
+                    {templates.map((template, index) => <div className='h-0 cursor-pointer w-full scale-50' key={index}>{template}</div>)}
                 </div>
             )
     }
@@ -111,6 +110,44 @@ const Preview = ({selectedColorScheme, selectedIndex}) => {
             break;
     }
 
+    /* 
+        ok, let me collect my thoughts here before we go on forward
+        we want to focus more on functionality and for now just forget a bit about design
+
+        in these 4 days of non-stop work I have organize myself and assign a clear goal and quota that is to be met at the end
+        of the day
+
+        Since we are still lacking a lot of functionality I would like to dedicate 3 days to just expanding our app's capabilities
+
+        The goal for day 1 will be setting up our backend for our projects in firebase
+            no matter the design, the create project section is complete
+            uppon completion of the create project questions, all of the users answers should be stored and used to create a new project collection
+            after the project is created, the user should be redirected to the new project and a project link should be added to the dashboard
+            for each project a new Route should be created
+            reorganize the sidepanel, make it toggleable, if it's not toggled make it show only icons
+            pretty much copy the sidepanel of wix, not in design but in content
+            
+            --TEMPLATE--
+            the template we made will be our theme for pretty much every template we make in the future because of it's simplicity
+            for now I want to keep the template preview and editable template separate
+            that way, once the user is happy with his editable template, he can choose to see it in action, and we will just pass in all the 
+            prefferences and content into a new preview template
+
+            let's start with first making the text editable, we may want to update our Textbox component for this or quite possibly rewrite it
+            upon clicking on a textbox, the sidemenu will open and navigate to text editing, giving control over font, font size, color, text decoration and the such
+
+            --DATABASE--
+            for each page of the project we want to create a collection, in that collection we will have a prefferences document and collections for each component
+            for each textbox in the page we want to create a new textbox document, we'll make it self-numerating and in the future the user will have access to 
+            a mock-up of the current page collection where he will be able to manipulate the documents and collections in a file explorer kind of way
+
+        the fourth day will be something like a maintenance day, fixing redundancies in code, documenting code, organizing our working directories
+        adding naming conventions among many more conventions (remember, 10% means a lot, even a 5% makes a difference in a competition)
+        
+        the design part of the process would hopefully be done to some extent by Ivano, but I can't yet count on him for sure
+        therefore, the fifth day would be atleast half dedicated to making more templates and components
+
+    */
     return (
         <div className="h-full">
             <div style={{background: colors.BG}} className='flex flex-col border-black w-full h-full rounded-md shadow-md shadow-black-500'>
@@ -245,6 +282,7 @@ const Page = () => {
 
     const pageCategories = ["E-commerce", "Business", "Blog", "Portfolio", "Event", "Personal Website", "Tribute", "Nonprofit"]
 
+    const [isLoading, setIsLoading] = useState(false);
     const [siteName, setSiteName] = useState("");
     const [pageNumber, setPageNumber] = useState(1);    
     const [selectedColorScheme, setSelectedColorScheme] = useState(colorSchemes[0]);
@@ -256,6 +294,10 @@ const Page = () => {
         {
             setPageNumber(current => current + 1)
         }
+    }
+
+    const createProject = () => {
+        setIsLoading(true);
     }
 
     switch (pageNumber) {
@@ -279,28 +321,29 @@ const Page = () => {
                     </div>
                     <div className='basis-1/3 flex flex-col h-full justify-between'>
                         {pageCategories.map(category => <div onClick={() => setSelectedCategory(category)} className={(selectedCategory === category) ? "p-4 border-2 border-primary rounded cursor-pointer text-primary text-4xl" : "p-4 border-2 border-black-100 rounded cursor-pointer text-black-900 hover:border-black-900 text-4xl"}>{category}</div>)}
-                        <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Continue</div>
+                        <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</div>
                     </div>
                 </div>     
             );
     
         case 3: 
             return (
-                <div className='w-full h-full flex flex-col items-center gap-6 p-24 text-black-900'>
-                    <div className="flex flex-row h-full justify-between">
-                        <img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer bg-primary p-3" />
+                <div className='w-full h-full flex flex-col items-center p-24 text-black-900'>
+                    <div className="flex flex-row h-full w-full">
+                        <div className="flex basis-1/3 h-full items-center w-full justify-start"><img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer bg-primary p-3" /></div>
                         <TemplatePage selectedCategory={selectedCategory}/>
-                        <img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer rotate-180 bg-primary p-3"/>
+                        <div className="flex basis-1/3 h-full items-center w-full justify-end"><img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer rotate-180 bg-primary p-3"/></div>
                     </div>
+                    <div onClick={() => setPageNumber(current => current + 1)} className='text-4xl w-1/3 text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer'>Next</div>
+
                 </div>
             )
         case 4: 
             return (
                 <div>
-                    <div className='w-full h-full items-center p-24 flex flex-row justify-between'>
-                        <div className='h-full flex flex-col items-center gap-6 basis-1/2'>
+                    <div className='w-full h-screen items-center p-24 flex flex-row justify-between'>
+                        <div className='h-full flex px-4 flex-col items-center gap-6 basis-1/2'>
                             <Preview selectedColorScheme={selectedColorScheme} selectedIndex={selectedIndex} />
-                            <button className='text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' onClick={() => setPageNumber(current => current - 1)} >Previous</button>
                         </div>
                         <div className='basis-1/2 flex h-full w-full justify-end'>
                             <div className='flex flex-col justify-between'>
@@ -312,9 +355,15 @@ const Page = () => {
                 </div>
             )
         case 5: 
+
             return (
-                <div>
-                    5      
+                <div className="flex flex-col gap-6 h-full w-full justify-center  items-center">
+                    <div className={isLoading ? "flex flex-col gap-6 items-center" : "hidden"}>
+                        <div className='w-44 h-44 border-[24px] border-t-secondary rounded-[50%] animate-spin border-black-500'></div>
+                        <p className='text-3xl text-gray-500 tracking-wide'>Creating project...</p>
+                    </div>
+
+                    <button onClick={createProject} className={isLoading ? "hidden" : 'text-4xl w-1/2 text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer'}>Create Project</button>
                 </div>
             )
     }
@@ -340,10 +389,7 @@ const ProjectCreation = () => {
 
             
 */
-    // next step would be to ask for the website category and provide some templates for each category
-    // website category should on page 2 since the purpose of the website will dictate the color scheme and general design of the web page
-    // TO-DO create a template for each website category, ideally the design would be first made in a web design tool such as figma
-    // TO-DO try and survive coding in school :(
+
     // website name, color scheme, fonts, languages supported, website category 
     return (
     <div>

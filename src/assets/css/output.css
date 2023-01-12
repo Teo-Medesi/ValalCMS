@@ -519,6 +519,9 @@ video {
 .ml-3 {
   margin-left: 0.75rem;
 }
+.mt-6 {
+  margin-top: 1.5rem;
+}
 .block {
   display: block;
 }
@@ -557,6 +560,9 @@ video {
 }
 .h-full {
   height: 100%;
+}
+.h-24 {
+  height: 6rem;
 }
 .h-\[62px\] {
   height: 62px;
@@ -603,15 +609,6 @@ video {
 .h-9 {
   height: 2.25rem;
 }
-.h-2 {
-  height: 0.5rem;
-}
-.h-28 {
-  height: 7rem;
-}
-.h-24 {
-  height: 6rem;
-}
 .max-h-\[250px\] {
   max-height: 250px;
 }
@@ -648,6 +645,9 @@ video {
 .w-\[30\%\] {
   width: 30%;
 }
+.w-24 {
+  width: 6rem;
+}
 .w-screen {
   width: 100vw;
 }
@@ -678,9 +678,6 @@ video {
 .w-max {
   width: max-content;
 }
-.w-24 {
-  width: 6rem;
-}
 .w-11 {
   width: 2.75rem;
 }
@@ -691,8 +688,14 @@ video {
 .w-9 {
   width: 2.25rem;
 }
-.w-28 {
-  width: 7rem;
+.w-\[33\%\] {
+  width: 33%;
+}
+.w-1\/3 {
+  width: 33.333333%;
+}
+.w-1\/2 {
+  width: 50%;
 }
 .min-w-full {
   min-width: 100%;
@@ -781,14 +784,14 @@ video {
   --tw-rotate: 180deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
-.scale-75 {
-  --tw-scale-x: .75;
-  --tw-scale-y: .75;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
 .scale-50 {
   --tw-scale-x: .5;
   --tw-scale-y: .5;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+.scale-75 {
+  --tw-scale-x: .75;
+  --tw-scale-y: .75;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 @keyframes spin {
@@ -834,9 +837,6 @@ video {
 }
 .flex-col {
   flex-direction: column;
-}
-.flex-wrap {
-  flex-wrap: wrap;
 }
 .flex-nowrap {
   flex-wrap: nowrap;
@@ -919,9 +919,6 @@ video {
 .border-\[24px\] {
   border-width: 24px;
 }
-.border-8 {
-  border-width: 8px;
-}
 .border-4 {
   border-width: 4px;
 }
@@ -966,13 +963,13 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(31 41 55 / var(--tw-border-opacity));
 }
-.border-black-100 {
-  --tw-border-opacity: 1;
-  border-color: rgb(217 217 217 / var(--tw-border-opacity));
-}
 .border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+.border-black-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(217 217 217 / var(--tw-border-opacity));
 }
 .border-primary {
   --tw-border-opacity: 1;
@@ -1017,6 +1014,10 @@ video {
 .border-l-white {
   --tw-border-opacity: 1;
   border-left-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+.border-t-secondary {
+  --tw-border-opacity: 1;
+  border-top-color: rgb(96 154 247 / var(--tw-border-opacity));
 }
 .bg-black-100 {
   --tw-bg-opacity: 1;
@@ -1134,9 +1135,6 @@ video {
 .to-\[\#eb7c99\] {
   --tw-gradient-to: #eb7c99;
 }
-.to-tertiary {
-  --tw-gradient-to: #3F6199;
-}
 .decoration-slice {
   -webkit-box-decoration-break: slice;
           box-decoration-break: slice;
@@ -1178,11 +1176,11 @@ video {
 .p-4 {
   padding: 1rem;
 }
-.p-8 {
-  padding: 2rem;
-}
 .p-3 {
   padding: 0.75rem;
+}
+.p-8 {
+  padding: 2rem;
 }
 .p-1 {
   padding: 0.25rem;
@@ -1277,9 +1275,9 @@ video {
   padding-left: 3rem;
   padding-right: 3rem;
 }
-.py-\[50\%\] {
-  padding-top: 50%;
-  padding-bottom: 50%;
+.px-\[33\%\] {
+  padding-left: 33%;
+  padding-right: 33%;
 }
 .pt-12 {
   padding-top: 3rem;
@@ -1335,10 +1333,6 @@ video {
 }
 .text-7xl {
   font-size: 4.5rem;
-  line-height: 1;
-}
-.text-6xl {
-  font-size: 3.75rem;
   line-height: 1;
 }
 .font-bold {
@@ -1556,10 +1550,6 @@ video {
 }
 .hover\:border-l-4:hover {
   border-left-width: 4px;
-}
-.hover\:border-primary:hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(30 41 59 / var(--tw-border-opacity));
 }
 .hover\:border-white:hover {
   --tw-border-opacity: 1;
