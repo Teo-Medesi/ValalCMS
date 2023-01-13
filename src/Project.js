@@ -12,8 +12,10 @@ export const ProjectContext = createContext();
 const Project = ({name}) => {
   const [settingsComponent, setSettingsComponent] = useState("");
   const [project, setProject] = useState([]);
+  const [isToggled, setIsToggled] = useState(false);
 
   const [user] = useContext(UserContext);
+
 
   const fetchProject = async () => {
     const projectRef = doc(db, `users/${user.uid}/projects/${name}`);
@@ -29,13 +31,9 @@ const Project = ({name}) => {
 
   return (
     <ProjectContext.Provider value={name}>
-        <div className='flex'>
-          <div className='basis-[5%]'>
-              <div className="fixed flex flex-col min-h-screen w-[5%] bg-primary border-r border-gray-800 shadow-inner">
-                  <Settings setSettingsComponent={setSettingsComponent} settingsComponent={settingsComponent} />
-              </div>
-          </div>
-            <Home className={"basis-[95%]"} category={project.category}/>
+        <div className='flex flex-row justify-between'>
+            <Settings isToggled={isToggled} setIsToggled={setIsToggled} />
+            <Home className={isToggled ? "basis-[100%]" : "basis-[95%]"} category={project.category}/>
         </div>
     </ProjectContext.Provider>
   )

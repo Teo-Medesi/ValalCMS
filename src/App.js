@@ -29,7 +29,7 @@ import PortfolioTemplate from "./components/websiteTemplates/PortfolioTemplate";
             ---- DONE uppon completion of the create project questions, all of the users answers should be stored and used to create a new project collection
             ---- DONE after the project is created, the user should be redirected to the new project and a project link should be added to the dashboard
             ---- DONE for each project a new Route should be created
-            we need to make a new Textbox component since the old one has some really shit code, better to clear the slate and start clean
+            ---- DONE we need to make a new Textbox component since the old one has some really shit code, better to clear the slate and start clean
             reorganize the sidepanel, make it toggleable, if it's not toggled make it show only icons
             pretty much copy the sidepanel of wix, not in design but in content
             
@@ -54,6 +54,17 @@ import PortfolioTemplate from "./components/websiteTemplates/PortfolioTemplate";
         therefore, the fifth day would be atleast half dedicated to making more templates and components
 
     */
+
+  /*
+  
+    DAY 2 
+    
+    copy the design of wixes sidepanel and start working on the functionality from there
+    make text decorable
+  
+  
+  */
+
 
 
 
