@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
 
-const TextBox = ({children, className, placeholder, setText, customSetFunction, customParameter}) => {
+const TextBox = ({children, className, placeholder, setText, customSetFunction, customParameter, onDoubleClick}) => {
     // the idea is for TextBox to just be a wrapper element that returns children if edit mode is off
     // if edit mode is on
     
@@ -25,6 +25,14 @@ const TextBox = ({children, className, placeholder, setText, customSetFunction, 
         }
     }
 
+    const handleDoubleClick = () => {
+        setIsEditMode(current => !current);
+        if (onDoubleClick != null)
+        {
+            onDoubleClick();
+        }
+    }
+
     if (isEditMode) {
         return (
             <div className={className}>
@@ -33,7 +41,7 @@ const TextBox = ({children, className, placeholder, setText, customSetFunction, 
         )
     } else {
         return (
-            <div className={className} onDoubleClick={() => setIsEditMode(current => !current)}>
+            <div className={className} onDoubleClick={handleDoubleClick}>
                 {children}
             </div>
         )

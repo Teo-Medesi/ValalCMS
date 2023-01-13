@@ -31,7 +31,7 @@ const Project = ({name}) => {
 
   return (
     <ProjectContext.Provider value={name}>
-        <div className='flex flex-row justify-between'>
+        <div className='flex flex-row justify-between overflow-hidden'>
             <Settings isToggled={isToggled} setIsToggled={setIsToggled} />
             <Home className={isToggled ? "basis-[100%]" : "basis-[95%]"} category={project.category}/>
         </div>
