@@ -354,7 +354,7 @@ const Page = () => {
                         </div>
                         <div className='basis-1/2 flex h-full w-full justify-end'>
                             <div className='flex flex-col justify-between'>
-                                {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme key={index} selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} key={index} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
+                                {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme key={index} selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
                                 <button onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</button>
                             </div>
                         </div>
