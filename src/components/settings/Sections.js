@@ -70,7 +70,7 @@ const Sections = () => {
             <div className='flex flex-row w-full h-full'>
                 <div className='flex basis-[30%] p-6 border-r border-r-black-600'>
                     <div className='flex w-full flex-col'>
-                        {tabs.map(tab => <p onClick={() => setActiveTab(tab)} className='p-2 hover:bg-black-600 cursor-pointer rounded-md'>{tab}</p>)}
+                        {tabs.map((tab, index) => <p key={index} onClick={() => setActiveTab(tab)} className='p-2 hover:bg-black-600 cursor-pointer rounded-md'>{tab}</p>)}
                     </div>
                 </div>
                 <div className='flex basis-[70%] flex-col justify-start'>

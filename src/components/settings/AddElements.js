@@ -4,6 +4,8 @@ import { SettingsContext } from "../../Settings";
 import CloseIcon from "../../assets/images/svgs/closeIcon.svg"
 import Paragraph1Preview from "./elements/Paragraph1Preview";
 import Paragraph1BoldPreview from "./elements/Paragraph1BoldPreview";
+import Paragraph1 from "./elements/Paragraph1"
+import Paragraph1Bold from "./elements/Paragraph1Bold"
 
 const Text = () => {
 
@@ -29,10 +31,10 @@ const Text = () => {
     */
     return (
         <div className="flex flex-col p-6 gap-6">
-            <Drag type="element"><Paragraph1Preview /></Drag>
-            <Drag type="element"><Paragraph1BoldPreview /></Drag>
-            <Drag type="element"><Paragraph1Preview /></Drag>
-            <Drag type="element"><Paragraph1BoldPreview /></Drag>
+            <Drag element={<Paragraph1 />} type="element"><Paragraph1Preview /></Drag>
+            <Drag element={<Paragraph1Bold />} type="element"><Paragraph1BoldPreview /></Drag>
+            <Drag element={<Paragraph1 />} type="element"><Paragraph1Preview /></Drag>
+            <Drag element={<Paragraph1Bold />} type="element"><Paragraph1BoldPreview /></Drag>
             
         </div>
     )
@@ -83,7 +85,7 @@ const AddElements = () => {
             <div className='flex flex-row w-full h-full'>
                 <div className='flex basis-[30%] p-6 border-r border-r-black-600'>
                     <div className='flex w-full flex-col'>
-                    {tabs.map(tab => <p onClick={() => setActiveTab(tab)} className='p-2 hover:bg-black-600 cursor-pointer rounded-md'>{tab}</p>)}
+                    {tabs.map((tab, index) => <p key={index} onClick={() => setActiveTab(tab)} className='p-2 hover:bg-black-600 cursor-pointer rounded-md'>{tab}</p>)}
                     </div>
                 </div>
                 <div className='flex basis-[70%] flex-col justify-start'>
