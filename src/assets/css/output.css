@@ -657,9 +657,6 @@ video {
 .max-h-\[800px\] {
   max-height: 800px;
 }
-.max-h-\[240px\] {
-  max-height: 240px;
-}
 .min-h-\[150px\] {
   min-height: 150px;
 }
@@ -668,12 +665,6 @@ video {
 }
 .min-h-full {
   min-height: 100%;
-}
-.min-h-\[88px\] {
-  min-height: 88px;
-}
-.min-h-\[240px\] {
-  min-height: 240px;
 }
 .w-full {
   width: 100%;
@@ -1468,10 +1459,6 @@ video {
 }
 .text-\[6px\] {
   font-size: 6px;
-}
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
 }
 .font-medium {
   font-weight: 500;
