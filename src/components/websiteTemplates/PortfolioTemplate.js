@@ -1,5 +1,5 @@
 import React from 'react'
-import Kanye from "./images/kanye2.jpg"
+import Kanye from "../../assets/images/kanye2.jpg"
 import Upload from "./images/upload2.png"
 
 const PortfolioTemplate = () => {

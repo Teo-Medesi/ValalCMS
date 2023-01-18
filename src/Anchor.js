@@ -5,7 +5,7 @@ import {useDrop } from 'react-dnd';
 import { ProjectContext } from './Project';
 import Draggable from 'react-draggable';
 
-const Anchor = () => {
+const Anchor = ({defaultElement}) => {
     const [_ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext);
     
     const [isSettingsActive, setIsSettingsActive] = useState(false);
@@ -22,6 +22,13 @@ const Anchor = () => {
         drop: (item) => {setElement(item)},
         collect: (monitor) => ({isOver: monitor.isOver()})
     })
+
+    useEffect(() => {
+        if (defaultElement != null && element == 0)
+        {
+            setElement(defaultElement);
+        }
+    }, [defaultElement])
 
     const [{isOverElement}, elementDropRef] = useDrop({
         accept: "element",
@@ -43,7 +50,6 @@ const Anchor = () => {
     const handleAuxClick = event => {
         event.preventDefault();
         setIsSettingsActive(true);
-        console.log(settingsPosition)
     }
 
     const handleClick = event => {
@@ -55,8 +61,8 @@ const Anchor = () => {
         if (!isSettingsActive)
         {
             setSettingsPosition({
-                x: event.clientX - event.target.offsetLeft - 70,
-                y: event.clientY - event.target.offsetTop - 200
+                x: event.clientX - event.target.offsetLeft,
+                y: event.clientY - event.target.offsetTop
             })
         }
     }
@@ -64,7 +70,7 @@ const Anchor = () => {
     if (element == null || element === 0)
     {
         return (
-            <div ref={dropRef} className={'w-full flex justify-center items-center hover:brightness-75  p-6 text-2xl text-black-700 border-2 border-black-900 border-spacing-6 min-h-[150px] bg-black-100 ' + (isAnchorActive ? " " : "hidden ") + (isOver ? "brightness-75" : "")}>
+            <div ref={dropRef} className={'w-full flex justify-center items-center hover:brightness-75  p-6 text-2xl text-black-700 min-h-[150px] bg-black-100 ' + (isAnchorActive ? " " : "hidden ") + (isOver ? "brightness-75" : "")}>
                 <div className='flex items-center justify-center w-full h-full border-2 border-black-700 border-dashed'>
                     <p>Drag and drop an element.</p>
                 </div>
@@ -74,7 +80,7 @@ const Anchor = () => {
     else {
         return (
             <div className={'relative cursor-pointer border-y-4 border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
-                <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute ' + (isSettingsActive ? "" : "hidden")}>
+                <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
                     <div onClick={() => setElement(0)} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
                         <p>Remove</p>
                         <img src={CloseIcon} className="w-7 h-7"/>

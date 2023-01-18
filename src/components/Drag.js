@@ -19,7 +19,7 @@ const Drag = ({children, element, type, setIsDragging}) => {
     }, [isDragging]);
 
     return (
-        <div ref={dragRef}>
+        <div className='cursor-pointer' ref={dragRef}>
             {children}
         </div>
     )

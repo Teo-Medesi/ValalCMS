@@ -50,6 +50,7 @@ module.exports = {
         600: "#B0B2B6",
         500: "#D1D2D6",
         400: "#DADCE0",
+        200: "#E9E9E9",
         100: "#D9D9D9"
       },
       error: "#CD291D",

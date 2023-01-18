@@ -7,6 +7,12 @@ import { ProjectContext } from "../../Project";
 import Text1 from "./sections/Text1";
 import Basic1 from "./sections/Basic1";
 import Basic1Preview from "./sections/Basic1Preview";
+import Navbar1 from "./sections/Navbar1";
+import Navbar1Preview from "./sections/Navbar1Preview";
+import Header1 from "./sections/Header/Header1";
+import Header1Preview from "./sections/Header/Header1Preview.PNG"
+import Services1 from "./sections/Services/Services1";
+import Services1Preview from "./sections/Services/Services1Preview.PNG"
 
 const Basic = () => {
     const [ _ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
@@ -20,6 +26,20 @@ const Basic = () => {
             </div>
         </div>
     )
+}
+
+const Services = () => {
+    const [ _ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
+
+    return (
+        <div className="flex flex-col p-6 gap-6">
+            <div className="relative">
+                <Drag type="section" element={<Services1 />} setIsDragging={setIsAnchorActive}>
+                    <img src={Services1Preview} />
+                </Drag>
+            </div>
+        </div>
+    )    
 }
 
 const Text = () => {
@@ -36,10 +56,43 @@ const Text = () => {
     )
 }
 
+const Navigation = () => {
+    const [ _ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
+
+    return ( 
+        <div className="flex flex-col p-6 gap-6 w-full">
+            <div className="relative">
+                <Drag type="section" element={<Navbar1 />} setIsDragging={setIsAnchorActive}>
+                    <Navbar1Preview />
+                </Drag>
+            </div>
+        </div>
+    )
+
+}
+
+const Header = () => {
+    const [ _ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
+
+    return ( 
+        <div className="flex flex-col p-6 gap-6 w-full">
+            <div className="relative">
+                <Drag type="section" element={<Header1 />} setIsDragging={setIsAnchorActive}>
+                    <img src={Header1Preview} className=""/>
+                </Drag>
+            </div>
+        </div>
+    )
+
+}
+
 const ActiveElement = ({activeTab}) => {
     switch (activeTab) {
         case "Basic": return <Basic />
         case "Text": return <Text />
+        case "Navigation": return <Navigation />
+        case "Header": return <Header />
+        case "Services": return <Services/>
         /* case "List": return <List />
         case "Form": return <Form />
         case "Welcome": return <Welcome />
@@ -59,7 +112,7 @@ const Sections = () => {
     const [setIsToggled, setIsToggledRelative] = useContext(SettingsContext);    
     const [activeTab, setActiveTab] = useState("Text");
 
-    const tabs = ["Basic", "Text", "List", "Form", "Welcome", "About", "Team", "Contact", "Promotion", "Services", "Subscribe", "Testimonials", "Bookings", "Events"]
+    const tabs = ["Basic", "Text", "Header", "Navigation", "Form", "List", "Welcome", "About", "Team", "Contact", "Promotion", "Services", "Subscribe", "Testimonials", "Bookings", "Events"]
 
     return (
         <>

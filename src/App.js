@@ -14,6 +14,7 @@ import {auth} from "./firebase.config"
 import { collection, getDocs } from "firebase/firestore";
 import ProjectCreation from "./ProjectCreation";
 import PortfolioTemplate from "./components/websiteTemplates/PortfolioTemplate";
+import DevelopmentPage from "./DevelopmentPage";
 
     /* 
         ok, let me collect my thoughts here before we go on forward
@@ -131,6 +132,7 @@ function App() {
             {projects.map(project => <Route path={`/${project.name}`} element={<Protected><Project name={project.name}/></Protected>} />)}
             <Route path="/createProject" element={<Protected><ProjectCreation /></Protected>} />
             <Route path="/template" element={<PortfolioTemplate />} />
+            <Route path="/test" element={<DevelopmentPage />} />
           </Routes>
         </div>
       </UserContext.Provider>
