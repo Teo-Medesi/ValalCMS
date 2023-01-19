@@ -27,7 +27,7 @@ const ColorScheme = ({colors, theme, setScheme, colorSchemes, index, setIndex, s
 
     return (
         <div onClick={handleClick} className={(selectedIndex === index) ? 'flex flex-row items-center gap-4 border-white border-4 cursor-pointer p-2 rounded-md' : 'flex flex-row items-center gap-4 hover:border-white border-4 border-black-100 cursor-pointer p-2 rounded-md'}>
-            {Object.values(colors).map((color, index) => <div key={index} style={{background: color}} className="2xl:w-24 2xl:h-24 xl:w-20 xl:h-20 rounded-full"></div>)}
+            {Object.values(colors).map((color, index) => <div key={index} style={{background: color}} className="2xl:w-20 2xl:h-20 xl:w-14 xl:h-14 rounded-full"></div>)}
         </div>
     )
 }     
@@ -118,14 +118,14 @@ const Preview = ({selectedColorScheme, selectedIndex}) => {
         <div className="h-full">
             <div style={{background: colors.BG}} className='flex flex-col border-black w-full h-full rounded-md shadow-md shadow-black-500'>
 
-                <div style={{background: colors.navbarBG}} className="basis-[10%] font-medium px-6  justify-between items-center flex flex-row">
-                    <ul style={{color: colors.navbarText}} className='flex uppercase flex-row gap-6'>
+                <div style={{background: colors.navbarBG}} className="basis-[10%] font-medium px-4  justify-between items-center flex flex-row">
+                    <ul style={{color: colors.navbarText}} className='flex uppercase flex-row gap-4'>
                         <li>Home</li>
                         <li>Über uns</li>
                         <li>Kontakt</li>
                     </ul>
 
-                    <div style={{background: colors.loginBG, color: colors.loginText}} className='uppercase text-white p-2 rounded'>Login</div>
+                    <div style={{background: colors.loginBG, color: colors.loginText}} className='uppercase text-white p-1 rounded'>Login</div>
                 </div>
 
                 <div className='basis-[45%] flex flex-row'>
@@ -257,8 +257,10 @@ const Page = () => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedTheme, setSelectedTheme] = useState("Minimalist Black")
-    
+    const [selectedTemplate, setSelectedTemplate] = useState("");
+
     const navigate = useNavigate();
+
 
     const handleKeyDown = event => {
         if (event.key === "Enter")
@@ -273,7 +275,7 @@ const Page = () => {
     const createProject = () => {
         setIsLoading(true);
 
-        setDoc(doc(db, `users/${user.uid}/projects/${siteName}`), {name: siteName, theme: selectedTheme, color_scheme: {primary: selectedColorScheme.colors.primary, secondary: selectedColorScheme.colors.secondary, tertiary: selectedColorScheme.colors.tertiary, quaternary: selectedColorScheme.colors.quaternary, quinary: selectedColorScheme.colors.quinary}, category: selectedCategory}).then(async () => {
+        setDoc(doc(db, `users/${user.uid}/projects/${siteName}`), {name: siteName, theme: selectedTheme, color_scheme: {primary: selectedColorScheme.colors.primary, secondary: selectedColorScheme.colors.secondary, tertiary: selectedColorScheme.colors.tertiary, quaternary: selectedColorScheme.colors.quaternary, quinary: selectedColorScheme.colors.quinary}, category: selectedCategory, template: selectedTemplate}).then(async () => {
             console.log("created project")
             await setDoc(doc(db, `users/${user.uid}/projects/${siteName}/pages/home`),{});
             setIsLoading(false);
@@ -312,10 +314,10 @@ const Page = () => {
             return (
                 <div onKeyDown={handleKeyDown} className='w-full px-48 py-24 h-full items-center flex flex-row'>
                     <div className="basis-2/3 p-12">
-                        <h1 className='text-5xl text-black-900'>Let's give your website a name.</h1>
+                        <h1 className='text-4xl text-black-900'>Let's give your website a name.</h1>
                     </div>
                     <div className='basis-1/3 flex justify-center items-center'>
-                        <input onChange={event => setSiteName(event.target.value)} value={siteName} type="text" className='w-full border-b-2 border-b-black-700 bg-black-100 text-center outline-none text-black-900 text-5xl placeholder:text-black-700'/>
+                        <input onChange={event => setSiteName(event.target.value)} value={siteName} type="text" className='w-full border-b-2 border-b-black-700 bg-black-100 text-center outline-none text-black-900 text-4xl placeholder:text-black-700'/>
                     </div>
                 </div>
             );
@@ -324,24 +326,25 @@ const Page = () => {
             return (
                 <div className='w-full h-full items-center p-24 flex flex-row justify-between'>
                     <div className="basis-2/3 p-12">
-                        <h1 className='text-5xl text-black-900'>What will your website be for?</h1>
+                        <h1 className='text-4xl text-black-900'>What will your website be for?</h1>
                     </div>
                     <div className='basis-1/3 flex flex-col h-full justify-between'>
-                        {pageCategories.map((category, index) => <div key={index} onClick={() => setSelectedCategory(category)} className={(selectedCategory === category) ? "p-4 border-2 border-primary rounded cursor-pointer text-primary text-4xl" : "p-4 border-2 border-black-100 rounded cursor-pointer text-black-900 hover:border-black-900 text-4xl"}>{category}</div>)}
-                        <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</div>
+                        {pageCategories.map((category, index) => <div key={index} onClick={() => setSelectedCategory(category)} className={(selectedCategory === category) ? "p-4 border-2 border-primary rounded cursor-pointer text-primary text-2xl" : "p-4 border-2 border-black-100 rounded cursor-pointer text-black-900 hover:border-black-900 text-2xl"}>{category}</div>)}
+                        <div onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-2xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</div>
                     </div>
                 </div>     
             );
     
         case 3: 
             return (
+
                 <div className='w-full h-full flex flex-col items-center p-24 text-black-900'>
-                    <div className="flex flex-row h-full w-full">
-                        <div className="flex basis-1/3 h-full items-center w-full justify-start"><img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer bg-primary p-3" /></div>
-                        <TemplatePage selectedCategory={selectedCategory}/>
-                        <div className="flex basis-1/3 h-full items-center w-full justify-end"><img src={Arrow} className="w-24 h-24 rounded-full cursor-pointer rotate-180 bg-primary p-3"/></div>
+                    <div className="flex flex-row justify-between items-center h-full w-full">
+                        <h1 className='text-4xl text-black-900'>Do you want to use a pre-made template?</h1>
+                        <h1 onClick={() => setSelectedTemplate("")} className={'text-4xl rounded cursor-pointer p-4 hover:border-primary border-2 border-transparent text-black-900 ' + ((selectedTemplate === "") ? "border-primary" : "")}>Yes</h1>
+                        <h1 onClick={() => setSelectedTemplate("none")} className={'text-4xl cursor-pointer p-4 rounded hover:border-primary border-2 border-transparent text-black-900 '  + ((selectedTemplate === "none") ? "border-primary" : "")}>No, I'll start from scratch</h1>
                     </div>
-                    <div onClick={() => setPageNumber(current => current + 1)} className='text-4xl w-1/3 text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer'>Next</div>
+                    <div onClick={() => setPageNumber(current => current + 1)} className='text-3xl w-1/3 text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer'>Next</div>
 
                 </div>
             )
@@ -353,9 +356,9 @@ const Page = () => {
                             <Preview selectedColorScheme={selectedColorScheme} selectedIndex={selectedIndex} />
                         </div>
                         <div className='basis-1/2 flex h-full w-full justify-end'>
-                            <div className='flex flex-col justify-between'>
+                            <div className='flex flex-col gap-2 justify-between'>
                                 {colorSchemes.map((colorScheme, index) => (index < 5) ? <ColorScheme key={index} selectedIndex={selectedIndex} index={index} setIndex={setSelectedIndex} colorSchemes={colorSchemes} setScheme={setSelectedColorScheme} theme={colorScheme.theme} colors={colorScheme.colors}/> : <></>)}
-                                <button onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-4xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</button>
+                                <button onClick={() => setPageNumber(current => current + 1)} className={(selectedCategory !== "") ? 'text-3xl w-full text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer' : 'hidden'}>Next</button>
                             </div>
                         </div>
                     </div>
@@ -370,7 +373,7 @@ const Page = () => {
                         <p className='text-3xl text-gray-500 tracking-wide'>Creating project...</p>
                     </div>
 
-                    <button onClick={createProject} className={isLoading ? "hidden" : 'text-4xl w-1/2 text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer'}>Create Project</button>
+                    <button onClick={createProject} className={isLoading ? "hidden" : 'text-3xl w-1/2 text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer'}>Create Project</button>
                 </div>
             )
     }

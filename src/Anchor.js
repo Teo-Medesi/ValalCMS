@@ -71,7 +71,7 @@ const Anchor = ({defaultElement}) => {
     {
         return (
             <div ref={dropRef} className={'w-full flex justify-center items-center hover:brightness-75  p-6 text-2xl text-black-700 min-h-[150px] bg-black-100 ' + (isAnchorActive ? " " : "hidden ") + (isOver ? "brightness-75" : "")}>
-                <div className='flex items-center justify-center w-full h-full border-2 border-black-700 border-dashed'>
+                <div className='flex items-center justify-center w-full h-full'>
                     <p>Drag and drop an element.</p>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import Anchor from '../../../Anchor'
 const Navbar1 = () => {
   return (
     <>
-        <nav className='basis-[5%] items-center p-6 flex flex-row justify-between'>
+        <nav className='basis-[5%] text-white items-center p-6 flex flex-row justify-between'>
             <h1>Portfolio</h1>
         
             <div>

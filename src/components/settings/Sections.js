@@ -13,6 +13,10 @@ import Header1 from "./sections/Header/Header1";
 import Header1Preview from "./sections/Header/Header1Preview.PNG"
 import Services1 from "./sections/Services/Services1";
 import Services1Preview from "./sections/Services/Services1Preview.PNG"
+import Subscribe1 from "./sections/Subscribe/Subscribe1";
+import Subscribe1Preview from "./sections/Subscribe/Subscribe1Preview.PNG"
+import Contact1 from "./sections/Contact/Contact1";
+import Contact1Preview from "./sections/Contact/Contact1Preview.PNG"
 
 const Basic = () => {
     const [ _ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
@@ -22,6 +26,34 @@ const Basic = () => {
             <div className="relative">
                 <Drag type="section" element={<Basic1 />} setIsDragging={setIsAnchorActive}>
                     <Basic1Preview/>
+                </Drag>
+            </div>
+        </div>
+    )
+}
+
+const Contact = () => {
+    const [ _ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
+
+    return (
+        <div className="flex flex-col p-6 gap-6">
+            <div className="relative">
+                <Drag type="section" element={<Contact1 />} setIsDragging={setIsAnchorActive}>
+                    <img src={Contact1Preview} />
+                </Drag>
+            </div>
+        </div>
+    )
+}
+
+const Subscribe = () => {
+    const [ _ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
+
+    return (
+        <div className="flex flex-col p-6 gap-6">
+            <div className="relative">
+                <Drag type="section" element={<Subscribe1 />} setIsDragging={setIsAnchorActive}>
+                    <img src={Subscribe1Preview} />
                 </Drag>
             </div>
         </div>
@@ -93,14 +125,14 @@ const ActiveElement = ({activeTab}) => {
         case "Navigation": return <Navigation />
         case "Header": return <Header />
         case "Services": return <Services/>
+        case "Subscribe": return <Subscribe />
+        case "Contact": return <Contact />
         /* case "List": return <List />
         case "Form": return <Form />
         case "Welcome": return <Welcome />
         case "About": return <About />
         case "Team": return <Team />
-        case "Contact": return <Contact />
         case "Promotion": return <Promotion />
-        case "Services": return <Services />
         case "Subscribe": return <Subscribe />
         case "Testimonials": return <Testimonials />
         case "Bookings": return <Bookings />
