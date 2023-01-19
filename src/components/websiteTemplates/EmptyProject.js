@@ -1,7 +1,8 @@
 import React from 'react'
+import AddAnchor from '../../AddAnchor'
 import Anchor from '../../Anchor'
 
-const EmptyProject = () => {
+const EmptyProject = ({anchors, anchorsPath}) => {
 
     // so we want to get all anchors from our anchors collection
     // for that we need need a ref to our anchors path, a fetch function, we'll use getDocs to get a docsSnapshot , then we'll populate state with it
@@ -12,7 +13,8 @@ const EmptyProject = () => {
 
     return (
         <div className='bg-[#000000]'>
-            <Anchor />
+            {anchors.map((anchor, index) => <div key={index}>{anchor.element}</div>)}
+            <AddAnchor anchorsPath={anchorsPath}/>
         </div>
     )
 }

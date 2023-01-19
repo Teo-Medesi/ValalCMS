@@ -4,9 +4,10 @@ import GearIcon from "./assets/images/svgs/gearIcon.svg"
 import {useDrop } from 'react-dnd';
 import { ProjectContext } from './Project';
 import Draggable from 'react-draggable';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from './firebase.config';
 
-const Anchor = ({defaultElement}) => {
-    const [_ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext);
+const Anchor = ({anchorData, anchorPath}) => {
     
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [settingsPosition, setSettingsPosition] = useState({x: 0, y: 0})
@@ -14,21 +15,7 @@ const Anchor = ({defaultElement}) => {
     const elementRef = useRef(null);
     const [height, setHeight] = useState(0);
 
-    const [element, setElement] = useState(0)
     const [elementBasket, setElementBasket] = useState([<></>]);
-    
-    const [{isOver}, dropRef] = useDrop({
-        accept: "section",
-        drop: (item) => {setElement(item)},
-        collect: (monitor) => ({isOver: monitor.isOver()})
-    })
-
-    useEffect(() => {
-        if (defaultElement != null && element == 0)
-        {
-            setElement(defaultElement);
-        }
-    }, [defaultElement])
 
     const [{isOverElement}, elementDropRef] = useDrop({
         accept: "element",
@@ -46,6 +33,10 @@ const Anchor = ({defaultElement}) => {
         }
     }, [elementRef.current])
 
+    const deleteAnchor = async () => {
+        const docRef = doc(db, anchorPath);
+        await deleteDoc(docRef);
+    }
 
     const handleAuxClick = event => {
         event.preventDefault();
@@ -67,21 +58,12 @@ const Anchor = ({defaultElement}) => {
         }
     }
 
-    if (element == null || element === 0)
+    if (anchorData.element != null || anchorData.element !== 0)
     {
-        return (
-            <div ref={dropRef} className={'w-full flex justify-center items-center hover:brightness-75  p-6 text-2xl text-black-700 min-h-[150px] bg-black-100 ' + (isAnchorActive ? " " : "hidden ") + (isOver ? "brightness-75" : "")}>
-                <div className='flex items-center justify-center w-full h-full'>
-                    <p>Drag and drop an element.</p>
-                </div>
-            </div>
-          )
-    }
-    else {
         return (
             <div className={'relative cursor-pointer border-y-4 border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
                 <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
-                    <div onClick={() => setElement(0)} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
+                    <div onClick={() => deleteAnchor()} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
                         <p>Remove</p>
                         <img src={CloseIcon} className="w-7 h-7"/>
                     </div>
@@ -92,7 +74,7 @@ const Anchor = ({defaultElement}) => {
                 </div>
                 {elementBasket.map((element, index) => <Draggable key={index}><div>{element}</div></Draggable>)}
 
-                <div ref={elementRef}>{element}</div>
+                <div ref={elementRef}>{anchorData.element}</div>
             </div>
         ); 
     }

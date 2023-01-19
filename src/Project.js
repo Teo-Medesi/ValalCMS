@@ -20,9 +20,10 @@ const Project = ({name}) => {
 
 
   const fetchProject = async () => {
-    const projectRef = doc(db, `users/${user.uid}/projects/${name}`);
+    const projectPath = `users/${user.uid}/projects/${name}`;
+    const projectRef = doc(db, projectPath);
     const projectSnap = await getDoc(projectRef);
-    setProject({...projectSnap.data(), id: projectSnap.id});
+    setProject({...projectSnap.data(), id: projectSnap.id, path: projectPath});
   }
 
   // in initial render user is still null
