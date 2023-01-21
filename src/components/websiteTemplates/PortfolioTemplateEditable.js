@@ -4,7 +4,7 @@ import TextSettings from '../../TextSettings'
 import Anchor from '../../Anchor'
 import { ProjectContext } from '../../Project'
 import Services1 from '../settings/sections/Services/Services1'
-import Navbar1 from '../settings/sections/Navbar1'
+import Navbar1 from '../settings/sections/Navigation/Navbar1'
 import Header1 from '../settings/sections/Header/Header1'
 
 const PortfolioTemplateEditable = () => {

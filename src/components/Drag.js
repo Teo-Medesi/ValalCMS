@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useDrag } from 'react-dnd'
 
-const Drag = ({children, element, type, setIsDragging}) => {
+const Drag = ({children, component, type, setIsDragging}) => {
 
     const [{isDragging}, dragRef] = useDrag({
         type: type,
-        item: (element),
+        item: {componentName: component},
         collect: (monitor) => ({
             isDragging: monitor.isDragging()
         })

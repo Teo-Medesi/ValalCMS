@@ -6,11 +6,14 @@ import { ProjectContext } from './Project';
 import Draggable from 'react-draggable';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from './firebase.config';
+import { AnchorContext } from './Home';
 
-const Anchor = ({anchorData, anchorPath}) => {
+const Anchor = ({anchorData, component}) => {
     
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [settingsPosition, setSettingsPosition] = useState({x: 0, y: 0})
+
+    const [anchors, anchorsPath, fetchAnchors] = useContext(AnchorContext);
 
     const elementRef = useRef(null);
     const [height, setHeight] = useState(0);
@@ -33,9 +36,9 @@ const Anchor = ({anchorData, anchorPath}) => {
         }
     }, [elementRef.current])
 
-    const deleteAnchor = async () => {
-        const docRef = doc(db, anchorPath);
-        await deleteDoc(docRef);
+    const deleteAnchor = () => {
+        const docRef = doc(db, anchorData.path);
+        deleteDoc(docRef).then(() => fetchAnchors());
     }
 
     const handleAuxClick = event => {
@@ -58,7 +61,7 @@ const Anchor = ({anchorData, anchorPath}) => {
         }
     }
 
-    if (anchorData.element != null || anchorData.element !== 0)
+    if (component != null || component !== 0)
     {
         return (
             <div className={'relative cursor-pointer border-y-4 border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
@@ -74,7 +77,7 @@ const Anchor = ({anchorData, anchorPath}) => {
                 </div>
                 {elementBasket.map((element, index) => <Draggable key={index}><div>{element}</div></Draggable>)}
 
-                <div ref={elementRef}>{anchorData.element}</div>
+                <div ref={elementRef}>{component}</div>
             </div>
         ); 
     }

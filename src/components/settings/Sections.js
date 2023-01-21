@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 import Drag from "../Drag";
-import Text1Preview from "./sections/Text1Preview";
+import Text1Preview from "./sections/Text/Text1Preview"
 import { SettingsContext } from "../../Settings";
 import CloseIcon from "../../assets/images/svgs/closeIcon.svg"
 import { ProjectContext } from "../../Project";
-import Text1 from "./sections/Text1";
-import Basic1 from "./sections/Basic1";
-import Basic1Preview from "./sections/Basic1Preview";
-import Navbar1 from "./sections/Navbar1";
-import Navbar1Preview from "./sections/Navbar1Preview";
+import Text1 from "./sections/Text/Text1";
+import Basic1 from "./sections/Basic/Basic1";
+import Basic1Preview from "./sections/Basic/Basic1Preview";
+import Navbar1 from "./sections/Navigation/Navbar1";
+import Navbar1Preview from "./sections/Navigation/Navbar1Preview";
 import Header1 from "./sections/Header/Header1";
 import Header1Preview from "./sections/Header/Header1Preview.PNG"
 import Services1 from "./sections/Services/Services1";
@@ -24,7 +24,7 @@ const Basic = () => {
     return (
         <div className="flex flex-col p-6 gap-6">
             <div className="relative">
-                <Drag type="section" element={<Basic1 />} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Basic1"} setIsDragging={setIsAnchorActive}>
                     <Basic1Preview/>
                 </Drag>
             </div>
@@ -38,7 +38,7 @@ const Contact = () => {
     return (
         <div className="flex flex-col p-6 gap-6">
             <div className="relative">
-                <Drag type="section" element={<Contact1 />} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Contact1"} setIsDragging={setIsAnchorActive}>
                     <img src={Contact1Preview} />
                 </Drag>
             </div>
@@ -52,7 +52,7 @@ const Subscribe = () => {
     return (
         <div className="flex flex-col p-6 gap-6">
             <div className="relative">
-                <Drag type="section" element={<Subscribe1 />} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Subscribe1"} setIsDragging={setIsAnchorActive}>
                     <img src={Subscribe1Preview} />
                 </Drag>
             </div>
@@ -66,7 +66,7 @@ const Services = () => {
     return (
         <div className="flex flex-col p-6 gap-6">
             <div className="relative">
-                <Drag type="section" element={<Services1 />} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Services1"} setIsDragging={setIsAnchorActive}>
                     <img src={Services1Preview} />
                 </Drag>
             </div>
@@ -80,7 +80,7 @@ const Text = () => {
     return (
         <div className="flex flex-col p-6 gap-6">
             <div className="relative">
-                <Drag type="section" element={<Text1 />} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Text1"} setIsDragging={setIsAnchorActive}>
                     <Text1Preview/>
                 </Drag>
             </div>
@@ -94,7 +94,7 @@ const Navigation = () => {
     return ( 
         <div className="flex flex-col p-6 gap-6 w-full">
             <div className="relative">
-                <Drag type="section" element={<Navbar1 />} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Navbar1"} setIsDragging={setIsAnchorActive}>
                     <Navbar1Preview />
                 </Drag>
             </div>
@@ -109,7 +109,7 @@ const Header = () => {
     return ( 
         <div className="flex flex-col p-6 gap-6 w-full">
             <div className="relative">
-                <Drag type="section" element={<Header1 />} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Header1"} setIsDragging={setIsAnchorActive}>
                     <img src={Header1Preview} className=""/>
                 </Drag>
             </div>

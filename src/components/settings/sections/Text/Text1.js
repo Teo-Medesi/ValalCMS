@@ -1,5 +1,5 @@
 import React from 'react'
-import Anchor from '../../../Anchor'
+import Anchor from '../../../../Anchor'
 
 const Text1 = () => {
   return (
