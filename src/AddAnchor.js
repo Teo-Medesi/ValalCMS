@@ -11,38 +11,37 @@ const AddAnchor = ({ anchorsPath }) => {
   const [newElement, setNewElement] = useState([]);
 
   const addAnchor = async (element) => {
-    console.log(`element before being stringified:`)
-    console.log(element)
-
     if (element != null) {
-      // const elementJSON = JSON.stringify(elementToAdd); 
+
       let seen = [];
-      const elementJSON = JSON.stringify(element, (key, val) => {
+
+      // encoding element to JSON
+      const elementJSON = JSON.stringify(element, (key, val) => {  
+        
+        // removing cyclic object values
         if (val != null && typeof val == "object") {
+          
           if (seen.indexOf(val) >= 0) {
             return;
           }
           seen.push(val);
         }
+        
+        // when stringifying react components, 2 values get lost in translation, "$$typeof" symbol and "type" function
+        // preventing $$typeof from being removed
         if (typeof val === "symbol") {
           return `$$Symbol:${Symbol.keyFor(val)}`
         }
         else {
+          // for some reason JSON throws an error if the value is "div"
           if (val !== "div") {
             return val;
           };
         }
 
       })
-      /*       console.log(element.type)
-            console.log(element.props)
-            console.log(element._owner.child)
-       */
-      console.log(`element json:`);
-      console.log(elementJSON);
-      console.log(typeof element.type)
 
-      // const elementParsed = JSON.parse(elementJSON);
+      // parsing the JSON object, while converting our symbol back to being a symbol and not a string
       const elementParsed = JSON.parse(elementJSON, (key, val) => {
         const matches = val && val.match && String(val).match(/^\$\$Symbol:(.*)$/);
 
@@ -55,15 +54,7 @@ const AddAnchor = ({ anchorsPath }) => {
 
       });
 
-
       setNewElement(React.createElement(element.type, elementParsed.props, elementParsed._owner.child));
-      console.log(elementParsed)
-      console.log(elementParsed.type)
-      console.log(elementParsed.type)
-      console.log(elementParsed.type)
-
-      console.log(`elementJSON after being parsed:`);
-      console.log(elementParsed);
     }
 
     // const collectionRef = collection(db, anchorsPath);
