@@ -3,7 +3,7 @@ import Upload from "../../../../assets/images/upload2.png"
 
 const Services1 = () => {
   return (
-    <div className='min-h-screen w-full flex flex-col h-full'>
+    <div className='min-h-screen text-white w-full flex flex-col h-full'>
       <section className='py-12 flex flex-col gap-12 h-full'>
     
             <div className='w-full px-24 flex justify-center flex-col gap-3 items-center'>

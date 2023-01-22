@@ -4,7 +4,7 @@ import GearIcon from "./assets/images/svgs/gearIcon.svg"
 import {useDrop } from 'react-dnd';
 import { ProjectContext } from './Project';
 import Draggable from 'react-draggable';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase.config';
 import { AnchorContext } from './Home';
 
@@ -36,9 +36,27 @@ const Anchor = ({anchorData, component}) => {
         }
     }, [elementRef.current])
 
-    const deleteAnchor = () => {
+    const deleteAnchor = async () => {
         const docRef = doc(db, anchorData.path);
-        deleteDoc(docRef).then(() => fetchAnchors());
+        await sortAnchorsBeforeDelete();
+        deleteDoc(docRef).then(() => {
+            fetchAnchors()
+        });
+    }
+
+    const sortAnchorsBeforeDelete = async () => {
+        // [1, 2, 3, 4, 5] deleted [2] => [1, 3, 4, 5] => [1, 2, 3, 4]
+        const anchorsRef = query(collection(db, anchorsPath), orderBy("ID"));
+        const anchorsSnap = await getDocs(anchorsRef);
+
+        anchorsSnap.forEach(async anchor => {
+            // we want every anchor, which has an id higher than the deleted one
+            const deletedAnchorID = anchorData.ID;
+            if (anchor.data().ID > deletedAnchorID)
+            {
+                await updateDoc(doc(db, `${anchorsPath}/${anchor.id}`), {ID: (anchor.data().ID - 1)});
+            }
+        })
     }
 
     const handleAuxClick = event => {
@@ -64,7 +82,7 @@ const Anchor = ({anchorData, component}) => {
     if (component != null || component !== 0)
     {
         return (
-            <div className={'relative cursor-pointer border-y-4 border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
+            <div className={'relative cursor-pointer border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
                 <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
                     <div onClick={() => deleteAnchor()} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
                         <p>Remove</p>

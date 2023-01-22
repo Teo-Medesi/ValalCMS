@@ -8,7 +8,7 @@ const Loading = () => {
   const [user, setUser] = useContext(UserContext);
 
   useEffect(() => {
-      if (user === [] || user === null) navigate("/signIn")
+      if (user === [] || user === null) navigate("/signUp")
       else navigate ("/dashboard")
 
   }, [user]);

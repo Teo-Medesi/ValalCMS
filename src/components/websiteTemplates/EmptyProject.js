@@ -17,7 +17,7 @@ const EmptyProject = () => {
 
     return (
         <div className='bg-[#000000]'>
-            {anchors.map((anchor, index) => <Anchor component={<ComponentImport componentName={anchor.component}/>} anchorData={anchor} key={index}/>)}
+            {anchors.map(anchor => <Anchor component={<ComponentImport componentName={anchor.component}/>} anchorData={anchor} key={anchor.id}/>)}
             <AddAnchor/>
         </div>
     )

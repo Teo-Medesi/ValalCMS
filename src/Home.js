@@ -4,14 +4,14 @@ import PortfolioTemplateEditable from './components/websiteTemplates/PortfolioTe
 import EmptyProject from './components/websiteTemplates/EmptyProject.js';
 import { UserContext } from './App.js';
 import { ProjectContext } from './Project.js';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from './firebase.config.js';
 
 export const AnchorContext = createContext();
 
 const Content = ({category, template}) => {
   
-  if (template != "none")
+/*   if (template != "none")
   {
     switch (category) {
       case "Portfolio": return <PortfolioTemplateEditable />
@@ -19,7 +19,10 @@ const Content = ({category, template}) => {
   }
   else {
     return <EmptyProject/>
-  }
+  } */
+
+  // no template functionality as of now
+  return <EmptyProject />
   
 }
 
@@ -31,8 +34,12 @@ const Home = ({className, category, template}) => {
   const [anchorsPath, setAnchorsPath] = useState("");
   
   const fetchAnchors = async () => {
-    const anchorsCollection = collection(db, anchorsPath);
-    const anchorsSnap = await getDocs(anchorsCollection);
+    // if we don't specify orderBy("id"), the array we get returned won't be sorted, therefore all the anchors that is sections would be unsorted
+    const anchorsRef = query(collection(db, anchorsPath), orderBy("ID"));
+    const anchorsSnap = await getDocs(anchorsRef);
+    
+    // before we set our anchors we want to make sure our anchors array is empty, if it isn't, our anchors won't be replaced, they'll just be duplicated 
+    setAnchors([]);
     anchorsSnap.forEach(anchorSnap => setAnchors(current => ([...current, {...anchorSnap.data(), id: anchorSnap.id, path: `${project.path}/pages/home/anchors/${anchorSnap.id}`}])))
   }
 
