@@ -4,10 +4,11 @@ import PortfolioTemplateEditable from './components/websiteTemplates/PortfolioTe
 import EmptyProject from './components/websiteTemplates/EmptyProject.js';
 import { UserContext } from './App.js';
 import { ProjectContext } from './Project.js';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from './firebase.config.js';
 
 export const AnchorContext = createContext();
+export const HomeContext = createContext();
 
 const Content = ({category, template}) => {
   
@@ -29,10 +30,15 @@ const Content = ({category, template}) => {
 const Home = ({className, category, template}) => {
 
   const [anchors, setAnchors] = useState([]);
+  const [home, setHome] = useState([]);
+  
   const [user, setUser] = useContext(UserContext);
   const [project, _ignore] = useContext(ProjectContext);
+
   const [anchorsPath, setAnchorsPath] = useState("");
-  
+  const [homePath, setHomePath] = useState("");
+
+
   const fetchAnchors = async () => {
     // if we don't specify orderBy("id"), the array we get returned won't be sorted, therefore all the anchors that is sections would be unsorted
     const anchorsRef = query(collection(db, anchorsPath), orderBy("ID"));
@@ -46,6 +52,7 @@ const Home = ({className, category, template}) => {
   useEffect(() => {
     if (user != null && user != [] && project.path != null)
     {
+      setHomePath(`${project.path}/pages/home`);
       setAnchorsPath(`${project.path}/pages/home/anchors`);
     }
 
@@ -58,13 +65,30 @@ const Home = ({className, category, template}) => {
     }
   }, [anchorsPath])
   
+  const fetchHome = async () => {
+    const homeRef = doc(db, homePath);
+    const homeSnap = await getDoc(homeRef);
+
+    setHome(homeSnap.data());
+  }
+
+  useEffect(() => {
+    if (homePath !== "" && homePath != null) 
+    {
+      fetchHome();
+    }
+  }, [homePath])
+  
+
 
   return (
-      <AnchorContext.Provider value={[anchors, anchorsPath, fetchAnchors]}>
-        <div className={className}>
-          <Content category={category} template={template}/>
-        </div>
-      </AnchorContext.Provider>
+      <HomeContext.Provider value={home}>
+        <AnchorContext.Provider value={[anchors, anchorsPath, fetchAnchors]}>
+          <div style={{backgroundColor: home.backgroundColor, color: (home.textBlack ? "#000000" : "#ffffff")}} className={className}>
+            <Content category={category} template={template}/>
+          </div>
+        </AnchorContext.Provider>
+      </HomeContext.Provider>
   )
 }
 

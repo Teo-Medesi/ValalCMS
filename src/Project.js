@@ -33,8 +33,8 @@ const Project = ({name}) => {
 
 
   return (
-    <ProjectContext.Provider value={[project, [isAnchorActive, setIsAnchorActive]]}>
-        <div onDragOver={event => event.preventDefault()} onDrop={event => event.preventDefault()} className='flex overflow-hidden min-h-screen max-h-full relative flex-row justify-between bg-[#000000]'>
+    <ProjectContext.Provider value={[project, [isAnchorActive, setIsAnchorActive, fetchProject]]}>
+        <div onDragOver={event => event.preventDefault()} onDrop={event => event.preventDefault()} className='flex overflow-hidden min-h-screen max-h-full relative flex-row justify-between'>
             <Settings isToggled={isToggled} isToggledRelative={isToggledRelative} setIsToggledRelative={setIsToggledRelative} setIsToggled={setIsToggled} />
             <Home className={isToggled ? "basis-[100%] overflow-scroll max-h-screen overflow-x-hidden" : isToggledRelative ? "basis-3/5 max-h-screen overflow-scroll overflow-x-hidden " : "basis-[95%] max-h-screen overflow-scroll overflow-x-hidden"} category={project.category} template={project.template}/>
         </div>

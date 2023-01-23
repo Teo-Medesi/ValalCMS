@@ -2,7 +2,7 @@ import React, {useContext} from 'react'
 import AddAnchor from '../../AddAnchor'
 import Anchor from '../../Anchor'
 import ComponentImport from "../../ComponentImport"
-import { AnchorContext } from '../../Home'
+import { AnchorContext, HomeContext } from '../../Home'
 
 const EmptyProject = () => {
 
@@ -14,9 +14,10 @@ const EmptyProject = () => {
     // as it goes for templates, upon creating a project, we'll define some properties based on the chosen category, no problem at all
 
     const [anchors, anchorsPath, fetchAnchors] = useContext(AnchorContext);
+    const home = useContext(HomeContext);
 
     return (
-        <div className='bg-[#000000]'>
+        <div>
             {anchors.map(anchor => <Anchor component={<ComponentImport componentName={anchor.component}/>} anchorData={anchor} key={anchor.id}/>)}
             <AddAnchor/>
         </div>

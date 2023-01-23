@@ -15,21 +15,6 @@ const AddAnchor = () => {
   const addAnchor = (component) => {
     if (component != null && component.componentName !== "") {
       const collectionRef = collection(db, anchorsPath);
-
-      // before we add a new doc, we need to make sure our collection is sorted
-      // say we have an initial collection sorted by IDs like this
-      //    [1, 2, 3, 4, 5, 6]
-      // let's remove 2 and 3
-      //    [1, 4, 5, 6] 
-      // array length is now 4
-      // if we add a new doc to this array we will have 2 elements with the same ID
-      //  [1, 4, 5, 6, 5] 
-
-      // [1, 2, 3, 4, 5]
-      // let's remove 2
-      // [1, 3, 4, 5]
-      // everything above 2 will get subtracted by 1
-      // [1, 2, 3, 4]
       addDoc(collectionRef, {ID: anchors.length + 1, component: component.componentName}).then(() => fetchAnchors());
     }
   }
