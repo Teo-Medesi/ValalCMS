@@ -4,7 +4,7 @@ import Anchor from '../../../../Anchor'
 const Basic1Preview = ({className}) => {
   return (
     <>
-        <section className={"flex text-black-700 cursor-pointer h-[88px] flex-col justify-center gap-3 text-sm text-center rounded-md w-full bg-black-900 " + className}>
+        <section className={"flex text-black-700 cursor-pointer h-52 flex-col justify-center gap-3 text-sm text-center rounded-md w-full bg-black-900 " + className}>
         </section>
     </>
   )

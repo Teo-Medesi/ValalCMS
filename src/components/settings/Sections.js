@@ -22,25 +22,25 @@ const Basic = () => {
     return (
         <div style={{scrollbarColor: "#1E293B"}} className="flex flex-col p-6 gap-6 overflow-scroll">
 
+            <Drag type="section" component={"Basic1"} setIsDragging={setIsAnchorActive}>
+                <Basic1Preview />
+            </Drag>
             <Drag type="section" component={"Bg0"} setIsDragging={setIsAnchorActive}>
                 <div className="border border-black-600 rounded h-52 flex justify-center items-center">
                     <img src={UploadIcon} className="w-20 h-20"/>
                 </div>
             </Drag>
             <Drag type="section" component={"Bg1"} setIsDragging={setIsAnchorActive}>
-                <img src={Bg1} />
+                <img src={Bg1} className="w-full h-52" />
             </Drag>
             <Drag type="section" component={"Bg2"} setIsDragging={setIsAnchorActive}>
-                <img src={Bg2} />
+                <img src={Bg2} className="w-full h-52"/>
             </Drag>
             <Drag type="section" component={"Bg3"} setIsDragging={setIsAnchorActive}>
-                <img src={Bg3} />
+                <img src={Bg3} className="w-full h-52"/>
             </Drag>
             <Drag type="section" component={"Bg4"} setIsDragging={setIsAnchorActive}>
-                <img src={Bg4} />
-            </Drag>
-            <Drag type="section" component={"Basic1"} setIsDragging={setIsAnchorActive}>
-                <Basic1Preview />
+                <img src={Bg4} className="w-full h-52" />
             </Drag>
         </div>
     )
