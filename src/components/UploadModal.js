@@ -2,8 +2,15 @@ import React, {useState, useEffect} from 'react'
 import { useRef } from 'react'
 import BirdImage from "../assets/images/svgs/birdIcon.svg"
 import CloseIcon from "../assets/images/svgs/closeIcon.svg"
+import { storage } from "../firebase.config"
+import { ref, uploadBytes } from 'firebase/storage'
 
-const UploadModal = ({isActive, setIsActive}) => {
+const UploadModal = ({isActive, setIsActive, storagePath, appendFileName, fetchFile}) => {
+
+    // How to use the upload modal? 
+    // 1. include it in the jsx where you want to render it,
+    // 2. regulate it's visibility with state and pass your state in as isActive, setIsActive
+    // 3. specify the storage path to where the file or blob should be uploaded
 
     const [file, setFile] = useState(0);
     const [previewFileURL, setPreviewFileURL] = useState("")
@@ -19,18 +26,32 @@ const UploadModal = ({isActive, setIsActive}) => {
         if (file !== 0 && file !== null)
         {
             setPreviewFileURL(URL.createObjectURL(file));
-            console.log(previewFileURL);
-            console.log(file.name);
         }
     },[file]);
 
     const handleUploadClick = () => {
         setUploadText("Uploading...");
+
+        if (file != null && file != 0)
+        {
+            const storageRef = ref(storage, storagePath + (appendFileName ? `/${file.name}` : ""));
+            uploadBytes(storageRef, file).then(() => {
+                setUploadText("Uploaded")
+                setIsUploaded(true);
+
+                if (fetchFile != null)
+                {
+                    fetchFile();
+                }
+            }).catch(error => console.error(error));
+        }
     }
 
     const handleClose = () => {
         setIsActive(false);
         setFile(0);
+        setUploadText("Upload");
+        setPreviewFileURL("");
     }
 
     return (
@@ -47,12 +68,16 @@ const UploadModal = ({isActive, setIsActive}) => {
                     <div className={(file == 0) ? 'text-2xl text-black-700' : 'hidden'}>Your image will be displayed here!</div>
                     <img src={(file === 0 || file === null) ? BirdImage : previewFileURL} className={(file === 0) ? "w-56 h-56 " : "max-w-[250px] max-h-[250px]"}/>
 
-                    <button onClick={handleUploadClick} className={isUploaded ? 'h-min w-96 bg-gradient-to-r from-[#2d388a] to-[#00aeef] text-xl text-white rounded-md p-4' : 'h-min w-96 bg-gray-800 text-xl text-white rounded-md p-4'}>{isUploaded ? "Image uploaded!" : uploadText}</button>
+                    <button onClick={handleUploadClick} className='h-min w-96 bg-gray-800 text-xl text-white rounded-md p-4'>{isUploaded ? "Image uploaded!" : uploadText}</button>
                 </div>
 
             </div>
         </div>
     )
+}
+
+UploadModal.defaultProps = {
+    appendFileName: true
 }
 
 export default UploadModal

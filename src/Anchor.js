@@ -7,6 +7,9 @@ import Draggable from 'react-draggable';
 import { collection, deleteDoc, doc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase.config';
 import { AnchorContext } from './Home';
+import { createContext } from 'react';
+
+export const ThisAnchorContext = createContext();
 
 const Anchor = ({anchorData, component}) => {
     
@@ -81,21 +84,22 @@ const Anchor = ({anchorData, component}) => {
     if (component != null || component !== 0)
     {
         return (
-            <div className={'relative border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
-                <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
-                    <div onClick={() => deleteAnchor()} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
-                        <p>Remove</p>
-                        <img src={CloseIcon} className="w-7 h-7"/>
+            <ThisAnchorContext.Provider value={anchorData}>
+                <div className={'relative border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
+                    <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
+                        <div onClick={() => deleteAnchor()} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
+                            <p>Remove</p>
+                            <img src={CloseIcon} className="w-7 h-7"/>
+                        </div>
+                        <div className='text-black-900 p-3 flex flex-row items-center justify-between'>
+                            <p>Settings</p>
+                            <img src={GearIcon} className="w-6 h-6" />
+                        </div>
                     </div>
-                    <div className='text-black-900 p-3 flex flex-row items-center justify-between'>
-                        <p>Settings</p>
-                        <img src={GearIcon} className="w-6 h-6" />
-                    </div>
+                    {elementBasket.map((element, index) => <Draggable key={index}><div>{element}</div></Draggable>)}
+                    <div ref={elementRef}>{component}</div>
                 </div>
-                {elementBasket.map((element, index) => <Draggable key={index}><div>{element}</div></Draggable>)}
-
-                <div ref={elementRef}>{component}</div>
-            </div>
+            </ThisAnchorContext.Provider>
         ); 
     }
 }
