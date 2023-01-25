@@ -88,7 +88,7 @@ const Settings = ({isToggled, setIsToggled, setIsToggledRelative, isToggledRelat
                         </div>
                     </div>
                 </div>
-                <div className={(isToggled || isToggledRelative) ? 'border-t-[12px] border-t-primary w-full h-screen' : "hidden"}>
+                <div className={(isToggled || isToggledRelative) ? 'border-t-[12px] border-t-primary w-full overflox-x-hidden overflox-y-scroll  h-screen' : "hidden"}>
                     <ActiveElement activeTab={activeTab} />
                 </div>
             </div>

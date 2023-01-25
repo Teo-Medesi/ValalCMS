@@ -65,7 +65,6 @@ const Anchor = ({anchorData, component}) => {
     }
 
     const handleClick = event => {
-        event.preventDefault();
         setIsSettingsActive(false);
     }
 
@@ -73,8 +72,8 @@ const Anchor = ({anchorData, component}) => {
         if (!isSettingsActive)
         {
             setSettingsPosition({
-                x: event.clientX - event.target.offsetLeft,
-                y: event.clientY - event.target.offsetTop
+                x: event.clientX - event.target.offsetLeft - 100,
+                y: event.clientY - event.target.offsetTop - 20
             })
         }
     }
@@ -82,7 +81,7 @@ const Anchor = ({anchorData, component}) => {
     if (component != null || component !== 0)
     {
         return (
-            <div className={'relative cursor-pointer border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
+            <div className={'relative border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
                 <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
                     <div onClick={() => deleteAnchor()} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
                         <p>Remove</p>

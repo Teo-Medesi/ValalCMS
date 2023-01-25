@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SettingsContext } from "../../Settings";
 import CloseIcon from "../../assets/images/svgs/closeIcon.svg"
-import { HomeContext } from "../../Home";
+import { HomeContext } from "../../Project";
 import { ProjectContext } from "../../Project";
 import { UserContext } from "../../App";
 import { db } from "../../firebase.config";
@@ -11,13 +11,14 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 const Design = () => {
     const [setIsToggled, setIsToggledRelative] = useContext(SettingsContext);
     const [homePath, setHomePath] = useState("");
+    const [__ignore, fetchHome] = useContext(HomeContext)
 
     const [home, setHome] = useState([]);
     const [project, _ignore, fetchProject] = useContext(ProjectContext);
     const [user, setUser] = useContext(UserContext);
 
 
-    const fetchHome = async () => {
+    const fetchHomeHere = async () => {
         const homeRef = doc(db, homePath);
         const homeSnap = await getDoc(homeRef);
 
@@ -33,7 +34,7 @@ const Design = () => {
 
     useEffect(() => {
         if (homePath !== "" && homePath != null) {
-            fetchHome();
+            fetchHomeHere();
         }
     }, [homePath])
 
@@ -42,13 +43,21 @@ const Design = () => {
         {
             const homeRef = doc(db, homePath);
             await updateDoc(homeRef, {backgroundColor: event.target.value})
+            fetchHomeHere();
             fetchHome();
         }
     }
 
     const handleTextColorChange = async event => {
         const homeRef = doc(db, homePath);
-        await updateDoc(homeRef, {textBlack: event.target.value})
+        if (event.target.value === "true")
+        {
+            await updateDoc(homeRef, {textBlack: true})
+        }
+        else {
+            await updateDoc(homeRef, {textBlack: false})
+        }
+        fetchHome();
     }
 
 
@@ -59,7 +68,7 @@ const Design = () => {
                 <img src={CloseIcon} onClick={() => setIsToggledRelative(false)} className="w-12 cursor-pointer h-12" />
             </div>
 
-            <div className="p-6 min-h-screen flex flex-col gap-6 overflow-y-scroll">
+            <div className="p-6 min-h-screen flex flex-col gap-6">
                 <div className="flex flex-col gap-3">
                     <h1 className="text-xl">Page Background</h1>
                     <div style={{background: home.backgroundColor}} className="border p-3 border-black-600 w-full rounded-md h-72">
@@ -68,7 +77,7 @@ const Design = () => {
                     <h3 className="text-black-700 italic">Please reload page to see changes</h3>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="fle x flex-col gap-3">
                     <h1 className="text-xl">Font</h1>
                     <div className="border p-3 border-black-600 w-full rounded-md">
                         <input onChange={handleColorChange} defaultValue={home.font} className="text-xl bg-transparent outline-none text-black-900" />
@@ -80,7 +89,10 @@ const Design = () => {
                     <h1 className="text-xl">Text Color</h1>
                     <div className="border p-3 flex flex-row justify-between border-black-600 w-full rounded-md items-center">
                         <h1 className="text-xl">Dark</h1>
-                        <input type="checkbox" onChange={handleTextColorChange} defaultChecked={home.textBlack} className="w-6 h-6 cursor-pointer"/>
+                        <select onChange={handleTextColorChange} defaultValue={home.textBlack} className="text-center rounded bg-transparent border-gray-400 border p-2 cursor-pointer">
+                            <option value={"true"}>true</option>
+                            <option value={"false"}>false</option>
+                        </select>
                     </div>
                     <h3 className="text-black-700 italic">Please reload page to see changes</h3>
                 </div>

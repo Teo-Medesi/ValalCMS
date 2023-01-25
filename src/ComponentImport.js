@@ -12,6 +12,11 @@ const ComponentImport = ({componentName}) => {
         case "Navbar1": return <All.Navbar1 />
         case "Subscribe1": return <All.Subscribe1 />
         case "Contact1": return <All.Contact1 />
+        case "Bg0": return <All.Bg0 />
+        case "Bg1": return <All.Bg1 />
+        case "Bg2": return <All.Bg2 />
+        case "Bg3": return <All.Bg3 />
+        case "Bg4": return <All.Bg4 />
     }    
 
 }

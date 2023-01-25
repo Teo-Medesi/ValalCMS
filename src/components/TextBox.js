@@ -70,7 +70,7 @@ TextBox.defaultProps = {
     properties: {
         font: "Inter",
         fontSize: "16px",
-        color: "#ffffff"
+        color: ""
     }
 }
 
