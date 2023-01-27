@@ -955,6 +955,15 @@ video {
 .cursor-pointer {
   cursor: pointer;
 }
+.cursor-col-resize {
+  cursor: col-resize;
+}
+.cursor-row-resize {
+  cursor: row-resize;
+}
+.cursor-grab {
+  cursor: grab;
+}
 .resize-none {
   resize: none;
 }

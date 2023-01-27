@@ -147,7 +147,7 @@ const Anchor = ({anchorData, component}) => {
                                 </div>
                             </div>
                             {elementBasket.map((element, index) => <Draggable key={index}><div>{element}</div></Draggable>)}
-                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} width={size.width} height={size.height} handle={<div className={'flex justify-center w-full bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
+                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} width={size.width} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
                                 <div className='w-full h-full' ref={elementRef}>{component}</div>
                             </ResizableBox>
                         </div>
