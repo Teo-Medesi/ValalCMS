@@ -9,7 +9,7 @@ const Navbar1 = () => {
 
   return (
     <>
-        <nav className={'h-[10vh] bg-transparent items-center p-6 flex flex-row justify-between ' + (home.textBlack ? "text-[#000000]" : "text-[#ffffff]")}>
+        <nav className={'h-[10vh] bg-transparent w-full items-center p-6 flex flex-row justify-between ' + (home.textBlack ? "text-[#000000]" : "text-[#ffffff]")}>
             <TextBox>Template</TextBox>        
             <div>
               <ul className='flex text-base flex-row gap-4'>

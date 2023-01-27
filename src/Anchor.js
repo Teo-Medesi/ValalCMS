@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import CloseIcon from "./assets/images/svgs/closeIcon.svg"
+import { Resizable, ResizableBox } from 'react-resizable';
 import GearIcon from "./assets/images/svgs/gearIcon.svg"
 import {useDrop } from 'react-dnd';
 import { ProjectContext } from './Project';
@@ -11,16 +12,26 @@ import { createContext } from 'react';
 
 export const ThisAnchorContext = createContext();
 
+const ResizeHandle = () => {
+    return (
+        <div className='flex justify-center w-screen bg-secondary h-2 relative'><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>
+    )
+}
+
 const Anchor = ({anchorData, component}) => {
     
+    const [isSelected, setIsSelected] = useState(false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [settingsPosition, setSettingsPosition] = useState({x: 0, y: 0})
 
     const [anchors, anchorsPath, fetchAnchors] = useContext(AnchorContext);
 
     const elementRef = useRef(null);
-    const [height, setHeight] = useState(0);
+    const anchorRef = useRef(null);
 
+    const [size, setSize] = useState({});
+    const [clientHeight, setClientHeight] = useState(0);
+    
     const [elementBasket, setElementBasket] = useState([<></>]);
 
     const [{isOverElement}, elementDropRef] = useDrop({
@@ -28,16 +39,36 @@ const Anchor = ({anchorData, component}) => {
         drop: (item) => {
             setElementBasket(current => [...current, item]);
             console.log(elementBasket)
-        }, 
+        },  
         collect: (monitor) => ({isOverElement: monitor.isOver()})
     }) 
 
     useEffect(() => {
         if (elementRef.current != null)
         {
-            setHeight(elementRef.current.clientHeight);
+            const anchorRef = doc(db, anchorData.path);
+            if (anchorData.initialized == null || anchorData.initialized === false)
+            {
+                console.log("anchor initialized")
+                updateDoc(anchorRef, {width: elementRef.current.clientWidth, height: elementRef.current.clientHeight, initialized: true}).then(() => {
+                    fetchAnchors()
+                    setSize({width: elementRef.current.clientWidth, height: elementRef.current.clientHeight});
+                });
+            }
+            else {
+                console.log("fetching data");
+                console.dir(anchorData.width, anchorData.height, anchorData.initialized)
+                setSize({width: anchorData.width, height: anchorData.height})
+            }
+
+            
         }
     }, [elementRef.current])
+
+
+    useEffect(() => {
+        document.addEventListener("click", handleClick, true)
+    })
 
     const deleteAnchor = async () => {
         const docRef = doc(db, anchorData.path);
@@ -68,7 +99,15 @@ const Anchor = ({anchorData, component}) => {
     }
 
     const handleClick = event => {
-        setIsSettingsActive(false);
+        if (anchorRef.current != null && !anchorRef.current.contains(event.target))
+        {
+            setIsSelected(false);
+            setIsSettingsActive(false);
+        }
+        else {
+            setIsSelected(true)
+        }
+
     }
 
     const handleMouseMovement = event => {
@@ -81,24 +120,38 @@ const Anchor = ({anchorData, component}) => {
         }
     }
 
+    const onResize = (event, {element, size, handle}) => {
+        console.log("resize")
+        setSize({width: size.width, height: size.height});
+      };
+
+     const onResizeStop = event => {
+        const anchorRef = doc(db, anchorData.path);
+        updateDoc(anchorRef, {width: size.width, height: size.height}).then(() => fetchAnchors());
+     } 
+
     if (component != null || component !== 0)
     {
         return (
             <ThisAnchorContext.Provider value={anchorData}>
-                <div className={'relative border-transparent ' + (isOverElement ? "border-4 border-primary " : " ") + (`max-h-[${height}px]`)} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()} onClick={handleClick}>
-                    <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
-                        <div onClick={() => deleteAnchor()} className='text-black-900 p-3 items-center border-b border-b-black-700 flex flex-row justify-between'>
-                            <p>Remove</p>
-                            <img src={CloseIcon} className="w-7 h-7"/>
-                        </div>
-                        <div className='text-black-900 p-3 flex flex-row items-center justify-between'>
-                            <p>Settings</p>
-                            <img src={GearIcon} className="w-6 h-6" />
+                    <div ref={anchorRef}>
+                        <div className={'relative' + (isOverElement ? "border-4 border-secondary " : "border-transparent ") + (`max-h-[${anchorData.height}px] `) + (isSelected ? "border-[6px] border-secondary border-b-0" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
+                            <div style={{transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)`}}  className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
+                                <div onClick={() => deleteAnchor()} className='text-black-900 p-3 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between'>
+                                    <p>Remove</p>
+                                    <img src={CloseIcon} className="w-7 h-7"/>
+                                </div>
+                                <div className='text-black-900 cursor-pointer p-3 flex flex-row items-center justify-between'>
+                                    <p>Settings</p>
+                                    <img src={GearIcon} className="w-6 h-6" />
+                                </div>
+                            </div>
+                            {elementBasket.map((element, index) => <Draggable key={index}><div>{element}</div></Draggable>)}
+                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} width={size.width} height={size.height} handle={<div className={'flex justify-center w-full bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
+                                <div className='w-full h-full' ref={elementRef}>{component}</div>
+                            </ResizableBox>
                         </div>
                     </div>
-                    {elementBasket.map((element, index) => <Draggable key={index}><div>{element}</div></Draggable>)}
-                    <div ref={elementRef}>{component}</div>
-                </div>
             </ThisAnchorContext.Provider>
         ); 
     }
