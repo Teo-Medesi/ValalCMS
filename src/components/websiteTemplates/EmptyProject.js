@@ -19,7 +19,7 @@ const EmptyProject = () => {
 
     return (
         <div>
-            {anchors.map(anchor => <Anchor component={<ComponentImport componentName={anchor.component}/>} anchorData={anchor} key={anchor.id}/>)}
+            {anchors.map(anchor => <Anchor component={<ComponentImport anchorData={anchor} componentName={anchor.component}/>} anchorData={anchor} key={anchor.id}/>)}
             <AddAnchor/>
         </div>
     )

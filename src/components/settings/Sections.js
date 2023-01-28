@@ -22,7 +22,7 @@ const Basic = () => {
     return (
         <div style={{scrollbarColor: "#1E293B"}} className="flex flex-col p-6 gap-6 overflow-scroll">
 
-            <Drag type="section" component={"Basic1"} setIsDragging={setIsAnchorActive}>
+            <Drag type="section" component={"Basic1"} properties={{backgroundColor: "#111316"}} setIsDragging={setIsAnchorActive}>
                 <Basic1Preview />
             </Drag>
             <Drag type="section" component={"Bg0"} setIsDragging={setIsAnchorActive}>
@@ -105,10 +105,12 @@ const Text = () => {
 const Navigation = () => {
     const [_ignore, [isAnchorActive, setIsAnchorActive]] = useContext(ProjectContext)
 
+    const textBoxes = [{id: 0, font: "Inter", fontSize: 16 , color: "", text: "Template"},{id: 1, font: "Inter", fontSize: 16, color: "", text: "About me"},{id: 2, font: "Inter", fontSize: 16, color: "", text: "Services"},{id: 3, font: "Inter", fontSize: 16, color: "", text: "Projects"},{id: 4, font: "Inter", fontSize: 16, color: "", text: "Blogs"},{id: 5, font: "Inter", fontSize: 16, color: "", text: "Gallery"},{id: 6, font: "Inter", fontSize: 16, color: "", text: "Contact us"}];
+
     return (
         <div className="flex flex-col p-6 gap-6 w-full">
             <div className="relative">
-                <Drag type="section" component={"Navbar1"} setIsDragging={setIsAnchorActive}>
+                <Drag type="section" component={"Navbar1"} properties={{backgroundColor: "", textBoxes: textBoxes}} setIsDragging={setIsAnchorActive}>
                     <Navbar1Preview />
                 </Drag>
             </div>

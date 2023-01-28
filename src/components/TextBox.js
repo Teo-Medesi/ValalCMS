@@ -1,13 +1,15 @@
 import React,{useEffect, useState} from 'react'
 import { useRef } from 'react';
 import { onlyText } from 'react-children-utilities';
+import TextSettings from '../TextSettings';
 
-const TextBox = ({children, className, customSetFunction, customParameter, onChange, properties}) => {
+const TextBox = ({children, className, anchorData, index, onChange, properties}) => {
     // the idea is for TextBox to just be a wrapper element that returns children if edit mode is off
     // if edit mode is on
 
-    const {font, fontSize, color} = properties; 
+    const {id, font, fontSize, color} = properties; 
     const elementRef = useRef(null);
+    const [isSettingsActive, setIsSettingsActive] = useState(false);
 
     // so each textbox component can have for now up to 3 properties which we can we ask to be passed down in a map 
     // text color, font size and font
@@ -18,11 +20,6 @@ const TextBox = ({children, className, customSetFunction, customParameter, onCha
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
 
-
-    useEffect(() => {
-        if (setText == null && customSetFunction == null) console.error("'setText' and 'customSetFunction' are both undefined, please assign a value to either 'setText' or 'customSetFunction', but not to both.");
-    }, [])
-
     useEffect(() => {
         if (elementRef.current != null) 
         {
@@ -31,6 +28,12 @@ const TextBox = ({children, className, customSetFunction, customParameter, onCha
         }
     }, [elementRef.current]);
 
+    useEffect(() => {
+        if (isEditMode) 
+        {
+            setIsSettingsActive(true);
+        }
+    }, [isEditMode]);
 
     const handleEdit = () => {
         setIsEditMode(false);
@@ -53,9 +56,12 @@ const TextBox = ({children, className, customSetFunction, customParameter, onCha
 
     if (isEditMode) {
         return (
-            <div style={{fontSize: fontSize, fontFamily: font, color: color}} className={className}>
-                <textarea style={{width: width + 20, height: height + 20}} onKeyDown={handleKeyDown} autoFocus defaultValue={text} onChange={event => setText(event.target.value)} className='border-gray-500 rounded-md outline-none p-2 overflow-hidden resize-none border bg-transparent h-full' type="text"/>
-            </div>
+            <>
+                <TextSettings anchorData={anchorData} index={index} isActive={isSettingsActive} setIsActive={setIsSettingsActive} className="absolute z-10"/>.
+                <div style={{fontSize: fontSize, fontFamily: font, color: color}} className={className}>
+                    <textarea style={{width: width + 20, height: height + 20}} onKeyDown={handleKeyDown} autoFocus defaultValue={text} onChange={event => setText(event.target.value)} className='border-gray-500 rounded-md outline-none p-2 overflow-hidden resize-none border bg-transparent h-full' type="text"/>
+                </div>
+            </>
         )
     } else {
         return (
@@ -68,8 +74,9 @@ const TextBox = ({children, className, customSetFunction, customParameter, onCha
 
 TextBox.defaultProps = {
     properties: {
-        font: "Inter",
-        fontSize: "16px",
+        id: "",
+        font: "",
+        fontSize: "",
         color: ""
     }
 }

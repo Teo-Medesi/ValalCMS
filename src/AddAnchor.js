@@ -12,10 +12,10 @@ const AddAnchor = () => {
 
   const elementRef = useRef(null);
 
-  const addAnchor = (component) => {
-    if (component != null && component.componentName !== "") {
+  const addAnchor = (item) => {
+    if (item != null && item.componentName !== "") {
       const collectionRef = collection(db, anchorsPath);
-      addDoc(collectionRef, {ID: anchors.length + 1, component: component.componentName}).then(() => fetchAnchors());
+      addDoc(collectionRef, {ID: anchors.length + 1, component: item.componentName, properties: item.properties}).then(() => fetchAnchors());
     }
   }
 

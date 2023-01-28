@@ -46,8 +46,8 @@ const Bg0 = () => {
         return (
             <>
                 <UploadModal fetchFile={fetchBackgroundImageURL} isActive={isActive} setIsActive={setIsActive} appendFileName={false} storagePath={storagePath} />
-                <div onClick={() => setIsActive(true)} className='h-[90vh] cursor-pointer px-5 bg-transparent w-full max-h-screen'>
-                    <div className='flex h-full justify-center items-center border border-black-600 rounded'>
+                <div onClick={() => setIsActive(true)} className='h-[90vh] cursor-pointer p-5 bg-transparent w-full max-h-screen'>
+                    <div className='flex h-full w-full justify-center items-center border border-black-600 rounded'>
                         <img src={UploadIcon} className="w-20 h-20" />
                     </div>
                 </div>
@@ -56,7 +56,7 @@ const Bg0 = () => {
     }
     else {
         return (
-            <div style={{ backgroundImage: `url(${imageURL})` }} className='w-screen h-[90vh] max-h-screen bg-cover'>
+            <div style={{ backgroundImage: `url(${imageURL})`, minWidth: "100%", height: "inherit", backgroundSize: "100% 100%" }} className='w-screen h-[90vh] max-h-screen bg-cover'>
                 <img src={imageURL} className="invisible" />
             </div>
         )
