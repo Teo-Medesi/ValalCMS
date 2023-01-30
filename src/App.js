@@ -1,20 +1,19 @@
 import React, { createContext, useEffect } from "react"
 import { db } from "./firebase.config";
 import "./assets/css/output.css";
-import Project from "./Project"
-import Dashboard from "./Dashboard";
+import Project from "./features/project/Project"
+import Dashboard from "./pages/Dashboard";
 import {Routes, Route} from "react-router-dom"
-import SignUp from "./SignUp";
-import SignIn from "./SignIn";
-import Loading from "./Loading"
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+import Loading from "./components/Loading"
 import Protected from "./components/Protected";
 import { useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import {auth} from "./firebase.config"
 import { collection, getDocs } from "firebase/firestore";
-import ProjectCreation from "./ProjectCreation";
-import PortfolioTemplate from "./components/websiteTemplates/PortfolioTemplate";
-import DevelopmentPage from "./DevelopmentPage";
+import ProjectCreation from "./pages/ProjectCreation";
+import DevelopmentPage from "./test/DevelopmentPage";
 
     /* 
       Well I'll be damned if this competition ain't nothing but an unpleasant rhetorical ball smack to my mental wellbeing,
@@ -83,7 +82,6 @@ function App() {
             <Route path="/signUp" element={<SignUp setUser={setUser}/>}/>
             {projects.map(project => <Route path={`/${project.name}`} element={<Protected><Project name={project.name}/></Protected>} />)}
             <Route path="/createProject" element={<Protected><ProjectCreation /></Protected>} />
-            <Route path="/template" element={<PortfolioTemplate />} />
             <Route path="/test" element={<DevelopmentPage />} />
           </Routes>
         </div>
