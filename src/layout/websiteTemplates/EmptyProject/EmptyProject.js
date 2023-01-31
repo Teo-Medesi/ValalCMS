@@ -14,9 +14,8 @@ const EmptyProject = () => {
     // if we fetch the anchors in home, for blank it should be empty at start, but for templates we should add them to firestore upon project creation
     // as it goes for templates, upon creating a project, we'll define some properties based on the chosen category, no problem at all
 
-    const [anchors, anchorsPath, fetchAnchors] = useContext(AnchorContext);
-    const [home, fetchHome] = useContext(HomeContext);
-
+    const [anchors,  ...rest] = useContext(AnchorContext);
+    
     return (
         <div>
             {anchors.map(anchor => <Anchor component={<ComponentImport anchorData={anchor} componentName={anchor.component}/>} anchorData={anchor} key={anchor.id}/>)}

@@ -27,7 +27,7 @@ import DevelopmentPage from "./test/DevelopmentPage";
       - organizing our workspace, opting for a better folder structure --- DONE
       
       - using custom hooks for anchors instead of manually fetching anchors everywhere
-        ----> useAnchors - custom hook for getting our anchors, this would be used pretty much only in home or wherever we need all of our anchors 
+        ----> useAnchors - custom hook for getting our anchors, this would be used pretty much only in home or wherever we need all of our anchors --- DONE
         ----> useAnchor - custom hook for getting individual anchor, it would have only one parameter, the anchor path which it will get from Home,
                           it would fetch and rerender *only* the anchor which needs to be rerendered, not all anchors as we did with fetchAnchors.
                           What if the user has multiple pages and a lot of heavy duty anchors, it wouldn't make sense to fetch all of them if only 
@@ -93,7 +93,7 @@ function App() {
             <Route path="/dashboard"  element={<Protected><Dashboard /></Protected>} />
             <Route path="/signIn" element={<SignIn setUser={setUser} />}/>
             <Route path="/signUp" element={<SignUp setUser={setUser}/>}/>
-            {projects.map(project => <Route path={`/${project.name}`} element={<Protected><Project name={project.name}/></Protected>} />)}
+            {projects.map((project, index) => <Route key={index} path={`/${project.name}`} element={<Protected><Project name={project.name}/></Protected>} />)}
             <Route path="/createProject" element={<Protected><ProjectCreation /></Protected>} />
             <Route path="/test" element={<DevelopmentPage />} />
           </Routes>

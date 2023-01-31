@@ -2,10 +2,7 @@ import React, {useContext, useState} from "react";
 import Drag from "../editing/Drag"
 import { SettingsContext } from "./Settings";
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
-import Paragraph1Preview from "../../layout/elements/Paragraph1Preview";
-import Paragraph1BoldPreview from "../../layout/elements/Paragraph1BoldPreview";
-import Paragraph1 from "../../layout/elements/Paragraph1"
-import Paragraph1Bold from "../../layout/elements/Paragraph1Bold"
+import * as All from "../../layout/elements/ElementsExport"
 
 const Text = () => {
 
@@ -31,11 +28,10 @@ const Text = () => {
     */
     return (
         <div className="flex flex-col p-6 gap-6">
-            <Drag element={<Paragraph1 />} type="element"><Paragraph1Preview /></Drag>
-            <Drag element={<Paragraph1Bold />} type="element"><Paragraph1BoldPreview /></Drag>
-            <Drag element={<Paragraph1 />} type="element"><Paragraph1Preview /></Drag>
-            <Drag element={<Paragraph1Bold />} type="element"><Paragraph1BoldPreview /></Drag>
-            
+            <Drag properties={{}} component={"Paragraph1"} type="element"><All.Paragraph1Preview /></Drag>
+            <Drag properties={{}} component={"Paragraph1Bold"} type="element"><All.Paragraph1BoldPreview /></Drag>
+            <Drag properties={{}} component={"Paragraph1"} type="element"><All.Paragraph1Preview /></Drag>
+            <Drag properties={{}} component={"Paragraph1Bold"} type="element"><All.Paragraph1BoldPreview /></Drag>
         </div>
     )
 }

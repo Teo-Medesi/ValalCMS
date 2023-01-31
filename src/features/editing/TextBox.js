@@ -65,7 +65,7 @@ const TextBox = ({children, className, anchorData, index, onChange, properties})
         )
     } else {
         return (
-            <div style={{fontSize: fontSize, font: font, color: color}} ref={elementRef} className={className} onDoubleClick={handleDoubleClick}>
+            <div style={{fontSize: fontSize, fontFamily: font, color: color}} ref={elementRef} className={className} onDoubleClick={handleDoubleClick}>
                 {text}
             </div>
         )
