@@ -16,19 +16,32 @@ import ProjectCreation from "./pages/ProjectCreation";
 import DevelopmentPage from "./test/DevelopmentPage";
 
     /* 
-      Well I'll be damned if this competition ain't nothing but an unpleasant rhetorical ball smack to my mental wellbeing,
-      progress moves so goddamn slow and this shit should be moving a lot lot faster, I feel very overwhelmed 
-      Worst part is, most of the time I don't even know what's the most important thing to do
-      there's always something to do, but with a deadline you really have to cut a lot of corners
+      Enthusiam is dropping pretty low on this project already, I guess the 90/10 rule is becoming more apparent, although I doubt Im even close to 60%,
+      not 90% of the work, it's just that I've been working on this project for so long and I've been treating it more as a learning experience than as a product
       
-      The problem with a CMS is that really is a full package deal, it really needs to have everything
+      To give up now would be pretty cowardly, I don't think I could forgive myself for giving up on this as I usually do on most things.
+      Let's not settle on mediocrity and let's instead do this project some justice.
+
       
-      ---- the most important part right now is the back end, saving a users website to the database
-      ---- being able to add more elements and assign roles to them
-      ---- uploading files, media, iframes
       
+      - organizing our workspace, opting for a better folder structure --- DONE
+      
+      - using custom hooks for anchors instead of manually fetching anchors everywhere
+        ----> useAnchors - custom hook for getting our anchors, this would be used pretty much only in home or wherever we need all of our anchors 
+        ----> useAnchor - custom hook for getting individual anchor, it would have only one parameter, the anchor path which it will get from Home,
+                          it would fetch and rerender *only* the anchor which needs to be rerendered, not all anchors as we did with fetchAnchors.
+                          What if the user has multiple pages and a lot of heavy duty anchors, it wouldn't make sense to fetch all of them if only 
+                          one of them changed.
+        
+        we would also need useUser as it would be used quite often
+        useProject is not of that high priority
 
 
+      - adding add element functionality, the ability to add absolutely positioned textboxes
+      - absolutely positioned images
+      - textbox resizability and alignment ---> perhaps I want to center text inside of a container, it's z index would be higher than anything else
+        on the screen and we could resize it for example to be screen width, then we can center the text inside of it
+      
 
     */
 
