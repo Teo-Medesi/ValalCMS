@@ -16,11 +16,9 @@ const Project = ({ name }) => {
   const [isToggledRelative, setIsToggledRelative] = useState(false);
   const [isAnchorActive, setIsAnchorActive] = useState(false);
 
-
   const [homePath, setHomePath] = useState("");
   const [home, setHome] = useState([]);
   const [user] = useContext(UserContext);
-
 
   const fetchProject = async () => {
     const projectPath = `users/${user.uid}/projects/${name}`;
