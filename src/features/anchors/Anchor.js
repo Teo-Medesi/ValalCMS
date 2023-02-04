@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, createContext, useState } from 'react'
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
-import {ResizableBox } from 'react-resizable';
+import { ResizableBox } from 'react-resizable';
 import GearIcon from "../../assets/svgs/gearIcon.svg"
 import { useDrop } from 'react-dnd';
-import { ChromePicker  } from 'react-color';
+import { ChromePicker } from 'react-color';
 import Draggable from 'react-draggable';
 import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase.config';
@@ -11,6 +11,78 @@ import { AnchorContext } from '../../pages/Home';
 import ElementImport from '../../components/ElementImport';
 
 export const ThisAnchorContext = createContext();
+
+const getWindowDimensions = () => {
+    const { innerWidth: windowWidth, innerHeight: windowHeight } = window;
+    return {
+        windowWidth,
+        windowHeight
+    };
+}
+
+export const useWindowDimensions = () => {
+    const [windowDimensions, setWindowDimensions] = useState(
+        getWindowDimensions()
+    );
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+        }
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return windowDimensions;
+}
+
+const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, updatePositionY, id}) => {
+    const [isDraggable, setIsDraggable] = useState(false);
+
+    const handleUpdateX = (newX) => {
+        updatePositionX(id, newX)
+    }
+
+    const handleUpdateY = (newY) => {
+        updatePositionY(id, newY)
+    }
+    
+    return (
+        <div className={className + (isActive ? "" : " hidden")}>
+            <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
+                <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-primary border-t-[12px] rounded-xl'>
+                    <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
+                        <h1 className=' font-bold text-black-900'>Element Settings</h1>
+                        <img src={CloseIcon} onClick={() => setIsActive(false)} className="w-8 cursor-pointer h-8" />
+                    </div>
+
+                    <div onMouseDown={() => setIsDraggable(false)} className="flex flex-col h-full basis-[90%] w-full relative">
+                        <div className="basis-1/5 p-4 border-b flex-col flex gap-2 border-black-600">
+                            <h1 className=" text-black-900">Align horizontally</h1>
+                            <div className="flex flex-row w-full justify-between items-center h-full">
+                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
+                                <div onClick={() => handleUpdateX(50)} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>C</div>
+                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
+                            </div>
+
+                        </div>
+
+                        <div className="basis-1/5 p-4 border-b flex flex-col gap-2 border-black-600">
+                            <h1 className=" text-black-900">Align vertically</h1>
+                            <div className="flex flex-row w-full justify-between items-center h-full">
+                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
+                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>C</div>
+                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Draggable>
+        </div>
+    )
+}
+
 
 const AnchorSettings = ({ isActive, setIsActive, className, background }) => {
 
@@ -20,15 +92,14 @@ const AnchorSettings = ({ isActive, setIsActive, className, background }) => {
     const [backgroundColor, setBackgroundColor] = background;
 
     const handleColorChange = event => {
-        if (event.target.value.length === 7)
-        {
+        if (event.target.value.length === 7) {
             setBackgroundColor(event.target.value);
         }
     }
 
     return (
         <div className={className + (isActive ? "" : " hidden")}>
-            <Draggable defaultPosition={{x: 200, y: 100}}  disabled={isDraggable ? false : true}>
+            <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
                 <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-primary border-t-[12px] rounded-xl'>
                     <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
                         <h1 className=' font-bold text-black-900'>Anchor Settings</h1>
@@ -36,17 +107,17 @@ const AnchorSettings = ({ isActive, setIsActive, className, background }) => {
                     </div>
 
                     <div onMouseDown={() => setIsDraggable(false)} className="flex flex-col h-full basis-[90%] w-full relative">
-                        <ChromePicker color={backgroundColor} onChange={(color) => setBackgroundColor(color.hex)} className={'absolute right-40 z-20' + (isColorPickerActive ? "" : " hidden")}/>
+                        <ChromePicker color={backgroundColor} onChange={(color) => setBackgroundColor(color.hex)} className={'absolute right-40 z-20' + (isColorPickerActive ? "" : " hidden")} />
                         <div className="basis-1/5 p-4 border-b flex-col flex  border-black-600">
 
                             <h1 className=" text-black-900">Background Color</h1>
                             <div className="flex flex-row w-full justify-between items-center h-full">
                                 <input type="text" defaultValue={(backgroundColor != "") ? backgroundColor : "transparent"} onChange={handleColorChange} className='py-1 text-black-800 px-3 w-[88%] outline-none border border-black-600 rounded-md' />
-                                <div onClick={() => setIsColorPickerActive(current => !current)} style={{background: backgroundColor}} className={"w-7 h-7 hover:border-secondary border-transparent border-2 cursor-pointer rounded-full" + ((backgroundColor === "") ? " border-secondary" : "" ) }></div>
+                                <div onClick={() => setIsColorPickerActive(current => !current)} style={{ background: backgroundColor }} className={"w-7 h-7 hover:border-secondary border-transparent border-2 cursor-pointer rounded-full" + ((backgroundColor === "") ? " border-secondary" : "")}></div>
                             </div>
-                        
+
                         </div>
-                            
+
                         <div className="basis-1/5 p-4 border-b flex flex-col  border-black-600">
                             <p className=' text-black-900'>blank</p>
                             <div className="flex flex-col justify-center h-full">
@@ -74,13 +145,20 @@ const Anchor = ({ anchorData, component }) => {
     const [isSelected, setIsSelected] = useState(false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isAnchorSettingsActive, setIsAnchorSettingsActive] = useState(false);
-    
+    const [isElementSettingsActive, setIsElementSettingsActive] = useState(false);
+
+    const { windowWidth, windowHeight } = useWindowDimensions();
+
+
+    const [isTempPositionActive, setIsTempPositionActive] = useState(false);
+    const [tempPosition, setTempPosition] = useState({});
     const [settingsPosition, setSettingsPosition] = useState({ x: 0, y: 0 })
 
     const [anchors, anchorsPath, fetchAnchors] = useContext(AnchorContext);
 
     const elementRef = useRef(null);
     const anchorRef = useRef(null);
+
 
     const [size, setSize] = useState({});
     const [backgroundColor, setBackgroundColor] = useState(anchorData.properties.backgroundColor);
@@ -117,15 +195,16 @@ const Anchor = ({ anchorData, component }) => {
     const fetchElements = async () => {
         const elementsRef = collection(db, `${anchorData.path}/elements`);
         const elementsSnap = await getDocs(elementsRef);
-        setElementBasket(elementsSnap.docs.map(element => ({...element.data(), id: element.id})));
+        setElementBasket(elementsSnap.docs.map(element => {/*console.log("fetch position", element.data().properties.clientX, element.data().properties.clientY);*/ return { ...element.data(), id: element.id } }));
+        setIsTempPositionActive(false);
+
     }
 
 
     const addElement = component => {
-        if (component.componentName !== "" && component.properties != null)
-        {
+        if (component.componentName !== "" && component.properties != null) {
             const elementsRef = collection(db, `${anchorData.path}/elements`);
-            addDoc(elementsRef, {component: component.componentName, properties: component.properties}).then(() => fetchElements());
+            addDoc(elementsRef, { component: component.componentName, properties: component.properties }).then(() => fetchElements());
         }
     }
 
@@ -134,17 +213,16 @@ const Anchor = ({ anchorData, component }) => {
     })
 
     useEffect(() => {
-        if (backgroundColor != null)
-        {
+        if (backgroundColor != null) {
             const anchorRef = doc(db, anchorData.path);
-            updateDoc(anchorRef, {"properties.backgroundColor": backgroundColor}).then(() => fetchAnchors());
+            updateDoc(anchorRef, { "properties.backgroundColor": backgroundColor }).then(() => fetchAnchors());
         }
     }, [backgroundColor])
 
     useEffect(() => {
         fetchElements();
     }, []);
-    
+
 
     const deleteAnchor = async () => {
         const docRef = doc(db, anchorData.path);
@@ -207,11 +285,29 @@ const Anchor = ({ anchorData, component }) => {
         setIsSettingsActive(false);
     }
 
-    // TODO problem is with drag offset
+
     const handleElementDrag = (event, id) => {
-        console.log(`new x: ${event.clientX}`)
+        setIsTempPositionActive(true);
+        setTempPosition({ x: event.clientX, y: event.clientY })
+
         const elementRef = doc(db, `${anchorData.path}/elements/${id}`);
-        updateDoc(elementRef, {"properties.clientX" : event.clientX, "properties.clientY": event.clientY}).then(() => fetchElements());
+        updateDoc(elementRef, { "properties.clientX": (event.clientX / windowWidth * 100), "properties.clientY": (event.clientY / windowHeight * 100) }).then(() => {
+            fetchElements();
+        });
+    }
+
+    const updateElementPositionX = (id, newX) => {
+        const elementRef = doc(db, `${anchorData.path}/elements/${id}`);
+        updateDoc(elementRef, {"properties.clientX": newX}).then(() => {
+            fetchElements();
+        });
+    }
+
+    const updateElementPositionY = (id, newY) => {
+        const elementRef = doc(db, `${anchorData.path}/elements/${id}`);
+        updateDoc(elementRef, {"properties.clientY": newY}).then(() => {
+            fetchElements();
+        });
     }
 
     if (component != null || component !== 0) {
@@ -231,13 +327,22 @@ const Anchor = ({ anchorData, component }) => {
                             </div>
                         </div>
 
-                        {elementBasket.map((element, index) => <Draggable position={{x: element.properties.clientX, y: element.properties.clientY}} onStop={event => handleElementDrag(event, element.id)} key={index}><div className='cursor-pointer'><ElementImport elementName={element.component} /></div></Draggable>)}
+                        {elementBasket.map((element, index) =>
+                            <div onAuxClick={() => setIsElementSettingsActive(true)} >
+                                <div onMouseOver={() => console.log("kurac")}><ElementSettings updatePositionX={updateElementPositionX} updatePositionY={updateElementPositionY} id={element.id} className="absolute z-30" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>
+                                <Draggable onStart={() => setIsSelected(true)} position={{ x: (isTempPositionActive ? tempPosition.x - 120 : (windowWidth * element.properties.clientX / 100 - 120)), y: (isTempPositionActive ? tempPosition.y - 100 : (windowHeight * element.properties.clientY / 100) - 100) }} onStop={event => handleElementDrag(event, element.id)} key={index}>
+                                    <div className='cursor-pointer z-20'>
+                                        <ElementImport elementName={element.component} />
+                                    </div>
+                                </Draggable>
+                            </div>
+                        )}
 
 
-                        <AnchorSettings className="absolute z-10" background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive}/>
+                        <AnchorSettings className="absolute z-10" background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
 
-                        <ResizableBox onResize={onResize} onResizeStop={onResizeStop} width={size.width} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
-                            <div className='w-full h-full' style={{background: backgroundColor}} ref={elementRef}>{component}</div>
+                        <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
+                            <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
                         </ResizableBox>
 
                     </div>
