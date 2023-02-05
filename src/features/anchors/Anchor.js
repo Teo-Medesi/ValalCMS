@@ -1,3 +1,4 @@
+// @collapse
 import React, { useContext, useEffect, useRef, createContext, useState } from 'react'
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
 import { ResizableBox } from 'react-resizable';
@@ -37,7 +38,7 @@ export const useWindowDimensions = () => {
     return windowDimensions;
 }
 
-const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, updatePositionY, id}) => {
+const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, updatePositionY, id }) => {
     const [isDraggable, setIsDraggable] = useState(false);
 
     const handleUpdateX = (newX) => {
@@ -47,7 +48,7 @@ const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, up
     const handleUpdateY = (newY) => {
         updatePositionY(id, newY)
     }
-    
+
     return (
         <div className={className + (isActive ? "" : " hidden")}>
             <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
@@ -61,9 +62,9 @@ const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, up
                         <div className="basis-1/5 p-4 border-b flex-col flex gap-2 border-black-600">
                             <h1 className=" text-black-900">Align horizontally</h1>
                             <div className="flex flex-row w-full justify-between items-center h-full">
-                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
+                                <div onClick={() => handleUpdateX(25)} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
                                 <div onClick={() => handleUpdateX(50)} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>C</div>
-                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
+                                <div onClick={() => handleUpdateX(75)} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
                             </div>
 
                         </div>
@@ -159,7 +160,6 @@ const Anchor = ({ anchorData, component }) => {
     const elementRef = useRef(null);
     const anchorRef = useRef(null);
 
-
     const [size, setSize] = useState({});
     const [backgroundColor, setBackgroundColor] = useState(anchorData.properties.backgroundColor);
 
@@ -195,7 +195,7 @@ const Anchor = ({ anchorData, component }) => {
     const fetchElements = async () => {
         const elementsRef = collection(db, `${anchorData.path}/elements`);
         const elementsSnap = await getDocs(elementsRef);
-        setElementBasket(elementsSnap.docs.map(element => {/*console.log("fetch position", element.data().properties.clientX, element.data().properties.clientY);*/ return { ...element.data(), id: element.id } }));
+        setElementBasket(elementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }));
         setIsTempPositionActive(false);
 
     }
@@ -285,67 +285,85 @@ const Anchor = ({ anchorData, component }) => {
         setIsSettingsActive(false);
     }
 
-
-    const handleElementDrag = (event, id) => {
-        setIsTempPositionActive(true);
-        setTempPosition({ x: event.clientX, y: event.clientY })
-
-        const elementRef = doc(db, `${anchorData.path}/elements/${id}`);
-        updateDoc(elementRef, { "properties.clientX": (event.clientX / windowWidth * 100), "properties.clientY": (event.clientY / windowHeight * 100) }).then(() => {
-            fetchElements();
-        });
-    }
-
     const updateElementPositionX = (id, newX) => {
+        /*  ------------- ELEMENT ---------------- 
+                            50%
+            what do we mean by 50%? 
+                It means that the center of the element should be located 50% from the left of the screen
+                half of the element is elementWidth / 2 (example 500/2 = 250px)
+                screen width is let's say 1000px
+                element should be pushed 500 px right and then 250px back
+                newX - element.clientX/2
+
+        */
         const elementRef = doc(db, `${anchorData.path}/elements/${id}`);
-        updateDoc(elementRef, {"properties.clientX": newX}).then(() => {
+        updateDoc(elementRef, { "properties.clientX": newX }).then(() => {
             fetchElements();
         });
     }
 
     const updateElementPositionY = (id, newY) => {
         const elementRef = doc(db, `${anchorData.path}/elements/${id}`);
-        updateDoc(elementRef, {"properties.clientY": newY}).then(() => {
+        updateDoc(elementRef, { "properties.clientY": newY }).then(() => {
             fetchElements();
         });
     }
 
+    // we need to let go of our old idea of how we should position elements, enough of Y, more of X
+    /* 
+        My current idea seems pretty good. Why make our own positioning system when we can use flexbox or plain css?
+        We can make a element div that is positioned directly above our anchor (higher z-index) make it's width and height equal to section and make it absolute,
+        then we give it a transparent background.
+
+        The problem I'm thinking of right now is interactability with the base section. If we have a wrapper div directly above our base section, how will
+        we interact with it?
+    */
+
     if (component != null || component !== 0) {
         return (
             <ThisAnchorContext.Provider value={anchorData}>
-                <div ref={anchorRef}>
-                    <div className={'relative w-full h-full' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
-
-                        <div style={{ transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)` }} className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
-                            <div onClick={() => deleteAnchor()} className='text-black-900 p-3 hover:bg-black-600 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between'>
-                                <p>Remove</p>
-                                <img src={CloseIcon} className="w-7 h-7" />
-                            </div>
-                            <div onClick={handleSettingsClick} className='text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between'>
-                                <p>Settings</p>
-                                <img src={GearIcon} className="w-6 h-6" />
-                            </div>
-                        </div>
-
+                <div className='relative'>
+                    <div style={{ width: "100vw", height: anchorData.height }} className="bg-transparent pointer-events-none absolute z-20">
                         {elementBasket.map((element, index) =>
-                            <div onAuxClick={() => setIsElementSettingsActive(true)} >
-                                <div onMouseOver={() => console.log("kurac")}><ElementSettings updatePositionX={updateElementPositionX} updatePositionY={updateElementPositionY} id={element.id} className="absolute z-30" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>
-                                <Draggable onStart={() => setIsSelected(true)} position={{ x: (isTempPositionActive ? tempPosition.x - 120 : (windowWidth * element.properties.clientX / 100 - 120)), y: (isTempPositionActive ? tempPosition.y - 100 : (windowHeight * element.properties.clientY / 100) - 100) }} onStop={event => handleElementDrag(event, element.id)} key={index}>
-                                    <div className='cursor-pointer z-20'>
+
+                            <div key={index} onClick={() => setIsSelected(true)} className='pointer-events-auto z-30 flex' onAuxClick={() => setIsElementSettingsActive(true)} >
+                                <div onMouseOver={() => setIsSettingsActive(false)}>
+                                    <ElementSettings updatePositionX={updateElementPositionX} updatePositionY={updateElementPositionY} id={element.id} className="absolute z-30" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} />
+                                </div>
+                                <div className='relative p-12'>
+                                    <div className='cursor-pointer absolute w-max p-1 border-4 border-tertiary z-20'>
+                                        <div className="w-6 h-6 absolute left-1/2 bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
+                                        <div style={{top: "calc(100% - 10px)"}} className="w-6 h-6 absolute left-1/2 rounded-full bg-white border-[3px] border-tertiary"></div>
+                                        <div className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
+                                        <div style={{left: "calc(100% - 10px)"}} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                                         <ElementImport elementName={element.component} />
                                     </div>
-                                </Draggable>
+                                </div>
+
                             </div>
                         )}
 
-
-                        <AnchorSettings className="absolute z-10" background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
-
-                        <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
-                            <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
-                        </ResizableBox>
-
                     </div>
+                    <div className='pointer-events-auto' ref={anchorRef}>
+                        <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
+                            <div style={{ transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)` }} className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
+                                <div onClick={() => deleteAnchor()} className='text-black-900 p-3 hover:bg-black-600 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between'>
+                                    <p>Remove</p>
+                                    <img src={CloseIcon} className="w-7 h-7" />
+                                </div>
+                                <div onClick={handleSettingsClick} className='text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between'>
+                                    <p>Settings</p>
+                                    <img src={GearIcon} className="w-6 h-6" />
+                                </div>
+                            </div>
+
+                            <AnchorSettings className="absolute z-10" background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
+                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
+                                <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
+                            </ResizableBox>
+                        </div>
+                    </div>
+
                 </div>
             </ThisAnchorContext.Provider>
         );
