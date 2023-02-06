@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useRef } from 'react'
 import { useEffect } from 'react'
 import Draggable from 'react-draggable'
 import CloseIcon from "../../../assets/svgs/closeIcon.svg"
@@ -7,43 +8,50 @@ import ElementImport from "../../../components/ElementImport"
 
 const Element = ({ setIsAnchorSelected, elementData }) => {
     const [isSettingsActive, setIsSettingsActive] = useState(false);
+    const [isSelected, setIsSelected] = useState(false);
+    
     const [marginTop, setMarginTop] = useState(5)
     const [marginRight, setMarginRight] = useState(5)
     const [marginBottom, setMarginBottom] = useState(5)
     const [marginLeft, setMarginLeft] = useState(5)
     const [intervalId, setIntervalId] = useState("");
 
+    const elementRef = useRef(null);
+
     const updateMarginTop = () => {
         setIntervalId(setInterval(() => {
-            setMarginTop(current => current + 0.1)
+            setMarginTop(current => current + 0.2);
             console.log(marginTop)
-        }, 30));
+        }, 20));
     }
 
     const updateMarginRight = () => {
         setIntervalId(setInterval(() => {
-            setMarginLeft(current => current - 0.1)
+            setMarginLeft(current => current - 0.2)
             console.log(marginRight)
-        }, 30));
+        }, 20));
     }
 
     const updateMarginBottom = () => {
         setIntervalId(setInterval(() => {
-            setMarginTop(current => current - 0.1)
+            if (marginTop >= 0) setMarginTop(current => current - 0.2)
             console.log(marginBottom)
-        }, 30));
+        }, 20));
     }
     
     const updateMarginLeft = () => {
         setIntervalId(setInterval(() => {
-            setMarginLeft(current => current + 0.1)
+            setMarginLeft(current => current + 0.2)
             console.log(marginLeft)
-        }, 30));
+        }, 20));
     }
 
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClick, true)
+        document.addEventListener("mouseup", stopInterval, true)
+    })
 
     const stopInterval = () => {
-        console.warn("clear")
         clearInterval(intervalId);
         setIntervalId(null);
     }
@@ -56,17 +64,31 @@ const Element = ({ setIsAnchorSelected, elementData }) => {
 
     }
 
+    const handleClick = event => {
+        setIsAnchorSelected(true);
+        if (elementRef.current != null && !elementRef.current.contains(event.target)) {
+            setIsSelected(false);
+            setIsSettingsActive(false);
+        }
+        else {
+            setIsSelected(true)
+        }
+        
+    }
+
     return (
-        <div style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} onClick={() => setIsAnchorSelected(true)} className='pointer-events-auto z-30 flex' onAuxClick={() => setIsSettingsActive(true)} >
+        <div ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} onClick={() => setIsAnchorSelected(true)} className='pointer-events-auto z-30 flex' onAuxClick={() => setIsSettingsActive(true)} >
             <div>
                 <ElementSettings updatePositionX={updateElementPositionX} updatePositionY={updateElementPositionY} id={elementData.id} className="absolute z-30" isActive={isSettingsActive} setIsActive={setIsSettingsActive} />
             </div>
             <div className='relative'>
-                <div className='cursor-pointer absolute w-max p-1 border-4 border-tertiary z-20'>
-                    <div onMouseDown={updateMarginTop} onMouseLeave={stopInterval} onMouseUp={stopInterval} className="w-6 h-6 absolute left-1/2 bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
-                    <div onMouseDown={updateMarginRight} onMouseLeave={stopInterval} onMouseUp={stopInterval} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
-                    <div onMouseDown={updateMarginBottom} onMouseLeave={stopInterval} onMouseUp={stopInterval} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-1/2 rounded-full bg-white border-[3px] border-tertiary"></div>
-                    <div onMouseDown={updateMarginLeft} onMouseLeave={stopInterval} onMouseUp={stopInterval} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
+                <div className={'cursor-pointer absolute w-max p-1 border-4 border-transparent z-20 ' + (isSelected ? "border-tertiary" : "")}>
+                    <div className={isSelected ? "" : "hidden"}>
+                        <div onMouseDown={updateMarginTop} onMouseUp={stopInterval} className="w-6 h-6 absolute left-1/2 bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
+                        <div onMouseDown={updateMarginRight} onMouseUp={stopInterval} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
+                        <div onMouseDown={updateMarginBottom} onMouseUp={stopInterval} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-1/2 rounded-full bg-white border-[3px] border-tertiary"></div>
+                        <div onMouseDown={updateMarginLeft} onMouseUp={stopInterval} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
+                    </div>
                     <div><ElementImport elementName={elementData.component} /></div>
                 </div>
             </div>
