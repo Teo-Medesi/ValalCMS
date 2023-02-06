@@ -175,8 +175,8 @@ const Anchor = ({ anchorData, component }) => {
         return (
             <ThisAnchorContext.Provider value={anchorData}>
                 <div className='relative'>
-                    <div style={{ width: "100vw", height: anchorData.height, justifyContent: justifyContent, alignItems: alignItems}} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
-                        {elementBasket.map((element, index) => <Element position={position} setJustifyContent={setJustifyContent} setAlignItems={setAlignItems} setPosition={setPosition} setIsAnchorSelected={setIsSelected} key={index} elementData={element}/>)}
+                    <div style={{ width: "100%", height: anchorData.height}} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
+                        {elementBasket.map((element, index) => <Element position={position} justifyContent={justifyContent} alignItems={alignItems} setJustifyContent={setJustifyContent} setAlignItems={setAlignItems} setPosition={setPosition} setIsAnchorSelected={setIsSelected} key={index} elementData={element}/>)}
 
                     </div>
                     <div className='pointer-events-auto' ref={anchorRef}>

@@ -8,7 +8,7 @@ import ElementImport from "../../../components/ElementImport"
 import { db } from '../../../firebase.config'
 
 
-const Element = ({ setIsAnchorSelected, elementData, setPosition, position, setAlignItems, setJustifyContent }) => {
+const Element = ({ setIsAnchorSelected, elementData, setPosition, position, setAlignItems, alignItems, setJustifyContent, justifyContent }) => {
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isSelected, setIsSelected] = useState(false);
 
@@ -103,12 +103,12 @@ const Element = ({ setIsAnchorSelected, elementData, setPosition, position, setA
 
     }
 
+    // WHY NO COLUMN WORK AAA
+
     return (
-        <div onMouseUp={stopInterval} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} onClick={() => setIsAnchorSelected(true)} className='pointer-events-auto z-30 flex' onAuxClick={() => setIsSettingsActive(true)} >
-            <div>
+        <div onMouseUp={stopInterval} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} onClick={() => setIsAnchorSelected(true)} className='pointer-events-auto z-30 flex w-full h-full' onAuxClick={() => setIsSettingsActive(true)} >
                 <ElementSettings setAlignItems={setAlignItems} setJustifyContent={setJustifyContent} setPosition={setPosition} updatePositionX={updateElementPositionX} updatePositionY={updateElementPositionY} id={elementData.id} className="absolute z-30" isActive={isSettingsActive} setIsActive={setIsSettingsActive} />
-            </div>
-            <div className='relative'>
+            <div style={{width: "100%", flexDirection:  'column', justifyContent: justifyContent, alignItems: alignItems}} className='relative flex'>
                 <div className={'cursor-pointer absolute w-max p-1 border-4 border-transparent z-20 ' + (isSelected ? "border-tertiary" : "")}>
                     <div className={isSelected ? "" : "hidden"}>
                         <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-1/2 bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
@@ -116,7 +116,7 @@ const Element = ({ setIsAnchorSelected, elementData, setPosition, position, setA
                         <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-1/2 rounded-full bg-white border-[3px] border-tertiary"></div>
                         <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                     </div>
-                    <div><ElementImport elementName={elementData.component} /></div>
+                    <ElementImport elementName={elementData.component} />
                 </div>
             </div>
         </div>
