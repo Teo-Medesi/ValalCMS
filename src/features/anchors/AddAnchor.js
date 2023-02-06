@@ -18,7 +18,6 @@ const AddAnchor = () => {
     }
   }
 
-
   useEffect(() => {
     if (isAnchorActive)
     {

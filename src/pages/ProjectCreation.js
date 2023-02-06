@@ -339,8 +339,8 @@ const Page = () => {
                 <div className='w-full h-full flex flex-col items-center p-24 text-black-900'>
                     <div className="flex flex-row justify-between items-center h-full w-full">
                         <h1 className='text-4xl text-black-900'>Do you want to use a pre-made template?</h1>
-                        <h1 onClick={() => setSelectedTemplate("")} className={'text-4xl rounded cursor-pointer p-4 hover:border-primary border-2 border-transparent text-black-900 ' + ((selectedTemplate === "") ? "border-primary" : "")}>Yes</h1>
-                        <h1 onClick={() => setSelectedTemplate("none")} className={'text-4xl cursor-pointer p-4 rounded hover:border-primary border-2 border-transparent text-black-900 '  + ((selectedTemplate === "none") ? "border-primary" : "")}>No, I'll start from scratch</h1>
+                        <h1 onClick={() => setSelectedTemplate("")} className={'text-4xl rounded cursor-pointer p-4 hover:border-primary border-2 text-black-900 ' + ((selectedTemplate === "") ? "border-primary" : "border-transparent")}>Yes</h1>
+                        <h1 onClick={() => setSelectedTemplate("none")} className={'text-4xl cursor-pointer p-4 rounded hover:border-primary border-2  text-black-900 '  + ((selectedTemplate === "none") ? "border-primary" : "border-transparent")}>No, I'll start from scratch</h1>
                     </div>
                     <div onClick={() => setPageNumber(current => current + 1)} className='text-3xl w-1/3 text-black-100 text-center bg-primary rounded-md p-4 cursor-pointer'>Next</div>
 

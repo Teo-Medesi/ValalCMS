@@ -1,49 +1,75 @@
+import { doc, updateDoc } from 'firebase/firestore'
 import React, { useState } from 'react'
 import { useRef } from 'react'
 import { useEffect } from 'react'
 import Draggable from 'react-draggable'
 import CloseIcon from "../../../assets/svgs/closeIcon.svg"
 import ElementImport from "../../../components/ElementImport"
+import { db } from '../../../firebase.config'
 
 
-const Element = ({ setIsAnchorSelected, elementData }) => {
+const Element = ({ setIsAnchorSelected, elementData, setPosition, position, setAlignItems, setJustifyContent }) => {
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isSelected, setIsSelected] = useState(false);
-    
-    const [marginTop, setMarginTop] = useState(5)
-    const [marginRight, setMarginRight] = useState(5)
-    const [marginBottom, setMarginBottom] = useState(5)
-    const [marginLeft, setMarginLeft] = useState(5)
+
+    const [marginTop, setMarginTop] = useState(elementData.marginTop)
+    const [marginLeft, setMarginLeft] = useState(elementData.marginLeft)
+
     const [intervalId, setIntervalId] = useState("");
+    const [marginToUpdate, setMarginToUpdate] = useState("");
 
     const elementRef = useRef(null);
 
-    const updateMarginTop = () => {
+    const updateMarginTop = async () => {
         setIntervalId(setInterval(() => {
             setMarginTop(current => current + 0.2);
-            console.log(marginTop)
-        }, 20));
+            setMarginToUpdate("top");
+        }, 20))
     }
 
-    const updateMarginRight = () => {
+    useEffect(() => {
+        if (position != null && position === "relative")
+        {
+            setMarginTop(0);
+            setMarginLeft(0);
+        }
+    }, [position])
+
+    const updateMarginRight = async () => {
         setIntervalId(setInterval(() => {
             setMarginLeft(current => current - 0.2)
-            console.log(marginRight)
+            setMarginToUpdate("left");
         }, 20));
     }
 
-    const updateMarginBottom = () => {
+    const updateMarginBottom = async () => {
         setIntervalId(setInterval(() => {
             if (marginTop >= 0) setMarginTop(current => current - 0.2)
-            console.log(marginBottom)
+            setMarginToUpdate("top");
         }, 20));
     }
-    
-    const updateMarginLeft = () => {
+
+    const updateMarginLeft = async () => {
         setIntervalId(setInterval(() => {
             setMarginLeft(current => current + 0.2)
-            console.log(marginLeft)
+            setMarginToUpdate("left");
         }, 20));
+    }
+
+    const updateMargin = async (direction) => {
+        const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
+        switch (direction) {
+            case "top":
+                await updateDoc(elementRef, { marginTop: marginTop });
+                break;
+
+            case "left":
+                await updateDoc(elementRef, { marginLeft: marginLeft });
+                break;
+
+            default:
+                break;
+        }
     }
 
     useEffect(() => {
@@ -52,6 +78,7 @@ const Element = ({ setIsAnchorSelected, elementData }) => {
     })
 
     const stopInterval = () => {
+        updateMargin(marginToUpdate)
         clearInterval(intervalId);
         setIntervalId(null);
     }
@@ -73,21 +100,21 @@ const Element = ({ setIsAnchorSelected, elementData }) => {
         else {
             setIsSelected(true)
         }
-        
+
     }
 
     return (
-        <div ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} onClick={() => setIsAnchorSelected(true)} className='pointer-events-auto z-30 flex' onAuxClick={() => setIsSettingsActive(true)} >
+        <div onMouseUp={stopInterval} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} onClick={() => setIsAnchorSelected(true)} className='pointer-events-auto z-30 flex' onAuxClick={() => setIsSettingsActive(true)} >
             <div>
-                <ElementSettings updatePositionX={updateElementPositionX} updatePositionY={updateElementPositionY} id={elementData.id} className="absolute z-30" isActive={isSettingsActive} setIsActive={setIsSettingsActive} />
+                <ElementSettings setAlignItems={setAlignItems} setJustifyContent={setJustifyContent} setPosition={setPosition} updatePositionX={updateElementPositionX} updatePositionY={updateElementPositionY} id={elementData.id} className="absolute z-30" isActive={isSettingsActive} setIsActive={setIsSettingsActive} />
             </div>
             <div className='relative'>
                 <div className={'cursor-pointer absolute w-max p-1 border-4 border-transparent z-20 ' + (isSelected ? "border-tertiary" : "")}>
                     <div className={isSelected ? "" : "hidden"}>
-                        <div onMouseDown={updateMarginTop} onMouseUp={stopInterval} className="w-6 h-6 absolute left-1/2 bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
-                        <div onMouseDown={updateMarginRight} onMouseUp={stopInterval} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
-                        <div onMouseDown={updateMarginBottom} onMouseUp={stopInterval} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-1/2 rounded-full bg-white border-[3px] border-tertiary"></div>
-                        <div onMouseDown={updateMarginLeft} onMouseUp={stopInterval} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
+                        <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-1/2 bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
+                        <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
+                        <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-1/2 rounded-full bg-white border-[3px] border-tertiary"></div>
+                        <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                     </div>
                     <div><ElementImport elementName={elementData.component} /></div>
                 </div>
@@ -96,7 +123,7 @@ const Element = ({ setIsAnchorSelected, elementData }) => {
     )
 }
 
-const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, updatePositionY, id }) => {
+const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, updatePositionY, setPosition, id, setAlignItems, setJustifyContent }) => {
     const [isDraggable, setIsDraggable] = useState(false);
 
     const handleUpdateX = (newX) => {
@@ -120,9 +147,9 @@ const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, up
                         <div className="basis-1/5 p-4 border-b flex-col flex gap-2 border-black-600">
                             <h1 className=" text-black-900">Align horizontally</h1>
                             <div className="flex flex-row w-full justify-between items-center h-full">
-                                <div onClick={() => handleUpdateX(25)} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
-                                <div onClick={() => handleUpdateX(50)} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>C</div>
-                                <div onClick={() => handleUpdateX(75)} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
+                                <div onClick={() => {setJustifyContent("start"); setPosition("relative")}} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
+                                <div onClick={() => {setJustifyContent("center"); setPosition("relative")}} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>C</div>
+                                <div onClick={() => {setJustifyContent("end"); setPosition("relative")}} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
                             </div>
 
                         </div>
@@ -130,9 +157,9 @@ const ElementSettings = ({ isActive, setIsActive, className, updatePositionX, up
                         <div className="basis-1/5 p-4 border-b flex flex-col gap-2 border-black-600">
                             <h1 className=" text-black-900">Align vertically</h1>
                             <div className="flex flex-row w-full justify-between items-center h-full">
-                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
-                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>C</div>
-                                <div className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
+                                <div onClick={() => {setAlignItems("start"); setPosition("relative")}}  className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>S</div>
+                                <div onClick={() => {setAlignItems("center"); setPosition("relative")}} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>C</div>
+                                <div onClick={() => {setAlignItems("end"); setPosition("relative")}} className='rounded px-4 py-2 cursor-pointer hover:bg-black-700 bg-black-600'>E</div>
                             </div>
                         </div>
                     </div>
