@@ -1,23 +1,24 @@
-import React,{useEffect, useState} from 'react'
+import React,{useContext, useEffect, useState} from 'react'
 import { useRef } from 'react';
 import { onlyText } from 'react-children-utilities';
 import TextSettings from './TextSettings';
 import { db } from '../../firebase.config';
 import { updateDoc, doc } from 'firebase/firestore';
+import { ThisElementContext } from '../anchors/elements/Element';
 
-const TextBox = ({children, className, anchorData, index, onChange, properties}) => {
-    // the idea is for TextBox to just be a wrapper element that returns children if edit mode is off
-    // if edit mode is on
-
-    const {id, font, fontSize, color} = properties; 
+const TextBox = ({children, className}) => {
+ 
+    const elementData = useContext(ThisElementContext);
+    
     const elementRef = useRef(null);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
 
-    // so each textbox component can have for now up to 3 properties which we can we ask to be passed down in a map 
-    // text color, font size and font
-
     const [isEditMode, setIsEditMode] = useState(false);
+
     const [text, setText] = useState(onlyText(children));
+    const [font, setFont] = useState("");
+    const [fontSize, setFontSize] = useState("");
+    const [color, setColor] = useState("");
 
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
@@ -38,11 +39,12 @@ const TextBox = ({children, className, anchorData, index, onChange, properties})
     }, [isEditMode]);
 
     useEffect(() => {
-        if (anchorData.properties.textBoxes[index].text != null)
-        {
-            setText(anchorData.properties.textBoxes[index].text);
+        if (elementData.properties.text != null)
+        {    
+            setText(elementData.properties.text);
         }
     }, [])
+
 
     const handleEdit = () => {
         updateText();
@@ -58,24 +60,17 @@ const TextBox = ({children, className, anchorData, index, onChange, properties})
 
     const handleDoubleClick = () => {
         setIsEditMode(current => !current);
-        if (onChange != null)
-        {
-            onChange();
-        }
     }
 
-    const updateText = () => {
-        let textBoxesCopy = anchorData.properties.textBoxes;
-        textBoxesCopy[index].text = text;      
-
-        const anchorRef = doc(db, anchorData.path);
-        updateDoc(anchorRef, { "properties.textBoxes": textBoxesCopy });
+    const updateText = async () => {
+        const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
+        updateDoc(elementRef, {"properties.text": text})
     }
 
     if (isEditMode) {
         return (
             <>
-                <TextSettings anchorData={anchorData} index={index} isActive={isSettingsActive} setIsActive={setIsSettingsActive} className="absolute z-10"/>
+                {/* <TextSettings isActive={isSettingsActive} setIsActive={setIsSettingsActive} className="absolute z-10"/> */}
                 <div style={{fontSize: fontSize, fontFamily: font, color: color}} className={className}>
                     <textarea style={{width: width + 20, height: height + 20}} onKeyDown={handleKeyDown} autoFocus defaultValue={text} onChange={event => setText(event.target.value)} className='border-gray-500 rounded-md outline-none p-2 overflow-hidden resize-none border bg-transparent h-full' type="text"/>
                 </div>
@@ -87,15 +82,6 @@ const TextBox = ({children, className, anchorData, index, onChange, properties})
                 {text}
             </div>
         )
-    }
-}
-
-TextBox.defaultProps = {
-    properties: {
-        id: "",
-        font: "",
-        fontSize: "",
-        color: ""
     }
 }
 
