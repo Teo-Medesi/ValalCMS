@@ -551,6 +551,9 @@ video {
 .z-20 {
   z-index: 20;
 }
+.z-40 {
+  z-index: 40;
+}
 .z-10 {
   z-index: 10;
 }
@@ -664,6 +667,9 @@ video {
 }
 .h-20 {
   height: 5rem;
+}
+.h-max {
+  height: max-content;
 }
 .h-\[90vh\] {
   height: 90vh;
@@ -1177,6 +1183,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
+.bg-error {
+  --tw-bg-opacity: 1;
+  background-color: rgb(205 41 29 / var(--tw-bg-opacity));
+}
 .bg-\[rgb\(0\2c 0\2c 0\2c 0\.1\)\] {
   background-color: rgb(0,0,0,0.1);
 }
@@ -1330,6 +1340,10 @@ video {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
 .py-12 {
   padding-top: 3rem;
   padding-bottom: 3rem;
@@ -1337,10 +1351,6 @@ video {
 .py-5 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
-}
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
 }
 .px-24 {
   padding-left: 6rem;
@@ -1700,6 +1710,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(176 178 182 / var(--tw-bg-opacity));
 }
+.hover\:bg-black-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(123 125 128 / var(--tw-bg-opacity));
+}
 .hover\:bg-gray-300:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
@@ -1707,10 +1721,6 @@ video {
 .hover\:bg-gray-900:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity));
-}
-.hover\:bg-black-700:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(123 125 128 / var(--tw-bg-opacity));
 }
 .hover\:shadow-md:hover {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -1724,6 +1734,10 @@ video {
 }
 .hover\:brightness-75:hover {
   --tw-brightness: brightness(.75);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.hover\:brightness-90:hover {
+  --tw-brightness: brightness(.9);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 @media (min-width: 640px) {

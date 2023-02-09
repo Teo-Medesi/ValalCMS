@@ -1,30 +1,33 @@
 import React, { useContext, useEffect, useRef, createContext, useState } from 'react'
-import CloseIcon from "../../assets/svgs/closeIcon.svg"
 import { ResizableBox } from 'react-resizable';
-import GearIcon from "../../assets/svgs/gearIcon.svg"
 import { useDrop } from 'react-dnd';
 import { ChromePicker } from 'react-color';
-import Draggable from 'react-draggable';
 import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { AnchorContext } from '../../pages/Home';
 import Element from './elements/Element';
+import PositionSettings from "./PositionSettings"
+import Draggable from 'react-draggable';
 import useWindowDimensions from './hooks/useWindowDimensions';
+import CloseIcon from "../../assets/svgs/closeIcon.svg"
+import GearIcon from "../../assets/svgs/gearIcon.svg"
 
 export const ThisAnchorContext = createContext();
+export const ElementContext = createContext();
 
 const Anchor = ({ anchorData, component }) => {
 
-    const [isSelected, setIsSelected] = useState(false);
+    const [isAnchorSelected, setIsAnchorSelected] = useState(false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isAnchorSettingsActive, setIsAnchorSettingsActive] = useState(false);
     const [isElementSettingsActive, setIsElementSettingsActive] = useState(false);
 
     const { windowWidth, windowHeight } = useWindowDimensions();
 
+    const [flexDirection, setFlexDirection] = useState("row");
     const [justifyContent, setJustifyContent] = useState("");
     const [alignItems, setAlignItems] = useState("");
-    const [position, setPosition] = useState("absolute");    
+    const [position, setPosition] = useState("relative");
 
     const [isTempPositionActive, setIsTempPositionActive] = useState(false);
     const [tempPosition, setTempPosition] = useState({});
@@ -34,6 +37,7 @@ const Anchor = ({ anchorData, component }) => {
 
     const elementRef = useRef(null);
     const anchorRef = useRef(null);
+    const positionSettingsRef = useRef(null);
 
     const [size, setSize] = useState({});
     const [backgroundColor, setBackgroundColor] = useState(anchorData.properties.backgroundColor);
@@ -48,7 +52,7 @@ const Anchor = ({ anchorData, component }) => {
         },
         collect: (monitor) => ({ isOverElement: monitor.isOver() })
     })
-    
+
     useEffect(() => {
         if (elementRef.current != null) {
             const anchorRef = doc(db, anchorData.path);
@@ -63,10 +67,10 @@ const Anchor = ({ anchorData, component }) => {
                 setSize({ width: anchorData.width, height: anchorData.height })
             }
 
-            
+
         }
     }, [elementRef.current])
-    
+
     const fetchElements = async () => {
         const elementsRef = collection(db, `${anchorData.path}/elements`);
         const elementsSnap = await getDocs(elementsRef);
@@ -79,7 +83,7 @@ const Anchor = ({ anchorData, component }) => {
     const addElement = component => {
         if (component.componentName !== "" && component.properties != null) {
             const elementsRef = collection(db, `${anchorData.path}/elements`);
-            addDoc(elementsRef, { component: component.componentName, properties: component.properties, path: `${anchorData.path}/elements`}).then(() => fetchElements());
+            addDoc(elementsRef, { component: component.componentName, properties: component.properties, path: `${anchorData.path}/elements` }).then(() => fetchElements());
         }
     }
 
@@ -106,7 +110,7 @@ const Anchor = ({ anchorData, component }) => {
             fetchAnchors()
         });
     }
-    
+
     const sortAnchorsBeforeDelete = async () => {
         // [1, 2, 3, 4, 5] deleted [2] => [1, 3, 4, 5] => [1, 2, 3, 4]
         const anchorsRef = query(collection(db, anchorsPath), orderBy("ID"));
@@ -125,18 +129,18 @@ const Anchor = ({ anchorData, component }) => {
         event.preventDefault();
         setIsSettingsActive(true);
     }
-    
+
     const handleClick = event => {
-        if (anchorRef.current != null && !anchorRef.current.contains(event.target)) {
-            setIsSelected(false);
+        if (anchorRef.current != null && !anchorRef.current.contains(event.target) && !positionSettingsRef.current.contains(event.target)) {
+            setIsAnchorSelected(false);
             setIsSettingsActive(false);
         }
         else {
-            setIsSelected(true)
+            setIsAnchorSelected(true)
         }
-        
+
     }
-    
+
     const handleMouseMovement = event => {
         if (!isSettingsActive) {
             setSettingsPosition({
@@ -154,7 +158,7 @@ const Anchor = ({ anchorData, component }) => {
         const anchorRef = doc(db, anchorData.path);
         updateDoc(anchorRef, { width: size.width, height: size.height }).then(() => fetchAnchors());
     }
-    
+
     const handleSettingsClick = event => {
         setIsAnchorSettingsActive(true);
         setIsSettingsActive(false);
@@ -170,17 +174,19 @@ const Anchor = ({ anchorData, component }) => {
         The problem I'm thinking of right now is interactability with the base section. If we have a wrapper div directly above our base section, how will
         we interact with it?
     */
-   
-   if (component != null || component !== 0) {
+
+    if (component != null || component !== 0) {
         return (
             <ThisAnchorContext.Provider value={anchorData}>
                 <div className='relative'>
-                    <div style={{ width: "100%", height: anchorData.height}} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
-                        {elementBasket.map((element, index) => <Element position={position} justifyContent={justifyContent} alignItems={alignItems} setJustifyContent={setJustifyContent} setAlignItems={setAlignItems} setPosition={setPosition} setIsAnchorSelected={setIsSelected} key={index} elementData={element}/>)}
-
-                    </div>
+                    <ElementContext.Provider value={{ justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
+                        <div style={{ width: "100%", height: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
+                            {elementBasket.map((element, index) => <div onAuxClick={() => setIsElementSettingsActive(true)}><Element elementData={element} key={index} /></div>)}
+                        </div>
+                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>
+                    </ElementContext.Provider>
                     <div className='pointer-events-auto' ref={anchorRef}>
-                        <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
+                        <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isAnchorSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
                             <div style={{ transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)` }} className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
                                 <div onClick={() => deleteAnchor()} className='text-black-900 p-3 hover:bg-black-600 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between'>
                                     <p>Remove</p>
@@ -193,7 +199,7 @@ const Anchor = ({ anchorData, component }) => {
                             </div>
 
                             <AnchorSettings className="absolute z-10" background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
-                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
+                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isAnchorSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
                                 <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
                             </ResizableBox>
                         </div>
