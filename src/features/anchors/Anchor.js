@@ -11,6 +11,7 @@ import Draggable from 'react-draggable';
 import useWindowDimensions from './hooks/useWindowDimensions';
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
 import GearIcon from "../../assets/svgs/gearIcon.svg"
+import PositionIcon from "../../assets/svgs/positionIcon.svg"
 
 export const ThisAnchorContext = createContext();
 export const ElementContext = createContext();
@@ -70,6 +71,16 @@ const Anchor = ({ anchorData, component }) => {
 
         }
     }, [elementRef.current])
+
+    useEffect(() => {
+        if (anchorData.properties.position != null)
+        {
+            setPosition(anchorData.properties.position.position);
+            setJustifyContent(anchorData.properties.position.justifyContent);
+            setAlignItems(anchorData.properties.position.alignItems);
+            setFlexDirection(anchorData.properties.position.flexDirection);
+        }
+    }, [anchorData.properties])    
 
     const fetchElements = async () => {
         const elementsRef = collection(db, `${anchorData.path}/elements`);
@@ -132,6 +143,7 @@ const Anchor = ({ anchorData, component }) => {
 
     const handleClick = event => {
         if (anchorRef.current != null && !anchorRef.current.contains(event.target) && !positionSettingsRef.current.contains(event.target)) {
+            console.log(elementRef.current.offsetTop)
             setIsAnchorSelected(false);
             setIsSettingsActive(false);
         }
@@ -187,18 +199,22 @@ const Anchor = ({ anchorData, component }) => {
                     </ElementContext.Provider>
                     <div className='pointer-events-auto' ref={anchorRef}>
                         <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isAnchorSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
-                            <div style={{ transform: `translate(${settingsPosition.x}px, ${settingsPosition.y}px)` }} className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-10 ' + (isSettingsActive ? "" : "hidden")}>
+                            <div style={{left: settingsPosition.x, top: "20px"}} className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-40 ' + (isSettingsActive ? "" : "hidden")}>
                                 <div onClick={() => deleteAnchor()} className='text-black-900 p-3 hover:bg-black-600 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between'>
                                     <p>Remove</p>
                                     <img src={CloseIcon} className="w-7 h-7" />
                                 </div>
-                                <div onClick={handleSettingsClick} className='text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between'>
+                                <div onClick={handleSettingsClick} className='text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md border-b border-b-black-700 flex flex-row items-center justify-between'>
                                     <p>Settings</p>
                                     <img src={GearIcon} className="w-6 h-6" />
                                 </div>
+                                <div onClick={() => {setIsElementSettingsActive(true); setIsSettingsActive(false)}} className='text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between'>
+                                    <p>Position</p>
+                                    <img src={PositionIcon} className="w-6 h-6" />
+                                </div>
                             </div>
 
-                            <AnchorSettings className="absolute z-10" background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
+                            <AnchorSettings className="absolute z-40" background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
                             <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isAnchorSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
                                 <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
                             </ResizableBox>

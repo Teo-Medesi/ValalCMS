@@ -45,17 +45,23 @@ const TextSettings = ({ isActive, setIsActive, className, anchorData, index }) =
         let textBoxesCopy = anchorData.properties.textBoxes;
         textBoxesCopy[index].color = value;
         console.log(textBoxesCopy[index]);
+
+        const anchorRef = doc(db, anchorData.path);
+        updateDoc(anchorRef, { "properties.textBoxes": textBoxesCopy });
     }
 
     const updateFont = event => {
         let textBoxesCopy = anchorData.properties.textBoxes;
         textBoxesCopy[index].font = event.target.value;
         console.log(textBoxesCopy[index]);
+
+        const anchorRef = doc(db, anchorData.path);
+        updateDoc(anchorRef, { "properties.textBoxes": textBoxesCopy });
     }
 
     return (
         <div className={className + (isActive ? "" : " hidden")}>
-            <Draggable disabled={isDraggable ? false : true}>
+            <Draggable defaultPosition={{x: 200, y: 200}} disabled={isDraggable ? false : true}>
                 <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-primary border-t-[12px] rounded-xl'>
                     <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
                         <h1 className=' font-bold text-black-900'>Text Settings</h1>
@@ -79,7 +85,7 @@ const TextSettings = ({ isActive, setIsActive, className, anchorData, index }) =
                             <div className="flex flex-col justify-center h-full">
                                 <input onChange={updateFontSize} type="text" defaultValue={fontSize} placeholder={fontSize} list="fontSizes" className='py-1 px-3 min-w-full text-black-900 outline-none border border-black-600 rounded-md' />
                                 <datalist id="fontSizes">
-                                    {[...Array(73).keys()].map(index => <option value={((index + 4) / 2) + "px"}>{((index + 4) / 2) + "px"}</option>)}
+                                    {[...Array(73).keys()].map(index => <option key={index} value={((index + 4) / 2) + "px"}>{((index + 4) / 2) + "px"}</option>)}
                                 </datalist>
                             </div>
                         </div>
