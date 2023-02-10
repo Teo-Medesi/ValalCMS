@@ -1,4 +1,4 @@
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, getDocs, updateDoc, collection } from 'firebase/firestore'
 import React, { useContext, useState, createContext } from 'react'
 import { useRef } from 'react'
 import { useEffect } from 'react'
@@ -23,6 +23,8 @@ const Element = ({ elementData }) => {
     const [marginToUpdate, setMarginToUpdate] = useState("");
 
     const [isShiftPressed, setIsShiftPressed] = useState(false);
+
+    const [subElements, setSubElements] = useState([]);
 
     const elementRef = useRef(null);
 
@@ -87,6 +89,23 @@ const Element = ({ elementData }) => {
     // In my case I'm just adding the event
 
     
+    const fetchSubElements = async () => {
+        if (elementData.component === "Multiple")
+        {
+            const subElementsRef = collection(db, `${elementData.path}/${elementData.id}/subElements`);
+            const subElementsSnap = await getDocs(subElementsRef);
+            setSubElements(subElementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }));
+            console.log(subElementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }))
+        }
+    }
+
+    useEffect(() => {
+        if (elementData != null)
+        {
+            fetchSubElements();
+        }
+    }, [])
+    
     useEffect(() => {
         document.addEventListener("mousedown", handleClick, true)
         document.addEventListener("mouseup", stopInterval, true)
@@ -133,10 +152,10 @@ const Element = ({ elementData }) => {
 
     const selectElement = () => {
         setIsSelected(true);
-        if (!selectedElements.includes(elementData.id)) {
+        if (!selectedElements.includes(elementData)) {
             if (selectedElements.length === 0 || isShiftPressed)
             {
-                setSelectedElements(current => [...current, elementData.id]);
+                setSelectedElements(current => [...current, elementData]);
             }
         }
     }
@@ -146,21 +165,29 @@ const Element = ({ elementData }) => {
     return (
         <ThisElementContext.Provider value={elementData}>
             <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + (isSelected ? "border-tertiary " : " ") + (position)}>
-                <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "" : "hidden"}>
+                <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "hidden" : "hidden"}>
                     <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-[45%] bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <div style={{userSelect: (isShiftPressed ? "none" : "auto")}}><ElementImport elementName={elementData.component} /></div>
+                <div style={{userSelect: (isShiftPressed ? "none" : "auto")}} className={"flex flex-row"}><ImportElement subElements={subElements} elementData={elementData}/></div>
             </div>
         </ThisElementContext.Provider>
     )
 }
 
+const ImportElement = ({elementData, subElements}) => {
+    if (elementData.component === "Multiple" && subElements != [])
+    {
+        return subElements.map(element => <Element elementData={element} />)
+    }
+    else {
+        return <ElementImport elementName={elementData.component}/>
+    }
+}
+
 export default Element
-
-
 
 /*
 

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, createContext, useState } from 'r
 import { ResizableBox } from 'react-resizable';
 import { useDrop } from 'react-dnd';
 import { ChromePicker } from 'react-color';
-import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { AnchorContext } from '../../pages/Home';
 import Element from './elements/Element';
@@ -12,6 +12,8 @@ import useWindowDimensions from './hooks/useWindowDimensions';
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
 import GearIcon from "../../assets/svgs/gearIcon.svg"
 import PositionIcon from "../../assets/svgs/positionIcon.svg"
+import GroupIcon from "../../assets/svgs/groupIcon.svg"
+import UngroupIcon from "../../assets/svgs/ungroupIcon.svg"
 
 export const ThisAnchorContext = createContext();
 export const ElementContext = createContext();
@@ -110,14 +112,29 @@ const Anchor = ({ anchorData, component }) => {
     }
 
     const groupElements = () => {
+        setIsSettingsActive(false);
         if (selectedElements.length > 1)
         {
-            console.log("grouppiiing")
+            // first we need to delete the elements we are grouping
+            // now we need to create a new element, it's component will be equal to "multiple" 
+            // displaying the new group of elements as one will be done in Element.js
+            // element -> subElements -> the IDs of our selected elements
+
+            
+            const elementsRef = collection(db, `${anchorData.path}/elements`);
+            addDoc(elementsRef, {component: "Multiple", properties: {}, path: `${anchorData.path}/elements`}).then(docRef => {
+
+                selectedElements.forEach(element => {
+                    deleteDoc(doc(db, `${element.path}/${element.id}`)).then(() => fetchElements());
+                    setDoc(doc(db, `${anchorData.path}/elements/${docRef.id}/subElements/${element.id}`), {component: element.component, properties: element.properties, id: element.id, path: `${anchorData.path}/elements/${docRef.id}/subElements`})
+                });
+                
+            }).then(() => fetchElements());
         }
     }
 
     useEffect(() => {
-        document.addEventListener("click", handleClick, true)
+        document.addEventListener("mousedown", handleClick, true)
     }, [])
 
     useEffect(() => {
@@ -227,15 +244,15 @@ const Anchor = ({ anchorData, component }) => {
                     <div className='pointer-events-auto' ref={anchorRef}>
                         <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isAnchorSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
                             
-                            <div style={{ left: settingsPosition.x, top: "20px" }} className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-40 ' + (isSettingsActive ? "" : "hidden")}>
+                            <div style={{ left: settingsPosition.x, top: "20px" }} className={'bg-black-100 w-40 flex border-t-4 flex-col rounded-md absolute z-40 ' + (isSettingsActive ? " " : "hidden ") + ((selectedElements.length > 1) ? "border-t-valid" : "border-t-primary")}>
                                 
-                                <div onClick={handleSettingsClick} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "" : "hidden")}>
+                                <div onClick={groupElements} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md border-b border-b-valid flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "" : "hidden")}>
                                     <p>Group</p>
-                                    <img src={GearIcon} className="w-6 h-6" />
+                                    <img src={GroupIcon} className="w-6 h-6" />
                                 </div>
-                                <div onClick={handleSettingsClick} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "" : "hidden")}>
+                                <div className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "" : "hidden")}>
                                     <p>Ungroup</p>
-                                    <img src={GearIcon} className="w-6 h-6" />
+                                    <img src={UngroupIcon} className="w-5 h-5" />
                                 </div>
                                 <div onClick={() => deleteAnchor()} className={'text-black-900 p-3 hover:bg-black-600 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between ' + ((selectedElements.length > 1) ? "hidden" : "")}>
                                     <p>Remove</p>

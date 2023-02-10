@@ -55,7 +55,7 @@ module.exports = {
         100: "#D9D9D9"
       },
       error: "#CD291D",
-      valid: "#00943D",
+      valid: "#005E41",
       background: "#F5F5F5"
     }),
     columns: {
