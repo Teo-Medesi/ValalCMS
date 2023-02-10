@@ -10,16 +10,19 @@ import { ElementContext } from '../Anchor'
 export const ThisElementContext = createContext();
 
 const Element = ({ elementData }) => {
-    const { position, setIsAnchorSelected } = useContext(ElementContext);
+    const { position, selectedElements, setSelectedElements } = useContext(ElementContext);
 
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isSelected, setIsSelected] = useState(false);
+    const [isMultipleSelected, setIsMultipleSelected] = useState(false);
 
     const [marginTop, setMarginTop] = useState(elementData.marginTop)
     const [marginLeft, setMarginLeft] = useState(elementData.marginLeft)
 
     const [intervalId, setIntervalId] = useState("");
     const [marginToUpdate, setMarginToUpdate] = useState("");
+
+    const [isShiftPressed, setIsShiftPressed] = useState(false);
 
     const elementRef = useRef(null);
 
@@ -36,6 +39,10 @@ const Element = ({ elementData }) => {
             setMarginLeft(0);
         }
     }, [position])
+
+    useEffect(() => {
+        (selectedElements.length > 1) ? setIsMultipleSelected(true) : setIsMultipleSelected(false);
+    }, [selectedElements])
 
     const updateMarginRight = async () => {
         setIntervalId(setInterval(() => {
@@ -74,24 +81,63 @@ const Element = ({ elementData }) => {
         }
     }
 
+    // Jesus Christ if only somebody told me sooner: UPDATED STATE CANNOT BE ACCESSED INSIDE OF AN EVENT HANDLER CALLBACK FUNCTION! 
+    // If the event listener is attached to the callback on the initial render, it will only have access to the initial value of state!!!
+    // https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559
+    // In my case I'm just adding the event
+
+    
     useEffect(() => {
         document.addEventListener("mousedown", handleClick, true)
         document.addEventListener("mouseup", stopInterval, true)
-    })
+        
+        document.addEventListener("keydown", handleKeyDown)
+        document.addEventListener("keyup", handleKeyUp)
+
+        return () => {
+            document.removeEventListener("mousedown", handleClick, true)
+            document.removeEventListener("mouseup", stopInterval, true)
+            
+            document.removeEventListener("keydown", handleKeyDown, true)
+            document.removeEventListener("keyup", handleKeyUp, true)
+        }
+    }, [isShiftPressed, selectedElements])
+
+    const handleKeyDown = event => {
+        if (event.repeat) return;
+        if (event.key === "Shift") {
+            setIsShiftPressed(true);
+        }
+    }
+
+    const handleKeyUp = event => {
+        setIsShiftPressed(false);
+        if (event.repeat) return;
+
+    }
 
     const stopInterval = () => {
-        updateMargin(marginToUpdate)
         clearInterval(intervalId);
         setIntervalId(null);
+
+        updateMargin(marginToUpdate)
     }
 
     const handleClick = event => {
-        setIsAnchorSelected(true);
         if (elementRef.current != null && !elementRef.current.contains(event.target)) {
-            setIsSelected(false);
+            if (!isShiftPressed && selectedElements.length <= 1) {
+                setIsSelected(false);
+            }
         }
-        else {
-            setIsSelected(true)
+    }
+
+    const selectElement = () => {
+        setIsSelected(true);
+        if (!selectedElements.includes(elementData.id)) {
+            if (selectedElements.length === 0 || isShiftPressed)
+            {
+                setSelectedElements(current => [...current, elementData.id]);
+            }
         }
     }
 
@@ -99,14 +145,14 @@ const Element = ({ elementData }) => {
 
     return (
         <ThisElementContext.Provider value={elementData}>
-            <div onAuxClick={() => setIsSettingsActive(true)} onClick={() => setIsAnchorSelected(true)} onMouseUp={stopInterval} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + (isSelected ? "border-tertiary " : " ") + (position)}>
-                <div className={isSelected ? "" : "hidden"}>
-                    <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-1/2 bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
+            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + (isSelected ? "border-tertiary " : " ") + (position)}>
+                <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "" : "hidden"}>
+                    <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-[45%] bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
-                    <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-1/2 rounded-full bg-white border-[3px] border-tertiary"></div>
+                    <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <ElementImport elementName={elementData.component} />
+                <div style={{userSelect: (isShiftPressed ? "none" : "auto")}}><ElementImport elementName={elementData.component} /></div>
             </div>
         </ThisElementContext.Provider>
     )
@@ -165,5 +211,16 @@ export default Element
         TEXT1           TEXT2 TEXT3 TEXT4           TEXT5
       (element1)        (   element2    )         (element3)
 
+      first of all we need to temporarily store the ID's of the elements that we want to group
+      they will be selected by holding shift
+
+      we need a selectedElements array in state, when we select an element, we'll add it to the array
+      ---> passing the array into our element
+
+      now we want to make a function that groups them
+
+
+
+      
 
 */
