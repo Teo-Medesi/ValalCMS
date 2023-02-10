@@ -34,13 +34,17 @@ const Anchor = ({ anchorData, component }) => {
     const [tempPosition, setTempPosition] = useState({});
     const [settingsPosition, setSettingsPosition] = useState({ x: 0, y: 0 })
 
-    const [padding, setPadding] = useState({ top: 0, right: 0, bottom: 0, left: 0 })
-
+    const [paddingX, setPaddingX] = useState(0);
+    const [paddingY, setPaddingY] = useState(0);
+    
     const [anchors, anchorsPath, fetchAnchors] = useContext(AnchorContext);
+
+    const [selectedElements, setSelectedElements] = useState([]);
 
     const elementRef = useRef(null);
     const anchorRef = useRef(null);
     const positionSettingsRef = useRef(null);
+    const elementBasketRef = useRef(null);
 
     const [size, setSize] = useState({});
     const [backgroundColor, setBackgroundColor] = useState(anchorData.properties.backgroundColor);
@@ -75,6 +79,12 @@ const Anchor = ({ anchorData, component }) => {
     }, [elementRef.current])
 
     useEffect(() => {
+        if (anchorData.properties.paddingX != null && anchorData.properties.paddingY != null)
+        {
+            setPaddingX(anchorData.properties.paddingX)
+            setPaddingY(anchorData.properties.paddingY)
+        }
+        
         if (anchorData.properties.position != null) {
             setPosition(anchorData.properties.position.position);
             setJustifyContent(anchorData.properties.position.justifyContent);
@@ -99,9 +109,16 @@ const Anchor = ({ anchorData, component }) => {
         }
     }
 
+    const groupElements = () => {
+        if (selectedElements.length > 1)
+        {
+            console.log("grouppiiing")
+        }
+    }
+
     useEffect(() => {
         document.addEventListener("click", handleClick, true)
-    })
+    }, [])
 
     useEffect(() => {
         if (backgroundColor != null) {
@@ -113,6 +130,10 @@ const Anchor = ({ anchorData, component }) => {
     useEffect(() => {
         fetchElements();
     }, []);
+
+    useEffect(() => {
+        console.log(selectedElements)
+    },[selectedElements])
 
 
     const deleteAnchor = async () => {
@@ -143,9 +164,12 @@ const Anchor = ({ anchorData, component }) => {
     }
 
     const handleClick = event => {
-        if (anchorRef.current != null && !anchorRef.current.contains(event.target) && !positionSettingsRef.current.contains(event.target)) {
+        if (event.repeat) return;
+        
+        if (anchorRef.current != null && !anchorRef.current.contains(event.target) && !positionSettingsRef.current.contains(event.target) && !elementBasketRef.current.contains(event.target)) {
             setIsAnchorSelected(false);
             setIsSettingsActive(false);
+            setSelectedElements([]);
         }
         else {
             setIsAnchorSelected(true)
@@ -190,31 +214,45 @@ const Anchor = ({ anchorData, component }) => {
     if (component != null || component !== 0) {
         return (
             <ThisAnchorContext.Provider value={anchorData}>
+                
                 <div className='relative'>
-                    <ElementContext.Provider value={{ justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
-                        <div style={{ width: "100%", paddingTop: padding.top + "px", paddingRight: padding.right + "px", paddingBottom: padding.bottom + "px", paddingLeft: padding.left + "px", height: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
+                    
+                    <ElementContext.Provider value={{selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
+                        <div ref={elementBasketRef} style={{ width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
                             {elementBasket.map((element, index) => <div onAuxClick={() => setIsElementSettingsActive(true)}><Element elementData={element} key={index} /></div>)}
                         </div>
-                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>
+                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>       
                     </ElementContext.Provider>
+                    
                     <div className='pointer-events-auto' ref={anchorRef}>
                         <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isAnchorSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
+                            
                             <div style={{ left: settingsPosition.x, top: "20px" }} className={'bg-black-100 w-40 flex border-t-primary border-t-4 flex-col rounded-md absolute z-40 ' + (isSettingsActive ? "" : "hidden")}>
-                                <div onClick={() => deleteAnchor()} className='text-black-900 p-3 hover:bg-black-600 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between'>
+                                
+                                <div onClick={handleSettingsClick} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "" : "hidden")}>
+                                    <p>Group</p>
+                                    <img src={GearIcon} className="w-6 h-6" />
+                                </div>
+                                <div onClick={handleSettingsClick} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "" : "hidden")}>
+                                    <p>Ungroup</p>
+                                    <img src={GearIcon} className="w-6 h-6" />
+                                </div>
+                                <div onClick={() => deleteAnchor()} className={'text-black-900 p-3 hover:bg-black-600 cursor-pointer items-center border-b border-b-black-700 flex flex-row justify-between ' + ((selectedElements.length > 1) ? "hidden" : "")}>
                                     <p>Remove</p>
                                     <img src={CloseIcon} className="w-7 h-7" />
                                 </div>
-                                <div onClick={handleSettingsClick} className='text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md border-b border-b-black-700 flex flex-row items-center justify-between'>
+                                <div onClick={handleSettingsClick} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md border-b border-b-black-700 flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "hidden" : "")}>
                                     <p>Settings</p>
                                     <img src={GearIcon} className="w-6 h-6" />
                                 </div>
-                                <div onClick={() => { setIsElementSettingsActive(true); setIsSettingsActive(false) }} className='text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between'>
+                                <div onClick={() => { setIsElementSettingsActive(true); setIsSettingsActive(false) }} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "hidden" : "")}>
                                     <p>Position</p>
                                     <img src={PositionIcon} className="w-6 h-6" />
                                 </div>
+                                
                             </div>
 
-                            <AnchorSettings className="absolute z-40" padding={padding} background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
+                            <AnchorSettings className="absolute z-40" paddingXProp={[paddingX, setPaddingX]} paddingYProp={[paddingY, setPaddingY]} background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
                             <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isAnchorSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
                                 <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
                             </ResizableBox>
@@ -227,26 +265,38 @@ const Anchor = ({ anchorData, component }) => {
     }
 }
 
-const AnchorSettings = ({ isActive, setIsActive, className, background, padding }) => {
+const AnchorSettings = ({ isActive, setIsActive, className, background, paddingXProp, paddingYProp }) => {
 
     const [isDraggable, setIsDraggable] = useState(false);
     const [isColorPickerActive, setIsColorPickerActive] = useState(false);
+
+    const anchorData = useContext(ThisAnchorContext);
+    
     // we are destructuring our background prop 
     const [backgroundColor, setBackgroundColor] = background;
+    const [paddingX, setPaddingX] = paddingXProp;
+    const [paddingY, setPaddingY] = paddingYProp
 
     const handleColorChange = event => {
         if (event.target.value.length === 7) {
             setBackgroundColor(event.target.value);
         }
-    }
+    } 
 
+    const handleClose = async () => {
+        setIsActive(false);
+
+        const anchorRef = doc(db, anchorData.path);
+        await updateDoc(anchorRef, {"properties.paddingX": paddingX, "properties.paddingY": paddingY});
+    }
+    
     return (
         <div className={className + (isActive ? "" : " hidden")}>
             <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
                 <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-primary border-t-[12px] rounded-xl'>
                     <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
                         <h1 className=' font-bold text-black-900'>Anchor Settings</h1>
-                        <img src={CloseIcon} onClick={() => setIsActive(false)} className="w-8 cursor-pointer h-8" />
+                        <img src={CloseIcon} onClick={handleClose} className="w-8 cursor-pointer h-8" />
                     </div>
 
                     <div onMouseDown={() => setIsDraggable(false)} className="flex flex-col h-full basis-[90%] w-full relative">
@@ -264,16 +314,23 @@ const AnchorSettings = ({ isActive, setIsActive, className, background, padding 
                         <div className="basis-1/5 p-4 gap-4 border-b flex flex-col  border-black-600">
                             <p className=' text-black-900'>Padding</p>
                             <div className="flex flex-col justify-between h-full">
-                                <div className='flex flex-row gap-12'>
-                                    <div className='basis-1/2 flex gap-2 flex-row justify-between'>
-                                        <p>left</p>
-                                        <input type="text" className='py-1 px-3 w-full text-black-900 outline-none border border-black-600 rounded-md' />
+                                <div className='flex flex-row justify-between'>
+                                    <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                        <p>x</p>
+                                        <div className='flex flex-row items-center gap-1'>
+                                            <button onClick={() => setPaddingX(current => current - 4)} className='text-xl bg-black-600 hover:bg-black-700 rounded p-1 px-3'>-</button>
+                                            <input onChange={event => setPaddingX(event.target.value)} value={paddingX} type="text" className='text-center p-1 w-full h-full text-black-900 outline-none border border-black-600 rounded' />
+                                            <button onClick={() => setPaddingX(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                                        </div>
                                     </div>
-                                    <div className='basis-1/2 flex gap-2 flex-row justify-between'>
-                                        <p>right</p>
-                                        <input type="text" className='py-1 px-3 w-full text-black-900 outline-none border border-black-600 rounded-md' />
+                                    <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                        <p>y</p>
+                                        <div className='flex flex-row items-center gap-1'>
+                                            <button onClick={() => setPaddingY(current => current - 4)} className='text-xl bg-black-600 rounded p-1 px-3 hover:bg-black-700'>-</button>
+                                            <input onChange={event => setPaddingY(event.target.value)} value={paddingY} type="text" className='text-center p-1 h-full w-full text-black-900 outline-none border border-black-600 rounded' />
+                                            <button onClick={() => setPaddingY(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                                        </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
