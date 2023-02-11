@@ -9,12 +9,14 @@ import Draggable from "react-draggable"
 import CloseIcon from "../../../assets/svgs/closeIcon.svg"
 import { ChromePicker } from 'react-color'
 import TextSettings from '../../editing/TextSettings'
+import { ThisAnchorContext } from '../Anchor'
 
 
 export const ThisElementContext = createContext();
 
 const Element = ({ elementData, isSubElement }) => {
     const { position, selectedElements, setSelectedElements } = useContext(ElementContext);
+    const anchorData = useContext(ThisAnchorContext);
 
     const [isGroup, setIsGroup] = useState(false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
@@ -28,6 +30,9 @@ const Element = ({ elementData, isSubElement }) => {
     const [paddingX, setPaddingX] = useState(0);
     const [paddingY, setPaddingY] = useState(0);
     const [borderRadius, setBorderRadius] = useState(0);
+
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
 
     const [font, setFont] = useState("");
     const [fontSize, setFontSize] = useState(16)
@@ -102,10 +107,9 @@ const Element = ({ elementData, isSubElement }) => {
     // https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559
     // In my case I'm just adding the event
 
-    
+
     const fetchSubElements = async () => {
-        if (elementData.component === "Multiple")
-        {
+        if (elementData.component === "Multiple") {
             const subElementsRef = collection(db, `${elementData.path}/${elementData.id}/subElements`);
             const subElementsSnap = await getDocs(subElementsRef);
             setSubElements(subElementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }));
@@ -114,10 +118,9 @@ const Element = ({ elementData, isSubElement }) => {
     }
 
     useEffect(() => {
-        if (elementData != null)
-        {
+        if (elementData != null) {
             fetchSubElements();
-            
+
             if (elementData.properties.background != null) setBackground(elementData.properties.background);
             if (elementData.properties.borderRadius != null) setBorderRadius(elementData.properties.borderRadius);
             if (elementData.properties.paddingX != null) setPaddingX(elementData.properties.paddingX);
@@ -126,21 +129,23 @@ const Element = ({ elementData, isSubElement }) => {
             if (elementData.properties.font != null) setFont(elementData.properties.font);
             if (elementData.properties.fontColor != null) setFontColor(elementData.properties.fontColor);
             if (elementData.properties.fontSize != null) setFontSize(elementData.properties.fontSize);
-            
+            if (elementData.properties.width != null) setWidth(elementData.properties.width);
+            if (elementData.properties.height != null) setHeight(elementData.properties.height);
+
         }
     }, [])
-    
+
     useEffect(() => {
         document.addEventListener("mousedown", handleClick, true)
         document.addEventListener("mouseup", stopInterval, true)
-        
+
         document.addEventListener("keydown", handleKeyDown)
         document.addEventListener("keyup", handleKeyUp)
 
         return () => {
             document.removeEventListener("mousedown", handleClick, true)
             document.removeEventListener("mouseup", stopInterval, true)
-            
+
             document.removeEventListener("keydown", handleKeyDown, true)
             document.removeEventListener("keyup", handleKeyUp, true)
         }
@@ -151,16 +156,14 @@ const Element = ({ elementData, isSubElement }) => {
         if (event.key === "Shift") {
             setIsShiftPressed(true);
         }
-        else if (event.key === "Enter")
-        {
-            if (elementRef.current != null && elementRef.current.contains(event.target))
-            {
+        else if (event.key === "Enter") {
+            if (elementRef.current != null && elementRef.current.contains(event.target)) {
                 setIsSelected(true);
             } else {
                 setIsSelected(false);
             }
         }
-        
+
     }
 
     const handleKeyUp = event => {
@@ -187,8 +190,7 @@ const Element = ({ elementData, isSubElement }) => {
     const selectElement = () => {
         setIsSelected(true);
         if (!selectedElements.includes(elementData)) {
-            if (selectedElements.length === 0 || isShiftPressed)
-            {
+            if (selectedElements.length === 0 || isShiftPressed) {
                 setSelectedElements(current => [...current, elementData]);
             }
         }
@@ -198,16 +200,16 @@ const Element = ({ elementData, isSubElement }) => {
 
     return (
         <ThisElementContext.Provider value={elementData}>
-            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 ' + ((isSelected && !isSubElement && isGroup) ? "border-valid " : (isSelected && !isSubElement) ? "border-tertiary " : "border-transparent ") + (position)}>
+            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-20 flex w-max h-max p-1 border-4 ' + ((isSelected && !isSubElement && isGroup) ? "border-valid " : (isSelected && !isSubElement) ? "border-tertiary " : "border-transparent ") + (position)}>
                 <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "hidden" : "hidden"}>
                     <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-[45%] bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <div style={{userSelect: (isShiftPressed ? "none" : "auto"), borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px"}} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData}/></div>
+                <div style={{ userSelect: (isShiftPressed ? "none" : "auto"), width: ((width != 0) ? width: "auto"), height: ((height != 0) ? width: "auto") , borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", maxHeight: anchorData.height }} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData} /></div>
             </div>
-            <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
+            <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} widthProp={[width, setWidth]} heightProp={[height, setHeight]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
         </ThisElementContext.Provider>
     )
 }
@@ -216,22 +218,21 @@ Element.defaultProps = {
     isSubElement: false
 }
 
-const ImportElement = ({elementData, subElements}) => {
-    if (elementData.component === "Multiple" && subElements != [])
-    {
+const ImportElement = ({ elementData, subElements }) => {
+    if (elementData.component === "Multiple" && subElements != []) {
         return subElements.map(element => <Element isSubElement={true} elementData={element} />)
     }
     else {
-        return <ElementImport elementName={elementData.component}/>
+        return <ElementImport elementName={elementData.component} />
     }
 }
 
 
-const ElementSettings = ({elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp, isGroup, font, fontSize, fontColor}) => {    
-    const {fetchElements} = useContext(ElementContext);
+const ElementSettings = ({ elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp, isGroup, font, fontSize, fontColor, widthProp, heightProp }) => {
+    const { fetchElements } = useContext(ElementContext);
 
     const [isTextSettingsActive, setIsTextSettingsActive] = useState(false);
-    
+
     const [isDraggable, setIsDraggable] = useState(false);
     const [isColorPickerActive, setIsColorPickerActive] = useState(false);
 
@@ -240,6 +241,8 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
     const [paddingX, setPaddingX] = paddingXProp;
     const [paddingY, setPaddingY] = paddingYProp;
     const [borderRadius, setBorderRadius] = borderRadiusProp;
+    const [width, setWidth] = widthProp;
+    const [height, setHeight] = heightProp;
 
     const handleColorChange = event => {
         if (event.target.value.length === 7) {
@@ -251,7 +254,7 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
         setIsActive(false);
 
         const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
-        await updateDoc(elementRef, {"properties.paddingX": paddingX, "properties.paddingY": paddingY, "properties.background": backgroundColor, "properties.borderRadius": borderRadius});
+        await updateDoc(elementRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY, "properties.background": backgroundColor, "properties.borderRadius": borderRadius, "properties.width": width, "properties.height": height });
     }
 
     const deleteElement = () => {
@@ -262,69 +265,78 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
 
     return (
         <>
-        <div className={className + (isActive ? "" : " hidden")}>
-            <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
-                <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-[12px] rounded-xl border-t-primary'>
-                    <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
-                        <h1 className=' font-bold text-black-900'>Element Settings</h1>
-                        <img src={CloseIcon} onClick={handleClose} className="w-8 cursor-pointer h-8" />
-                    </div>
-
-                    <div onMouseDown={() => setIsDraggable(false)} className="flex flex-col h-full basis-[90%] w-full relative">
-                        <ChromePicker color={backgroundColor} onChange={(color) => setBackgroundColor(color.hex)} className={'absolute right-40 z-20' + (isColorPickerActive ? "" : " hidden")} />
-                        <div className="basis-1/5 p-4 border-b flex-col flex  border-black-600">
-
-                            <h1 className=" text-black-900">Background Color</h1>
-                            <div className="flex flex-row w-full justify-between items-center h-full">
-                                <input type="text" defaultValue={(backgroundColor != "") ? backgroundColor : "transparent"} onChange={handleColorChange} className='py-1 text-black-800 px-3 w-[88%] outline-none border border-black-600 rounded-md' />
-                                <div onClick={() => setIsColorPickerActive(current => !current)} style={{ background: backgroundColor }} className={"w-7 h-7 hover:border-secondary border-2 cursor-pointer rounded-full " + ((backgroundColor === "transparent") ? "border-secondary" : "border-transparent")}></div>
-                            </div>
-
+            <div className={className + (isActive ? "" : " hidden")}>
+                <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
+                    <div className='w-80 h-[480px] z-20 shadow-xl flex-col shadow-black-900 bg-black-100 border-t-[12px] rounded-xl border-t-primary'>
+                        <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
+                            <h1 className=' font-bold text-black-900'>Element Settings</h1>
+                            <img src={CloseIcon} onClick={handleClose} className="w-8 cursor-pointer h-8" />
                         </div>
 
-                        <div className="basis-1/5 p-4 gap-4 border-b flex flex-col  border-black-600">
-                            <p className=' text-black-900'>Padding</p>
-                            <div className="flex flex-col justify-between h-full">
-                                <div className='flex flex-row justify-between'>
-                                    <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
-                                        <p>x</p>
-                                        <div className='flex flex-row items-center gap-1'>
-                                            <button onClick={() => setPaddingX(current => current - 4)} className='text-xl bg-black-600 hover:bg-black-700 rounded p-1 px-3'>-</button>
-                                            <input onChange={event => setPaddingX(event.target.value)} value={paddingX} type="text" className='text-center p-1 w-full h-full text-black-900 outline-none border border-black-600 rounded' />
-                                            <button onClick={() => setPaddingX(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                        <div onMouseDown={() => setIsDraggable(false)} className="flex flex-col h-full basis-[90%] w-full relative">
+                            <ChromePicker color={backgroundColor} onChange={(color) => setBackgroundColor(color.hex)} className={'absolute right-40 z-20' + (isColorPickerActive ? "" : " hidden")} />
+                            <div className="basis-1/5 p-4 border-b flex-col flex  border-black-600">
+
+                                <h1 className=" text-black-900">Background Color</h1>
+                                <div className="flex flex-row w-full justify-between items-center h-full">
+                                    <input type="text" defaultValue={(backgroundColor != "") ? backgroundColor : "transparent"} onChange={handleColorChange} className='py-1 text-black-800 px-3 w-[88%] outline-none border border-black-600 rounded-md' />
+                                    <div onClick={() => setIsColorPickerActive(current => !current)} style={{ background: backgroundColor }} className={"w-7 h-7 hover:border-secondary border-2 cursor-pointer rounded-full " + ((backgroundColor === "transparent") ? "border-secondary" : "border-transparent")}></div>
+                                </div>
+
+                            </div>
+
+                            <div className="basis-1/5 p-4 gap-4 border-b flex flex-col  border-black-600">
+                                <p className=' text-black-900'>Padding</p>
+                                <div className="flex flex-col justify-between h-full">
+                                    <div className='flex flex-row justify-between'>
+                                        <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                            <p>x</p>
+                                            <div className='flex flex-row items-center gap-1'>
+                                                <button onClick={() => setPaddingX(current => current - 4)} className='text-xl bg-black-600 hover:bg-black-700 rounded p-1 px-3'>-</button>
+                                                <input onChange={event => setPaddingX(event.target.value)} value={paddingX} type="text" className='text-center p-1 w-full h-full text-black-900 outline-none border border-black-600 rounded' />
+                                                <button onClick={() => setPaddingX(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
-                                        <p>y</p>
-                                        <div className='flex flex-row items-center gap-1'>
-                                            <button onClick={() => setPaddingY(current => current - 4)} className='text-xl bg-black-600 rounded p-1 px-3 hover:bg-black-700'>-</button>
-                                            <input onChange={event => setPaddingY(event.target.value)} value={paddingY} type="text" className='text-center p-1 h-full w-full text-black-900 outline-none border border-black-600 rounded' />
-                                            <button onClick={() => setPaddingY(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                                        <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                            <p>y</p>
+                                            <div className='flex flex-row items-center gap-1'>
+                                                <button onClick={() => setPaddingY(current => current - 4)} className='text-xl bg-black-600 rounded p-1 px-3 hover:bg-black-700'>-</button>
+                                                <input onChange={event => setPaddingY(event.target.value)} value={paddingY} type="text" className='text-center p-1 h-full w-full text-black-900 outline-none border border-black-600 rounded' />
+                                                <button onClick={() => setPaddingY(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="basis-1/5 p-4 border-b flex-col flex  border-black-600">
+                            <div className="basis-1/5 p-4 border-b flex-col flex gap-2  border-black-600">
+                                <div className="flex flex-row w-full gap-1 justify-between items-center h-full">
+                                    <h1 className=" text-black-900">radius</h1>
+                                    <input type="number" value={borderRadius} onChange={event => setBorderRadius(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                </div>
+                                <div className='flex flex-row gap-1 justify-between'>
+                                    <div className="flex flex-row w-full gap-1 justify-between items-center h-full">
+                                        <h1 className=" text-black-900">width</h1>
+                                        <input type="number" value={width} onChange={event => setWidth(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                    </div>
+                                    <div className="flex flex-row w-full gap-1 justify-between items-center h-full">
+                                        <h1 className=" text-black-900">height</h1>
+                                        <input type="number" value={height} onChange={event => setHeight(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                    </div>
+                                </div>
 
-                            <h1 className=" text-black-900">Border-radius</h1>
-                            <div className="flex flex-row w-full justify-between items-center h-full">
-                                <input type="number" value={borderRadius} onChange={event => setBorderRadius(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
                             </div>
+                            <div className="basis-1/6 flex gap-2 flex-row justify-between p-6 ">
+                                <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
+                                <button onClick={() => setIsTextSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Text settings</button>
+                            </div>
+                            <div className="basis-1/5 p-4">
+                            </div>
+                        </div>
 
-                        </div>
-                        <div className="basis-1/5 flex gap-2 flex-row justify-between border-b p-6 border-black-600">
-                            <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
-                            <button onClick={() => setIsTextSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Text settings</button>
-                        </div>
-                        <div className="basis-1/5 p-4">
-                        </div>
                     </div>
-
-                </div>
-            </Draggable>
-        </div>
-        <TextSettings className="absolute z-40 pointer-events-auto" isActiveProp={[isTextSettingsActive, setIsTextSettingsActive]} fontProp={font} colorProp={fontColor} fontSizeProp={fontSize}/>
+                </Draggable>
+            </div>
+            <TextSettings className="absolute z-40 pointer-events-auto" isActiveProp={[isTextSettingsActive, setIsTextSettingsActive]} fontProp={font} colorProp={fontColor} fontSizeProp={fontSize} />
         </>
 
     )

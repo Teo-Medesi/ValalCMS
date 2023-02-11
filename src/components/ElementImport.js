@@ -7,6 +7,7 @@ const ElementImport = ({elementName, anchorData}) => {
     {
         case "Paragraph1": return <All.Paragraph1 />
         case "Paragraph1Bold": return <All.Paragraph1Bold />
+        case "ImageElement": return <All.ImageElement />
     }    
 
 }

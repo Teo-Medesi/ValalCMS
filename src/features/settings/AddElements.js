@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import Drag from "../editing/Drag"
 import { SettingsContext } from "./Settings";
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
@@ -37,14 +37,18 @@ const Text = () => {
 }
 
 const Images = () => {
-    
+    return (
+        <div className="flex flex-col p-6 gap-6">
+            <Drag properties={{}} component={"ImageElement"} type="element"><All.ImageElementPreview /></Drag>
+        </div>
+    )
 }
 
 const Buttons = () => {
-    
+
 }
 
-const ActiveElement = ({activeTab}) => {
+const ActiveElement = ({ activeTab }) => {
     switch (activeTab) {
         case "Text": return <Text />
         case "Images": return <Images />
@@ -67,10 +71,10 @@ const ActiveElement = ({activeTab}) => {
 
 
 const AddElements = () => {
-    const [setIsToggled] = useContext(SettingsContext);    
+    const [setIsToggled] = useContext(SettingsContext);
     const [activeTab, setActiveTab] = useState("Text");
 
-    const tabs = ["Text", "Image", "Button", "Strip", "Decorative", "Box", "Gallery", "Forms", "List", "Payments", "Input"]
+    const tabs = ["Text", "Images", "Button", "Strip", "Decorative", "Box", "Gallery", "Forms", "List", "Payments", "Input"]
 
     return (
         <>
@@ -81,14 +85,14 @@ const AddElements = () => {
             <div className='flex flex-row w-full h-full'>
                 <div className='flex basis-[30%] p-6 border-r border-r-black-600'>
                     <div className='flex w-full flex-col'>
-                    {tabs.map((tab, index) => <p key={index} onClick={() => setActiveTab(tab)} className='p-2 hover:bg-black-600 cursor-pointer rounded-md'>{tab}</p>)}
+                        {tabs.map((tab, index) => <p key={index} onClick={() => setActiveTab(tab)} className='p-2 hover:bg-black-600 cursor-pointer rounded-md'>{tab}</p>)}
                     </div>
                 </div>
                 <div className='flex basis-[70%] flex-col justify-start'>
                     <div className='flex p-4 items-center border-b border-black-600'>
                         <h1 className='text-xl text-black-900'>{activeTab}</h1>
                     </div>
-                    <ActiveElement activeTab={activeTab}/>
+                    <ActiveElement activeTab={activeTab} />
                 </div>
             </div>
 

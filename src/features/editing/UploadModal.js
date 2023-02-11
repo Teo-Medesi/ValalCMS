@@ -55,7 +55,7 @@ const UploadModal = ({isActive, setIsActive, storagePath, appendFileName, fetchF
     }
 
     return (
-        <div className={'w-screen h-screen fixed top-0 left-0 right-0 bottom-0 py-12 justify-center flex bg-[rgb(0,0,0,0.1)] ' + (isActive ? "" : "hidden")}>
+        <div className={'w-screen h-screen fixed z-40 pointer-events-auto top-0 left-0 right-0 bottom-0 py-12 justify-center flex bg-[rgb(0,0,0,0.1)] ' + (isActive ? "" : "hidden")}>
             <div className='flex flex-col justify-between border bg-gray-100 border-black-600 border-t-8 border-t-primary gap-24 w-[75%] xl:w-[50%] rounded-md p-6 h-full'>
                 <div className='flex flex-row basis-1/4 justify-between'>
                     <input type="file" ref={inputRef} onChange={event => setFile(event.target.files[0])} className="hidden"/>
@@ -68,7 +68,7 @@ const UploadModal = ({isActive, setIsActive, storagePath, appendFileName, fetchF
                     <div className={(file == 0) ? 'text-2xl text-black-700' : 'hidden'}>Your image will be displayed here!</div>
                     <img src={(file === 0 || file === null) ? BirdImage : previewFileURL} className={(file === 0) ? "w-56 h-56 " : "max-w-[250px] max-h-[250px]"}/>
 
-                    <button onClick={handleUploadClick} className='h-min w-96 bg-gray-800 text-xl text-white rounded-md p-4'>{isUploaded ? "Image uploaded!" : uploadText}</button>
+                    <button onClick={handleUploadClick} className='h-min cursor-pointer w-96 bg-gray-800 text-xl text-white rounded-md p-4'>{isUploaded ? "Image uploaded!" : uploadText}</button>
                 </div>
 
             </div>

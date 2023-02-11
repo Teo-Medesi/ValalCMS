@@ -122,11 +122,6 @@ const Header = () => {
 
     return (
         <div className="flex flex-col p-6 gap-6 w-full">
-            <div className="relative">
-                <Drag type="section" component={"Header1"} setIsDragging={setIsAnchorActive}>
-                    <img src={Header1Preview} className="" />
-                </Drag>
-            </div>
         </div>
     )
 
