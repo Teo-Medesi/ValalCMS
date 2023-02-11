@@ -59,10 +59,6 @@ const PositionSettings = ({ isActive, setIsActive, className }) => {
                                 <div title="end" onClick={() => setAlignItems("end")} className={'rounded px-4 py-2 cursor-pointer ' + ((alignItems === "end") ? " bg-primary text-white" : "hover:bg-black-700 bg-black-600")}>E</div>
                             </div>
                         </div>
-
-                        <div className="basis-1/5 border-b p-6 border-black-600">
-                            <button className='bg-error w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
-                        </div>
                     </div>
                 </div>
             </Draggable>

@@ -54,7 +54,13 @@ const TextBox = ({children, className}) => {
     const handleKeyDown = event => {
         if(event.key === "Enter")
         {
-            handleEdit();
+            if (isEditMode)
+            {
+                handleEdit();
+            } else {
+                event.preventDefault();
+                setIsEditMode(true);
+            }
         }
     }
 
@@ -78,7 +84,7 @@ const TextBox = ({children, className}) => {
         )
     } else {
         return (
-            <div style={{fontSize: fontSize, fontFamily: font, color: color}} ref={elementRef} className={className} onDoubleClick={handleDoubleClick}>
+            <div tabIndex={0} onKeyDown={handleKeyDown} style={{fontSize: fontSize, fontFamily: font, color: color}} ref={elementRef} className={className} onDoubleClick={handleDoubleClick}>
                 {text}
             </div>
         )

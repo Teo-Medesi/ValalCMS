@@ -1194,10 +1194,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
-.bg-error {
-  --tw-bg-opacity: 1;
-  background-color: rgb(205 41 29 / var(--tw-bg-opacity));
-}
 .bg-\[rgb\(0\2c 0\2c 0\2c 0\.1\)\] {
   background-color: rgb(0,0,0,0.1);
 }
@@ -1212,6 +1208,10 @@ video {
 .bg-tertiary {
   --tw-bg-opacity: 1;
   background-color: rgb(63 97 153 / var(--tw-bg-opacity));
+}
+.bg-error {
+  --tw-bg-opacity: 1;
+  background-color: rgb(205 41 29 / var(--tw-bg-opacity));
 }
 .bg-black-900 {
   --tw-bg-opacity: 1;

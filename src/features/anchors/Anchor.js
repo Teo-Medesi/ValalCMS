@@ -38,7 +38,7 @@ const Anchor = ({ anchorData, component }) => {
 
     const [paddingX, setPaddingX] = useState(0);
     const [paddingY, setPaddingY] = useState(0);
-    
+
     const [anchors, anchorsPath, fetchAnchors] = useContext(AnchorContext);
 
     const [selectedElements, setSelectedElements] = useState([]);
@@ -81,12 +81,11 @@ const Anchor = ({ anchorData, component }) => {
     }, [elementRef.current])
 
     useEffect(() => {
-        if (anchorData.properties.paddingX != null && anchorData.properties.paddingY != null)
-        {
+        if (anchorData.properties.paddingX != null && anchorData.properties.paddingY != null) {
             setPaddingX(anchorData.properties.paddingX)
             setPaddingY(anchorData.properties.paddingY)
         }
-        
+
         if (anchorData.properties.position != null) {
             setPosition(anchorData.properties.position.position);
             setJustifyContent(anchorData.properties.position.justifyContent);
@@ -113,22 +112,21 @@ const Anchor = ({ anchorData, component }) => {
 
     const groupElements = () => {
         setIsSettingsActive(false);
-        if (selectedElements.length > 1)
-        {
+        if (selectedElements.length > 1) {
             // first we need to delete the elements we are grouping
             // now we need to create a new element, it's component will be equal to "multiple" 
             // displaying the new group of elements as one will be done in Element.js
             // element -> subElements -> the IDs of our selected elements
 
-            
+
             const elementsRef = collection(db, `${anchorData.path}/elements`);
-            addDoc(elementsRef, {component: "Multiple", properties: {}, path: `${anchorData.path}/elements`}).then(docRef => {
+            addDoc(elementsRef, { component: "Multiple", properties: {}, path: `${anchorData.path}/elements` }).then(docRef => {
 
                 selectedElements.forEach(element => {
                     deleteDoc(doc(db, `${element.path}/${element.id}`)).then(() => fetchElements());
-                    setDoc(doc(db, `${anchorData.path}/elements/${docRef.id}/subElements/${element.id}`), {component: element.component, properties: element.properties, id: element.id, path: `${anchorData.path}/elements/${docRef.id}/subElements`})
+                    setDoc(doc(db, `${anchorData.path}/elements/${docRef.id}/subElements/${element.id}`), { component: element.component, properties: element.properties, id: element.id, path: `${anchorData.path}/elements/${docRef.id}/subElements` }).then(() => fetchElements())
                 });
-                
+
             }).then(() => fetchElements());
         }
     }
@@ -150,7 +148,7 @@ const Anchor = ({ anchorData, component }) => {
 
     useEffect(() => {
         console.log(selectedElements)
-    },[selectedElements])
+    }, [selectedElements])
 
 
     const deleteAnchor = async () => {
@@ -182,7 +180,7 @@ const Anchor = ({ anchorData, component }) => {
 
     const handleClick = event => {
         if (event.repeat) return;
-        
+
         if (anchorRef.current != null && !anchorRef.current.contains(event.target) && !positionSettingsRef.current.contains(event.target) && !elementBasketRef.current.contains(event.target)) {
             setIsAnchorSelected(false);
             setIsSettingsActive(false);
@@ -231,21 +229,21 @@ const Anchor = ({ anchorData, component }) => {
     if (component != null || component !== 0) {
         return (
             <ThisAnchorContext.Provider value={anchorData}>
-                
+
                 <div className='relative'>
-                    
-                    <ElementContext.Provider value={{selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
-                        <div ref={elementBasketRef} style={{ width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
-                            {elementBasket.map((element, index) => <div onAuxClick={() => setIsElementSettingsActive(true)}><Element elementData={element} key={index} /></div>)}
+
+                    <ElementContext.Provider value={{ fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
+                        <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-20 flex">
+                            {elementBasket.map((element, index) => <div><Element elementData={element} key={index} /></div>)}
                         </div>
-                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>       
+                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>
                     </ElementContext.Provider>
-                    
+
                     <div className='pointer-events-auto' ref={anchorRef}>
                         <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isAnchorSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
-                            
+
                             <div style={{ left: settingsPosition.x, top: "20px" }} className={'bg-black-100 w-40 flex border-t-4 flex-col rounded-md absolute z-40 ' + (isSettingsActive ? " " : "hidden ") + ((selectedElements.length > 1) ? "border-t-valid" : "border-t-primary")}>
-                                
+
                                 <div onClick={groupElements} className={'text-black-900 cursor-pointer p-3 hover:bg-black-600 hover:rounded-b-md border-b border-b-valid flex flex-row items-center justify-between ' + ((selectedElements.length > 1) ? "" : "hidden")}>
                                     <p>Group</p>
                                     <img src={GroupIcon} className="w-6 h-6" />
@@ -266,11 +264,11 @@ const Anchor = ({ anchorData, component }) => {
                                     <p>Position</p>
                                     <img src={PositionIcon} className="w-6 h-6" />
                                 </div>
-                                
+
                             </div>
 
-                            <AnchorSettings className="absolute z-40" paddingXProp={[paddingX, setPaddingX]} paddingYProp={[paddingY, setPaddingY]} background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
-                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-screen bg-secondary h-2 relative ' + (isAnchorSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
+                            <AnchorSettings className="absolute z-40" sizeProp={[size, setSize]} paddingXProp={[paddingX, setPaddingX]} paddingYProp={[paddingY, setPaddingY]} background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
+                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-full bg-secondary h-2 relative ' + (isAnchorSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
                                 <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
                             </ResizableBox>
                         </div>
@@ -282,31 +280,32 @@ const Anchor = ({ anchorData, component }) => {
     }
 }
 
-const AnchorSettings = ({ isActive, setIsActive, className, background, paddingXProp, paddingYProp }) => {
+const AnchorSettings = ({ isActive, setIsActive, className, background, paddingXProp, paddingYProp, sizeProp }) => {
 
     const [isDraggable, setIsDraggable] = useState(false);
     const [isColorPickerActive, setIsColorPickerActive] = useState(false);
 
     const anchorData = useContext(ThisAnchorContext);
-    
+
     // we are destructuring our background prop 
     const [backgroundColor, setBackgroundColor] = background;
     const [paddingX, setPaddingX] = paddingXProp;
     const [paddingY, setPaddingY] = paddingYProp
+    const [size, setSize] = sizeProp;
 
     const handleColorChange = event => {
         if (event.target.value.length === 7) {
             setBackgroundColor(event.target.value);
         }
-    } 
+    }
 
     const handleClose = async () => {
         setIsActive(false);
 
         const anchorRef = doc(db, anchorData.path);
-        await updateDoc(anchorRef, {"properties.paddingX": paddingX, "properties.paddingY": paddingY});
+        await updateDoc(anchorRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY });
     }
-    
+
     return (
         <div className={className + (isActive ? "" : " hidden")}>
             <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
@@ -351,10 +350,21 @@ const AnchorSettings = ({ isActive, setIsActive, className, background, paddingX
                                 </div>
                             </div>
                         </div>
-                        <div className="basis-1/5 p-4 border-b flex flex-col  border-black-600">
-                            <p className=' text-black-900'>blank</p>
-                            <div className="flex flex-col justify-center h-full">
-                                <input type="text" className='py-1 px-3 min-w-full text-black-900 outline-none border border-black-600 rounded-md' />
+                        <div className="basis-1/5 p-4 gap-4 border-b flex flex-col  border-black-600">
+                            <p className=' text-black-900'>Size</p>
+                            <div className='flex flex-row justify-between'>
+                                <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                    <p>height</p>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <input onChange={event => setSize(current => ({...current, height: event.target.value}))} value={size.height} type="text" className='text-center p-1 w-full h-full text-black-900 outline-none border border-black-600 rounded' />
+                                    </div>
+                                </div>
+                                <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                    <p>width</p>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <input title="sections take up screen width" value={"screen"} type="text" className='text-center p-1 h-full w-full text-black-700 italic outline-none border border-black-600 rounded' />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="basis-1/5 p-4 border-b border-black-600"></div>

@@ -1,15 +1,18 @@
-import { doc, getDocs, updateDoc, collection } from 'firebase/firestore'
+import { doc, getDocs, updateDoc, collection, deleteDoc } from 'firebase/firestore'
 import React, { useContext, useState, createContext } from 'react'
 import { useRef } from 'react'
 import { useEffect } from 'react'
 import ElementImport from "../../../components/ElementImport"
 import { db } from '../../../firebase.config'
 import { ElementContext } from '../Anchor'
+import Draggable from "react-draggable"
+import CloseIcon from "../../../assets/svgs/closeIcon.svg"
+import { ChromePicker } from 'react-color'
 
 
 export const ThisElementContext = createContext();
 
-const Element = ({ elementData }) => {
+const Element = ({ elementData, isSubElement }) => {
     const { position, selectedElements, setSelectedElements } = useContext(ElementContext);
 
     const [isSettingsActive, setIsSettingsActive] = useState(false);
@@ -18,6 +21,11 @@ const Element = ({ elementData }) => {
 
     const [marginTop, setMarginTop] = useState(elementData.marginTop)
     const [marginLeft, setMarginLeft] = useState(elementData.marginLeft)
+
+    const [background, setBackground] = useState("transparent");
+    const [paddingX, setPaddingX] = useState(0);
+    const [paddingY, setPaddingY] = useState(0);
+    const [borderRadius, setBorderRadius] = useState(0);
 
     const [intervalId, setIntervalId] = useState("");
     const [marginToUpdate, setMarginToUpdate] = useState("");
@@ -103,6 +111,11 @@ const Element = ({ elementData }) => {
         if (elementData != null)
         {
             fetchSubElements();
+            setBackground(elementData.properties.background);
+            setBorderRadius(elementData.properties.borderRadius);
+            setPaddingX(elementData.properties.paddingX);
+            setPaddingY(elementData.properties.paddingY);
+
         }
     }, [])
     
@@ -127,6 +140,16 @@ const Element = ({ elementData }) => {
         if (event.key === "Shift") {
             setIsShiftPressed(true);
         }
+        else if (event.key === "Enter")
+        {
+            if (elementRef.current != null && elementRef.current.contains(event.target))
+            {
+                setIsSelected(true);
+            } else {
+                setIsSelected(false);
+            }
+        }
+        
     }
 
     const handleKeyUp = event => {
@@ -164,27 +187,127 @@ const Element = ({ elementData }) => {
 
     return (
         <ThisElementContext.Provider value={elementData}>
-            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + (isSelected ? "border-tertiary " : " ") + (position)}>
+            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + ((isSelected && !isSubElement) ? "border-tertiary " : " ") + (position)}>
                 <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "hidden" : "hidden"}>
                     <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-[45%] bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <div style={{userSelect: (isShiftPressed ? "none" : "auto")}} className={"flex flex-row"}><ImportElement subElements={subElements} elementData={elementData}/></div>
+                <div style={{userSelect: (isShiftPressed ? "none" : "auto"), borderRadius: borderRadius + "px", background: background, paddingLeft: paddingX, paddingRight: paddingX, paddingTop: paddingY, paddingBottom: paddingY}} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData}/></div>
             </div>
+            <ElementSettings className="absolute z-40 pointer-events-auto" elementData={elementData} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
         </ThisElementContext.Provider>
     )
+}
+
+Element.defaultProps = {
+    isSubElement: false
 }
 
 const ImportElement = ({elementData, subElements}) => {
     if (elementData.component === "Multiple" && subElements != [])
     {
-        return subElements.map(element => <Element elementData={element} />)
+        return subElements.map(element => <Element isSubElement={true} elementData={element} />)
     }
     else {
         return <ElementImport elementName={elementData.component}/>
     }
+}
+
+const ElementSettings = ({elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp}) => {    
+    const {fetchElements} = useContext(ElementContext);
+    
+    const [isDraggable, setIsDraggable] = useState(false);
+    const [isColorPickerActive, setIsColorPickerActive] = useState(false);
+
+    // we are destructuring our props 
+    const [backgroundColor, setBackgroundColor] = background;
+    const [paddingX, setPaddingX] = paddingXProp;
+    const [paddingY, setPaddingY] = paddingYProp;
+    const [borderRadius, setBorderRadius] = borderRadiusProp;
+
+    const handleColorChange = event => {
+        if (event.target.value.length === 7) {
+            setBackgroundColor(event.target.value);
+        }
+    }
+
+    const handleClose = async () => {
+        setIsActive(false);
+
+        const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
+        await updateDoc(elementRef, {"properties.paddingX": paddingX, "properties.paddingY": paddingY, "properties.background": background, "properties.borderRadius": borderRadius});
+    }
+
+    const deleteElement = () => {
+        const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
+        deleteDoc(elementRef).then(() => fetchElements());
+    }
+
+
+    return (
+        <div className={className + (isActive ? "" : " hidden")}>
+            <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
+                <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-primary border-t-[12px] rounded-xl'>
+                    <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
+                        <h1 className=' font-bold text-black-900'>Element Settings</h1>
+                        <img src={CloseIcon} onClick={handleClose} className="w-8 cursor-pointer h-8" />
+                    </div>
+
+                    <div onMouseDown={() => setIsDraggable(false)} className="flex flex-col h-full basis-[90%] w-full relative">
+                        <ChromePicker color={backgroundColor} onChange={(color) => setBackgroundColor(color.hex)} className={'absolute right-40 z-20' + (isColorPickerActive ? "" : " hidden")} />
+                        <div className="basis-1/5 p-4 border-b flex-col flex  border-black-600">
+
+                            <h1 className=" text-black-900">Background Color</h1>
+                            <div className="flex flex-row w-full justify-between items-center h-full">
+                                <input type="text" defaultValue={(backgroundColor != "") ? backgroundColor : "transparent"} onChange={handleColorChange} className='py-1 text-black-800 px-3 w-[88%] outline-none border border-black-600 rounded-md' />
+                                <div onClick={() => setIsColorPickerActive(current => !current)} style={{ background: backgroundColor }} className={"w-7 h-7 hover:border-secondary border-transparent border-2 cursor-pointer rounded-full" + ((backgroundColor === "transparent" || backgroundColor === "") ? " border-secondary" : "")}></div>
+                            </div>
+
+                        </div>
+
+                        <div className="basis-1/5 p-4 gap-4 border-b flex flex-col  border-black-600">
+                            <p className=' text-black-900'>Padding</p>
+                            <div className="flex flex-col justify-between h-full">
+                                <div className='flex flex-row justify-between'>
+                                    <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                        <p>x</p>
+                                        <div className='flex flex-row items-center gap-1'>
+                                            <button onClick={() => setPaddingX(current => current - 4)} className='text-xl bg-black-600 hover:bg-black-700 rounded p-1 px-3'>-</button>
+                                            <input onChange={event => setPaddingX(event.target.value)} value={paddingX} type="text" className='text-center p-1 w-full h-full text-black-900 outline-none border border-black-600 rounded' />
+                                            <button onClick={() => setPaddingX(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                                        </div>
+                                    </div>
+                                    <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
+                                        <p>y</p>
+                                        <div className='flex flex-row items-center gap-1'>
+                                            <button onClick={() => setPaddingY(current => current - 4)} className='text-xl bg-black-600 rounded p-1 px-3 hover:bg-black-700'>-</button>
+                                            <input onChange={event => setPaddingY(event.target.value)} value={paddingY} type="text" className='text-center p-1 h-full w-full text-black-900 outline-none border border-black-600 rounded' />
+                                            <button onClick={() => setPaddingY(current => current + 4)} className='text-lg bg-black-600 rounded p-1 px-3 hover:bg-black-700'>+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="basis-1/5 p-4 border-b flex-col flex  border-black-600">
+
+                            <h1 className=" text-black-900">Border-radius</h1>
+                            <div className="flex flex-row w-full justify-between items-center h-full">
+                                <input type="number" value={borderRadius} onChange={event => setBorderRadius(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                            </div>
+
+                        </div>
+                        <div className="basis-1/5 border-b p-6 border-black-600">
+                            <button onClick={deleteElement} className='bg-error w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
+                        </div>
+                        <div className="basis-1/5 p-4"></div>
+                    </div>
+
+                </div>
+            </Draggable>
+        </div>
+    )
 }
 
 export default Element
@@ -196,12 +319,6 @@ export default Element
 
     We add a basic, slap on our elements and just save the anchor to a root level collection
     users on the other hand will be able to add it to their own custom collection instead
-
-
-
-
-
-
 
     How do we scale down everything down a notch and make it so that each site is not only editable in anchor configuration but in the element as well
 
@@ -245,9 +362,5 @@ export default Element
       ---> passing the array into our element
 
       now we want to make a function that groups them
-
-
-
-      
 
 */
