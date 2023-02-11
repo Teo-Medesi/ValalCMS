@@ -128,6 +128,8 @@ const Anchor = ({ anchorData, component }) => {
                 });
 
             }).then(() => fetchElements());
+
+            alert("Please refresh to see changes. Having some problems with firestore calls :(")
         }
     }
 
@@ -145,11 +147,6 @@ const Anchor = ({ anchorData, component }) => {
     useEffect(() => {
         fetchElements();
     }, []);
-
-    useEffect(() => {
-        console.log(selectedElements)
-    }, [selectedElements])
-
 
     const deleteAnchor = async () => {
         const docRef = doc(db, anchorData.path);

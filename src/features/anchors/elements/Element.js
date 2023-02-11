@@ -8,6 +8,7 @@ import { ElementContext } from '../Anchor'
 import Draggable from "react-draggable"
 import CloseIcon from "../../../assets/svgs/closeIcon.svg"
 import { ChromePicker } from 'react-color'
+import TextSettings from '../../editing/TextSettings'
 
 
 export const ThisElementContext = createContext();
@@ -27,6 +28,10 @@ const Element = ({ elementData, isSubElement }) => {
     const [paddingX, setPaddingX] = useState(0);
     const [paddingY, setPaddingY] = useState(0);
     const [borderRadius, setBorderRadius] = useState(0);
+
+    const [font, setFont] = useState("");
+    const [fontSize, setFontSize] = useState(16)
+    const [fontColor, setFontColor] = useState("");
 
     const [intervalId, setIntervalId] = useState("");
     const [marginToUpdate, setMarginToUpdate] = useState("");
@@ -112,11 +117,16 @@ const Element = ({ elementData, isSubElement }) => {
         if (elementData != null)
         {
             fetchSubElements();
-            setBackground(elementData.properties.background);
-            setBorderRadius(elementData.properties.borderRadius);
-            setPaddingX(elementData.properties.paddingX);
-            setPaddingY(elementData.properties.paddingY);
-            setIsGroup(elementData.properties.isGroup);
+            
+            if (elementData.properties.background != null) setBackground(elementData.properties.background);
+            if (elementData.properties.borderRadius != null) setBorderRadius(elementData.properties.borderRadius);
+            if (elementData.properties.paddingX != null) setPaddingX(elementData.properties.paddingX);
+            if (elementData.properties.paddingY != null) setPaddingY(elementData.properties.paddingY);
+            if (elementData.properties.isGroup != null) setIsGroup(elementData.properties.isGroup);
+            if (elementData.properties.font != null) setFont(elementData.properties.font);
+            if (elementData.properties.fontColor != null) setFontColor(elementData.properties.fontColor);
+            if (elementData.properties.fontSize != null) setFontSize(elementData.properties.fontSize);
+            
         }
     }, [])
     
@@ -188,16 +198,16 @@ const Element = ({ elementData, isSubElement }) => {
 
     return (
         <ThisElementContext.Provider value={elementData}>
-            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + ((isSelected && !isSubElement && isGroup) ? "border-valid " : (isSelected && !isSubElement) ? "border-tertiary " : " ") + (position)}>
+            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 ' + ((isSelected && !isSubElement && isGroup) ? "border-valid " : (isSelected && !isSubElement) ? "border-tertiary " : "border-transparent ") + (position)}>
                 <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "hidden" : "hidden"}>
                     <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-[45%] bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <div style={{userSelect: (isShiftPressed ? "none" : "auto"), borderRadius: borderRadius + "px", background: background, paddingLeft: paddingX, paddingRight: paddingX, paddingTop: paddingY, paddingBottom: paddingY}} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData}/></div>
+                <div style={{userSelect: (isShiftPressed ? "none" : "auto"), borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px"}} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData}/></div>
             </div>
-            <ElementSettings className="absolute z-40 pointer-events-auto" elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
+            <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
         </ThisElementContext.Provider>
     )
 }
@@ -217,8 +227,10 @@ const ImportElement = ({elementData, subElements}) => {
 }
 
 
-const ElementSettings = ({elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp, isGroup}) => {    
+const ElementSettings = ({elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp, isGroup, font, fontSize, fontColor}) => {    
     const {fetchElements} = useContext(ElementContext);
+
+    const [isTextSettingsActive, setIsTextSettingsActive] = useState(false);
     
     const [isDraggable, setIsDraggable] = useState(false);
     const [isColorPickerActive, setIsColorPickerActive] = useState(false);
@@ -239,7 +251,7 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
         setIsActive(false);
 
         const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
-        await updateDoc(elementRef, {"properties.paddingX": paddingX, "properties.paddingY": paddingY, "properties.background": background, "properties.borderRadius": borderRadius});
+        await updateDoc(elementRef, {"properties.paddingX": paddingX, "properties.paddingY": paddingY, "properties.background": backgroundColor, "properties.borderRadius": borderRadius});
     }
 
     const deleteElement = () => {
@@ -249,6 +261,7 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
 
 
     return (
+        <>
         <div className={className + (isActive ? "" : " hidden")}>
             <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
                 <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-[12px] rounded-xl border-t-primary'>
@@ -264,7 +277,7 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
                             <h1 className=" text-black-900">Background Color</h1>
                             <div className="flex flex-row w-full justify-between items-center h-full">
                                 <input type="text" defaultValue={(backgroundColor != "") ? backgroundColor : "transparent"} onChange={handleColorChange} className='py-1 text-black-800 px-3 w-[88%] outline-none border border-black-600 rounded-md' />
-                                <div onClick={() => setIsColorPickerActive(current => !current)} style={{ background: backgroundColor }} className={"w-7 h-7 hover:border-secondary border-transparent border-2 cursor-pointer rounded-full" + ((backgroundColor === "transparent" || backgroundColor === "") ? " border-secondary" : "")}></div>
+                                <div onClick={() => setIsColorPickerActive(current => !current)} style={{ background: backgroundColor }} className={"w-7 h-7 hover:border-secondary border-2 cursor-pointer rounded-full " + ((backgroundColor === "transparent") ? "border-secondary" : "border-transparent")}></div>
                             </div>
 
                         </div>
@@ -302,7 +315,7 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
                         </div>
                         <div className="basis-1/5 flex gap-2 flex-row justify-between border-b p-6 border-black-600">
                             <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
-                            <button className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Text settings</button>
+                            <button onClick={() => setIsTextSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Text settings</button>
                         </div>
                         <div className="basis-1/5 p-4">
                         </div>
@@ -311,6 +324,9 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
                 </div>
             </Draggable>
         </div>
+        <TextSettings className="absolute z-40 pointer-events-auto" isActiveProp={[isTextSettingsActive, setIsTextSettingsActive]} fontProp={font} colorProp={fontColor} fontSizeProp={fontSize}/>
+        </>
+
     )
 }
 
