@@ -120,7 +120,7 @@ const Anchor = ({ anchorData, component }) => {
 
 
             const elementsRef = collection(db, `${anchorData.path}/elements`);
-            addDoc(elementsRef, { component: "Multiple", properties: {}, path: `${anchorData.path}/elements` }).then(docRef => {
+            addDoc(elementsRef, { component: "Multiple", properties: {isGroup: true}, path: `${anchorData.path}/elements` }).then(docRef => {
 
                 selectedElements.forEach(element => {
                     deleteDoc(doc(db, `${element.path}/${element.id}`)).then(() => fetchElements());

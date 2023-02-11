@@ -15,6 +15,7 @@ export const ThisElementContext = createContext();
 const Element = ({ elementData, isSubElement }) => {
     const { position, selectedElements, setSelectedElements } = useContext(ElementContext);
 
+    const [isGroup, setIsGroup] = useState(false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isSelected, setIsSelected] = useState(false);
     const [isMultipleSelected, setIsMultipleSelected] = useState(false);
@@ -115,7 +116,7 @@ const Element = ({ elementData, isSubElement }) => {
             setBorderRadius(elementData.properties.borderRadius);
             setPaddingX(elementData.properties.paddingX);
             setPaddingY(elementData.properties.paddingY);
-
+            setIsGroup(elementData.properties.isGroup);
         }
     }, [])
     
@@ -187,7 +188,7 @@ const Element = ({ elementData, isSubElement }) => {
 
     return (
         <ThisElementContext.Provider value={elementData}>
-            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + ((isSelected && !isSubElement) ? "border-tertiary " : " ") + (position)}>
+            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-30 flex w-max h-max p-1 border-4 border-transparent ' + ((isSelected && !isSubElement && isGroup) ? "border-valid " : (isSelected && !isSubElement) ? "border-tertiary " : " ") + (position)}>
                 <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "hidden" : "hidden"}>
                     <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-[45%] bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
@@ -196,7 +197,7 @@ const Element = ({ elementData, isSubElement }) => {
                 </div>
                 <div style={{userSelect: (isShiftPressed ? "none" : "auto"), borderRadius: borderRadius + "px", background: background, paddingLeft: paddingX, paddingRight: paddingX, paddingTop: paddingY, paddingBottom: paddingY}} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData}/></div>
             </div>
-            <ElementSettings className="absolute z-40 pointer-events-auto" elementData={elementData} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
+            <ElementSettings className="absolute z-40 pointer-events-auto" elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
         </ThisElementContext.Provider>
     )
 }
@@ -215,7 +216,8 @@ const ImportElement = ({elementData, subElements}) => {
     }
 }
 
-const ElementSettings = ({elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp}) => {    
+
+const ElementSettings = ({elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp, isGroup}) => {    
     const {fetchElements} = useContext(ElementContext);
     
     const [isDraggable, setIsDraggable] = useState(false);
@@ -249,7 +251,7 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
     return (
         <div className={className + (isActive ? "" : " hidden")}>
             <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
-                <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-primary border-t-[12px] rounded-xl'>
+                <div className='w-80 h-[480px] shadow-xl flex-col shadow-black-900 bg-black-100 border-t-[12px] rounded-xl border-t-primary'>
                     <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
                         <h1 className=' font-bold text-black-900'>Element Settings</h1>
                         <img src={CloseIcon} onClick={handleClose} className="w-8 cursor-pointer h-8" />
@@ -298,10 +300,12 @@ const ElementSettings = ({elementData, isActive, setIsActive, className, backgro
                             </div>
 
                         </div>
-                        <div className="basis-1/5 border-b p-6 border-black-600">
-                            <button onClick={deleteElement} className='bg-error w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
+                        <div className="basis-1/5 flex gap-2 flex-row justify-between border-b p-6 border-black-600">
+                            <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
+                            <button className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Text settings</button>
                         </div>
-                        <div className="basis-1/5 p-4"></div>
+                        <div className="basis-1/5 p-4">
+                        </div>
                     </div>
 
                 </div>
