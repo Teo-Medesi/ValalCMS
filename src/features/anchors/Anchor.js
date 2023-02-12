@@ -229,7 +229,7 @@ const Anchor = ({ anchorData, component }) => {
                 <div className='relative'>
 
                     <ElementContext.Provider value={{ fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
-                        <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-10 flex">
+                        <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: (size != {} ? size.height : anchorData.height), flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-10 flex">
                             {elementBasket.map((element, index) => <div><Element elementData={element} key={index} /></div>)}
                         </div>
                         <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>
