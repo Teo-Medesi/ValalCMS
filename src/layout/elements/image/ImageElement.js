@@ -54,7 +54,7 @@ const ImageElement = () => {
         return (
             <>
                 <UploadModal fetchFile={fetchBackgroundImageURL} isActive={isActive} setIsActive={setIsActive} appendFileName={false} storagePath={storagePath} />
-                <div onClick={() => setIsActive(true)} className='h-64 w-64 cursor-pointer p-3 bg-transparent'>
+                <div onDoubleClick={() => setIsActive(true)} className='h-64 w-64 cursor-pointer p-3 bg-transparent'>
                     <div className='flex h-full w-full justify-center items-center border border-black-600 rounded'>
                         <img src={UploadIcon} className="w-20 h-20" />
                     </div>

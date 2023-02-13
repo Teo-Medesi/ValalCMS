@@ -31,6 +31,7 @@ const Anchor = ({ anchorData, component }) => {
     const [justifyContent, setJustifyContent] = useState("");
     const [alignItems, setAlignItems] = useState("");
     const [position, setPosition] = useState("relative");
+    const [gap, setGap] = useState(0);
 
     const [isTempPositionActive, setIsTempPositionActive] = useState(false);
     const [tempPosition, setTempPosition] = useState({});
@@ -87,10 +88,10 @@ const Anchor = ({ anchorData, component }) => {
         }
 
         if (anchorData.properties.position != null) {
-            setPosition(anchorData.properties.position.position);
-            setJustifyContent(anchorData.properties.position.justifyContent);
-            setAlignItems(anchorData.properties.position.alignItems);
-            setFlexDirection(anchorData.properties.position.flexDirection);
+            if (anchorData.properties.position.justifyContent != null) setJustifyContent(anchorData.properties.position.justifyContent);
+            if (anchorData.properties.position.alignItems != null) setAlignItems(anchorData.properties.position.alignItems);
+            if (anchorData.properties.position.flexDirection != null) setFlexDirection(anchorData.properties.position.flexDirection);
+            if (anchorData.properties.position.gap != null) setGap(anchorData.properties.position.gap);
         }
     }, [anchorData.properties])
 
@@ -119,7 +120,7 @@ const Anchor = ({ anchorData, component }) => {
             // element -> subElements -> the IDs of our selected elements
 
             const elementsRef = collection(db, `${anchorData.path}/elements`);
-            addDoc(elementsRef, { component: "Multiple", properties: {isGroup: true}, path: `${anchorData.path}/elements` }).then(docRef => {
+                addDoc(elementsRef, { component: "Multiple", properties: {isGroup: true}, path: `${anchorData.path}/elements` }).then(docRef => {
 
                 selectedElements.forEach(element => {
                     deleteDoc(doc(db, `${element.path}/${element.id}`)).then(() => fetchElements());
@@ -229,13 +230,13 @@ const Anchor = ({ anchorData, component }) => {
                 <div className='relative'>
 
                     <ElementContext.Provider value={{ fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
-                        <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: (size != {} ? size.height : anchorData.height), flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute z-10 flex">
+                        <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height + "px", flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap + "px"}} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute flex">
                             {elementBasket.map((element, index) => <div><Element elementData={element} key={index} /></div>)}
                         </div>
-                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActive={isElementSettingsActive} setIsActive={setIsElementSettingsActive} /></div>
+                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActiveProp={[isElementSettingsActive, setIsElementSettingsActive]} elementData={anchorData} context={ElementContext}/></div>
                     </ElementContext.Provider>
 
-                    <div className='pointer-events-auto' ref={anchorRef}>
+                    <div className='pointer-events-auto z-50' ref={anchorRef}>
                         <div className={'relative w-full h-full ' + (isOverElement ? "border-4 border-secondary " : "") + (`max-h-[${anchorData.height}px] `) + (isAnchorSelected ? "border-[6px] border-secondary" : "border-transparent ")} ref={elementDropRef} onAuxClick={handleAuxClick} onMouseMove={handleMouseMovement} onContextMenu={(event) => event.preventDefault()}>
 
                             <div style={{ left: settingsPosition.x, top: "20px" }} className={'bg-black-100 w-40 flex border-t-4 flex-col rounded-md absolute z-40 ' + (isSettingsActive ? " " : "hidden ") + ((selectedElements.length > 1) ? "border-t-valid" : "border-t-primary")}>
@@ -299,7 +300,7 @@ const AnchorSettings = ({ isActive, setIsActive, className, background, paddingX
         setIsActive(false);
 
         const anchorRef = doc(db, anchorData.path);
-        await updateDoc(anchorRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY });
+        await updateDoc(anchorRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY, height: size.height});
     }
 
     return (

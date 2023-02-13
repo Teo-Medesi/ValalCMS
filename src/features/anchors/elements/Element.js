@@ -10,9 +10,11 @@ import CloseIcon from "../../../assets/svgs/closeIcon.svg"
 import { ChromePicker } from 'react-color'
 import TextSettings from '../../editing/TextSettings'
 import { ThisAnchorContext } from '../Anchor'
+import PositionSettings from '../PositionSettings'
 
 
 export const ThisElementContext = createContext();
+export const ThisElementPositionContext = createContext();
 
 const Element = ({ elementData, isSubElement }) => {
     const { position, selectedElements, setSelectedElements } = useContext(ElementContext);
@@ -37,6 +39,11 @@ const Element = ({ elementData, isSubElement }) => {
     const [font, setFont] = useState("");
     const [fontSize, setFontSize] = useState(16)
     const [fontColor, setFontColor] = useState("");
+
+    const [flexDirection, setFlexDirection] = useState("row");
+    const [justifyContent, setJustifyContent] = useState("");
+    const [alignItems, setAlignItems] = useState("");
+    const [gap, setGap] = useState(0);
 
     const [intervalId, setIntervalId] = useState("");
     const [marginToUpdate, setMarginToUpdate] = useState("");
@@ -113,7 +120,6 @@ const Element = ({ elementData, isSubElement }) => {
             const subElementsRef = collection(db, `${elementData.path}/${elementData.id}/subElements`);
             const subElementsSnap = await getDocs(subElementsRef);
             setSubElements(subElementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }));
-            console.log(subElementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }))
         }
     }
 
@@ -131,6 +137,14 @@ const Element = ({ elementData, isSubElement }) => {
             if (elementData.properties.fontSize != null) setFontSize(elementData.properties.fontSize);
             if (elementData.properties.width != null) setWidth(elementData.properties.width);
             if (elementData.properties.height != null) setHeight(elementData.properties.height);
+
+            if (elementData.properties.position != null) {
+
+                if (elementData.properties.position.flexDirection != null) setFlexDirection(elementData.properties.position.flexDirection);
+                if (elementData.properties.position.justifyContent != null) setJustifyContent(elementData.properties.position.justifyContent);
+                if (elementData.properties.position.alignItems != null) setAlignItems(elementData.properties.position.alignItems);
+                if (elementData.properties.position.gap != null) setGap(elementData.properties.position.gap);
+            }
 
         }
     }, [])
@@ -207,9 +221,12 @@ const Element = ({ elementData, isSubElement }) => {
                     <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <div style={{ userSelect: (isShiftPressed ? "none" : "auto"), width: ((width != 0) ? width: "auto"), height: ((height != 0) ? width: "auto") , borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", maxHeight: anchorData.height }} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData} /></div>
+                <div style={{ userSelect: (isShiftPressed ? "none" : "auto"), width: ((width != 0) ? width : "auto"), height: ((height != 0) ? width : "auto"), borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", maxHeight: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap }} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData} /></div>
             </div>
-            <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} widthProp={[width, setWidth]} heightProp={[height, setHeight]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
+            <ThisElementPositionContext.Provider value={{ gap, setGap, justifyContent, setJustifyContent, alignItems, setAlignItems, flexDirection, setFlexDirection }}>
+                <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} widthProp={[width, setWidth]} heightProp={[height, setHeight]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
+            </ThisElementPositionContext.Provider>
+
         </ThisElementContext.Provider>
     )
 }
@@ -232,6 +249,7 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
     const { fetchElements } = useContext(ElementContext);
 
     const [isTextSettingsActive, setIsTextSettingsActive] = useState(false);
+    const [isPositionSettingsActive, setIsPositionSettingsActive] = useState(false);
 
     const [isDraggable, setIsDraggable] = useState(false);
     const [isColorPickerActive, setIsColorPickerActive] = useState(false);
@@ -265,9 +283,11 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
 
     return (
         <>
+            <TextSettings className="absolute z-40 pointer-events-auto" isActiveProp={[isTextSettingsActive, setIsTextSettingsActive]} fontProp={font} colorProp={fontColor} fontSizeProp={fontSize} />
+            <PositionSettings className="absolute z-40 pointer-events-auto" isActiveProp={[isPositionSettingsActive, setIsPositionSettingsActive]} elementData={elementData} context={ThisElementPositionContext} />
             <div className={className + (isActive ? "" : " hidden")}>
-                <Draggable defaultPosition={{ x: 200, y: 100 }} disabled={isDraggable ? false : true}>
-                    <div className='w-80 h-[480px] z-20 shadow-xl flex-col shadow-black-900 bg-black-100 border-t-[12px] rounded-xl border-t-primary'>
+                <Draggable defaultPosition={{ x: 50, y: 0 }} disabled={isDraggable ? false : true}>
+                    <div className='w-80 z-20 shadow-xl flex-col shadow-black-900 bg-black-100 border-t-[12px] rounded-xl border-t-primary'>
                         <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
                             <h1 className=' font-bold text-black-900'>Element Settings</h1>
                             <img src={CloseIcon} onClick={handleClose} className="w-8 cursor-pointer h-8" />
@@ -325,9 +345,10 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
                                 </div>
 
                             </div>
-                            <div className="basis-1/6 flex gap-2 flex-row justify-between p-6 ">
+                            <div className="basis-1/6 flex gap-2 flex-col justify-between p-6 ">
                                 <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
                                 <button onClick={() => setIsTextSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Text settings</button>
+                                <button onClick={() => setIsPositionSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Position Settings</button>
                             </div>
                             <div className="basis-1/5 p-4">
                             </div>
@@ -336,7 +357,6 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
                     </div>
                 </Draggable>
             </div>
-            <TextSettings className="absolute z-40 pointer-events-auto" isActiveProp={[isTextSettingsActive, setIsTextSettingsActive]} fontProp={font} colorProp={fontColor} fontSizeProp={fontSize} />
         </>
 
     )
