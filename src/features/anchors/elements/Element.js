@@ -17,7 +17,7 @@ export const ThisElementContext = createContext();
 export const ThisElementPositionContext = createContext();
 
 const Element = ({ elementData, isSubElement }) => {
-    const { position, selectedElements, setSelectedElements } = useContext(ElementContext);
+    const { isScreenOverlay, position, selectedElements, setSelectedElements } = useContext(ElementContext);
     const anchorData = useContext(ThisAnchorContext);
 
     const [isGroup, setIsGroup] = useState(false);
@@ -221,7 +221,7 @@ const Element = ({ elementData, isSubElement }) => {
                     <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <div style={{ userSelect: (isShiftPressed ? "none" : "auto"), width: ((width != 0) ? width : "auto"), height: ((height != 0) ? width : "auto"), borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", maxHeight: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap }} tabIndex={0} className="flex flex-row"><ImportElement subElements={subElements} elementData={elementData} /></div>
+                <div style={{ userSelect: (isShiftPressed ? "none" : "auto"), width: ((width != 0) ? width : "auto"), height: ((height != 0) ? width : "auto"), borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", maxHeight: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap }} tabIndex={0} className="flex"><ImportElement subElements={subElements} elementData={elementData} /></div>
             </div>
             <ThisElementPositionContext.Provider value={{ gap, setGap, justifyContent, setJustifyContent, alignItems, setAlignItems, flexDirection, setFlexDirection }}>
                 <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} widthProp={[width, setWidth]} heightProp={[height, setHeight]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />

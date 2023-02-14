@@ -24,6 +24,8 @@ const Anchor = ({ anchorData, component }) => {
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isAnchorSettingsActive, setIsAnchorSettingsActive] = useState(false);
     const [isElementSettingsActive, setIsElementSettingsActive] = useState(false);
+    const [isScreenOverlay, setIsScreenOverlay] = useState(false);
+    const [visibleElementID, setVisibleElementID] = useState("");
 
     const { windowWidth, windowHeight } = useWindowDimensions();
 
@@ -95,6 +97,27 @@ const Anchor = ({ anchorData, component }) => {
         }
     }, [anchorData.properties])
 
+    const updateOverlay = (state, id) => {
+
+        if (state === true)
+        {
+            setIsScreenOverlay(true);
+            setVisibleElementID(id);
+        }
+        else {
+            setIsScreenOverlay(false)
+            setVisibleElementID("");
+        }
+    }
+
+    useEffect(() => {
+        console.log(visibleElementID)
+        console.log(elementBasket)
+        elementBasket.map(element => {
+            console.log(element.id)
+        })
+    }, [visibleElementID])
+
     const fetchElements = async () => {
         const elementsRef = collection(db, `${anchorData.path}/elements`);
         const elementsSnap = await getDocs(elementsRef);
@@ -122,9 +145,9 @@ const Anchor = ({ anchorData, component }) => {
             const elementsRef = collection(db, `${anchorData.path}/elements`);
                 addDoc(elementsRef, { component: "Multiple", properties: {isGroup: true}, path: `${anchorData.path}/elements` }).then(docRef => {
 
-                selectedElements.forEach(element => {
+                selectedElements.forEach((element, index) => {
                     deleteDoc(doc(db, `${element.path}/${element.id}`)).then(() => fetchElements());
-                    setDoc(doc(db, `${anchorData.path}/elements/${docRef.id}/subElements/${element.id}`), { component: element.component, properties: element.properties, id: element.id, path: `${anchorData.path}/elements/${docRef.id}/subElements` }).then(() => fetchElements())
+                    setDoc(doc(db, `${anchorData.path}/elements/${docRef.id}/subElements/${element.id}`), { component: element.component, properties: element.properties, id: element.id, path: `${anchorData.path}/elements/${docRef.id}/subElements`, ID: index }).then(() => fetchElements())
                 });
 
             }).then(() => fetchElements());
@@ -229,9 +252,9 @@ const Anchor = ({ anchorData, component }) => {
 
                 <div className='relative'>
 
-                    <ElementContext.Provider value={{ fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection }}>
+                    <ElementContext.Provider value={{ updateOverlay, fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection, gap, setGap }}>
                         <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height + "px", flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap + "px"}} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute flex">
-                            {elementBasket.map((element, index) => <div><Element elementData={element} key={index} /></div>)}
+                            {elementBasket.map((element, index) => <div className={(isScreenOverlay && visibleElementID !== element.id) ? "invisible" : ""}><Element elementData={element} key={index} /></div>)}
                         </div>
                         <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActiveProp={[isElementSettingsActive, setIsElementSettingsActive]} elementData={anchorData} context={ElementContext}/></div>
                     </ElementContext.Provider>

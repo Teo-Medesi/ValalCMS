@@ -3,11 +3,12 @@ import UploadIcon from "../../../assets/svgs/uploadIcon.svg"
 import UploadModal from '../../../features/editing/UploadModal'
 import { ProjectContext } from "../../../features/project/Project"
 import { UserContext } from '../../../App'
-import { ThisAnchorContext } from '../../../features/anchors/Anchor'
+import { ElementContext, ThisAnchorContext } from '../../../features/anchors/Anchor'
 import { getDownloadURL, ref } from 'firebase/storage'
-import { storage } from '../../../firebase.config'
+import { db, storage } from '../../../firebase.config'
 import { ThisElementContext } from '../../../features/anchors/elements/Element'
 import { useRef } from 'react'
+import { doc, getDoc } from 'firebase/firestore'
 
 const ImageElement = () => {
     const [isActive, setIsActive] = useState(false);
@@ -24,6 +25,7 @@ const ImageElement = () => {
 
     // getting the elements parent anchor data
     const anchor = useContext(ThisAnchorContext);
+    const {updateOverlay} = useContext(ElementContext)
 
     useEffect(() => {
         if (user != null && project != null && anchor != null && elementData != null) {
@@ -41,6 +43,23 @@ const ImageElement = () => {
         }
     }, [storagePath, imageRef.current]);
 
+    const handleOverlay = async () => {
+        const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
+        const elementParentSnap = await getDoc(elementRef.parent.parent);
+        if (elementParentSnap.data().component === "Multiple")
+        {
+            updateOverlay(isActive, elementParentSnap.id);
+        }
+        else {
+            updateOverlay(isActive, elementData.id);
+        }
+
+
+    }
+
+    useEffect(() => {
+        handleOverlay();
+    }, [isActive])
 
     const fetchBackgroundImageURL = () => {
         const storageRef = ref(storage, storagePath);

@@ -26,11 +26,13 @@ const PositionSettings = ({ isActiveProp, elementData, className, context }) => 
         }
     }
 
-    useEffect(() => {
-        if (elementData.path != null) {
+    const handleClose = () => {
+        setIsActive(false);
+        if (elementData.path != null)
+        {
             updatePosition();
         }
-    }, [alignItems, justifyContent, flexDirection])
+    }
 
     return (
         <div className={className + (isActive ? "" : " hidden")}>
@@ -38,7 +40,7 @@ const PositionSettings = ({ isActiveProp, elementData, className, context }) => 
                 <div className='w-80 shadow-xl flex-col shadow-black-900 bg-black-100 border-t-primary border-t-[12px] rounded-xl'>
                     <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className='flex p-3 basis-[10%]  cursor-pointer flex-row items-center justify-between border-b border-black-600'>
                         <h1 className=' font-bold text-black-900'>Position Settings</h1>
-                        <img src={CloseIcon} onClick={() => setIsActive(false)} className="w-8 cursor-pointer h-8" />
+                        <img src={CloseIcon} onClick={handleClose} className="w-8 cursor-pointer h-8" />
                     </div>
 
                     <div onMouseDown={() => setIsDraggable(false)} className="flex flex-col h-full basis-[90%] w-full relative">
