@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import * as All from "../../../layout/sections/SectionExports" 
+import * as All from "../../sections/SectionExports" 
 import TextSettings from '../../../TextSettings'
 import Anchor from '../../../features/anchors/Anchor'
 import { ProjectContext } from '../../../Project'

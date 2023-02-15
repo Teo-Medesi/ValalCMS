@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useContext, createContext } from 'react'
-import EmptyProject from '../layout/websiteTemplates/EmptyProject/EmptyProject.js';
-import { UserContext } from '../App.js';
-import { ProjectContext } from '../features/project/Project.js';
-import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
-import { db } from '../firebase.config.js';
-import { HomeContext } from '../features/project/Project.js';
-import useAnchors from '../features/anchors/hooks/useAnchors.js';
+import EmptyProject from '../layout/websiteTemplates/EmptyProject/EmptyProject.jsx';
+import { UserContext } from '../App.jsx';
+import { ProjectContext } from '../features/project/Project.jsx';
+import { HomeContext } from '../features/project/Project.jsx';
+import useAnchors from '../features/anchors/hooks/useAnchors.jsx';
 
 export const AnchorContext = createContext();
 
