@@ -8,7 +8,7 @@ import { getDownloadURL, ref } from 'firebase/storage'
 import { db, storage } from '../../../firebase.config'
 import { ThisElementContext } from '../../../features/anchors/elements/Element'
 import { useRef } from 'react'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
 
 const ImageElement = () => {
     const [isActive, setIsActive] = useState(false);
@@ -16,32 +16,46 @@ const ImageElement = () => {
     const [user, ___ignore] = useContext(UserContext);
     const elementData = useContext(ThisElementContext);
 
+    const {fetchElements} = useContext(ElementContext)
+
     const [storagePath, setStoragePath] = useState("")
     const [imageURL, setImageURL] = useState("");
-    const [imageWidth, setImageWidth] = useState(0);
-    const [imageHeight, setImageHeight] = useState(0);
 
     const imageRef = useRef(null);
 
     // getting the elements parent anchor data
-    const anchor = useContext(ThisAnchorContext);
+    const anchorData = useContext(ThisAnchorContext);
     const {updateOverlay} = useContext(ElementContext)
 
     useEffect(() => {
-        if (user != null && project != null && anchor != null && elementData != null) {
-            setStoragePath(`users/${user.uid}/projects/${project.name}/pages/home/anchors/${anchor.id}/elements/${elementData.id}/images/backgroundImage`);
+        if (user != null && project != null && anchorData != null && elementData != null) {
+            setStoragePath(`users/${user.uid}/projects/${project.name}/pages/home/anchors/${anchorData.id}/elements/${elementData.id}/images/backgroundImage`);
         }
-    }, [user, project, anchor, elementData])
+    }, [user, project, anchorData, elementData])
 
     useEffect(() => {
-        if (storagePath !== "" && storagePath != null && imageRef.current != null)
+        console.log(storagePath, imageRef.current)
+        
+        if (storagePath !== "" && storagePath != null)
         {   
             fetchBackgroundImageURL();
-            setImageWidth(imageRef.current.clientWidth)
-            setImageHeight(imageRef.current.clientHeight)
-            
         }
-    }, [storagePath, imageRef.current]);
+    }, [storagePath]);
+
+    const onUpload = () => {
+        const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
+
+        let initialSize;
+        if (anchorData.height > 400)
+        {
+            initialSize = 400;
+        }
+        else {
+            initialSize = anchorData.height / 1.2;
+        }
+
+        updateDoc(elementRef, {"properties.width": initialSize + "px", "properties.height": initialSize + "px"}).then(() => fetchElements())
+    }
 
     const handleOverlay = async () => {
         const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
@@ -62,6 +76,7 @@ const ImageElement = () => {
     }, [isActive])
 
     const fetchBackgroundImageURL = () => {
+        console.log("fetched");
         const storageRef = ref(storage, storagePath);
         getDownloadURL(storageRef).then(url => {
             setImageURL(url);
@@ -72,7 +87,7 @@ const ImageElement = () => {
     if (imageURL === "") {
         return (
             <>
-                <UploadModal fetchFile={fetchBackgroundImageURL} isActive={isActive} setIsActive={setIsActive} appendFileName={false} storagePath={storagePath} />
+                <UploadModal onUpload={onUpload} fetchFile={fetchBackgroundImageURL} isActive={isActive} setIsActive={setIsActive} appendFileName={false} storagePath={storagePath} />
                 <div onDoubleClick={() => setIsActive(true)} className='h-64 w-64 cursor-pointer p-3 bg-transparent'>
                     <div className='flex h-full w-full justify-center items-center border border-black-600 rounded'>
                         <img src={UploadIcon} className="w-20 h-20" />
@@ -83,7 +98,7 @@ const ImageElement = () => {
     }
     else {
         return (
-                <img src={imageURL} ref={imageRef} style={{height: "auto", width: "auto",  backgroundSize: "100% 100%" }} className='bg-cover aspect-square' />
+                <img src={imageURL} style={{height: "100%", width: "100%",  backgroundSize: "100% 100%" }} className='bg-cover aspect-square' />
         )
     }
 }

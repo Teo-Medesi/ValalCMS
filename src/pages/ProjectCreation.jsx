@@ -275,7 +275,7 @@ const Page = () => {
 
         setDoc(doc(db, `users/${user.uid}/projects/${siteName}`), {name: siteName, theme: selectedTheme, color_scheme: {primary: selectedColorScheme.colors.primary, secondary: selectedColorScheme.colors.secondary, tertiary: selectedColorScheme.colors.tertiary, quaternary: selectedColorScheme.colors.quaternary, quinary: selectedColorScheme.colors.quinary}, category: selectedCategory, template: selectedTemplate, font: "Inter"}).then(async () => {
             console.log("created project")
-            await setDoc(doc(db, `users/${user.uid}/projects/${siteName}/pages/home`),{backgroundColor: "#000000", font: "Inter", textBlack: false});
+            await setDoc(doc(db, `users/${user.uid}/projects/${siteName}/pages/home`),{backgroundColor: "#ffffff", font: "Inter", textBlack: false});
             setIsLoading(false);
 
             navigate(`/${siteName}`);

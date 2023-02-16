@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Drag from "../editing/Drag"
 import { SettingsContext } from "./Settings";
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
@@ -6,40 +6,49 @@ import * as All from "../../layout/elements/ElementsExport"
 
 const Text = () => {
 
-    // aight, let's brainstorm a bit
-    /*
-        the text part of it is pretty damn simple, we'll make it the same way we did for section components
+    const [isDragging, setIsDragging] = useState(0);
+    const [toggled, _ignore] = useContext(SettingsContext);
+    const [isToggled, setIsToggled] = toggled;
 
-        now the tricky part is actually throwing the text into our page
-        obviously the text would have to be of absolute positioning for a start, maybe later on we can work out some kind of grid for relative positioning
-        
+    useEffect(() => {
+      if (isDragging !== 0)
+      {
+        if (isDragging)
+        {
+            setIsToggled(false);
+        }
+      }
+    }, [isDragging])
+    
 
-        to be able to drop it in, we'd have to make each section a drop zone
-        this is the part that worries me for now, since our portfolio page is not thought out well enough, we'll skip past it for now, later on we will systematize the portfolio components
-        
-        making a drop functionality for each and every component individually, of which there will be hundreds, would be incredibly redundant and inefficient 
-        therefore we need to create somekind of wrapper div that encapsulates all of our sections on an individual basis without us having to explicitly name them
-        the best option for now seems to be the anchor component, every section is and will be a child of an anchor, therefore all of our logic should be handled there
-
-        <div>
-            {for each element in our drop basket return element}
-            {children}
-        </div>
-    */
     return (
         <div className="flex flex-col p-6 gap-6">
-            <Drag properties={{}} component={"Paragraph1"} type="element"><All.Paragraph1Preview /></Drag>
-            <Drag properties={{}} component={"Paragraph1Bold"} type="element"><All.Paragraph1BoldPreview /></Drag>
-            <Drag properties={{}} component={"Paragraph1"} type="element"><All.Paragraph1Preview /></Drag>
-            <Drag properties={{}} component={"Paragraph1Bold"} type="element"><All.Paragraph1BoldPreview /></Drag>
+            <Drag setIsDragging={setIsDragging} properties={{}} component={"Paragraph1"} type="element"><All.Paragraph1Preview /></Drag>
+            <Drag setIsDragging={setIsDragging} properties={{}} component={"Paragraph1Bold"} type="element"><All.Paragraph1BoldPreview /></Drag>
+            <Drag setIsDragging={setIsDragging} properties={{}} component={"Paragraph1"} type="element"><All.Paragraph1Preview /></Drag>
+            <Drag setIsDragging={setIsDragging} properties={{}} component={"Paragraph1Bold"} type="element"><All.Paragraph1BoldPreview /></Drag>
         </div>
     )
 }
 
 const Images = () => {
+    const [isDragging, setIsDragging] = useState(0);
+    const [toggled, _ignore] = useContext(SettingsContext);
+    const [isToggled, setIsToggled] = toggled;
+
+    useEffect(() => {
+      if (isDragging !== 0)
+      {
+        if (isDragging)
+        {
+            setIsToggled(false);
+        }
+      }
+    }, [isDragging])
+
     return (
         <div className="flex flex-col p-6 gap-6">
-            <Drag properties={{}} component={"ImageElement"} type="element"><All.ImageElementPreview /></Drag>
+            <Drag setIsDragging={setIsDragging} properties={{}} component={"ImageElement"} type="element"><All.ImageElementPreview /></Drag>
         </div>
     )
 }
@@ -71,7 +80,7 @@ const ActiveElement = ({ activeTab }) => {
 
 
 const AddElements = () => {
-    const [setIsToggled] = useContext(SettingsContext);
+    const [[isToggled, setIsToggled], _ignore] = useContext(SettingsContext);
     const [activeTab, setActiveTab] = useState("Text");
 
     const tabs = ["Text", "Images", "Button", "Strip", "Decorative", "Box", "Gallery", "Forms", "List", "Payments", "Input"]

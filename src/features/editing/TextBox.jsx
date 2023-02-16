@@ -84,9 +84,9 @@ const TextBox = ({children, className}) => {
         )
     } else {
         return (
-            <div tabIndex={0} onKeyDown={handleKeyDown} style={{fontSize: fontSize, fontFamily: font, color: color}} ref={elementRef} className={className} onDoubleClick={handleDoubleClick}>
+            <p tabIndex={0} onKeyDown={handleKeyDown} style={{fontSize: fontSize, fontFamily: font, color: color}} ref={elementRef} className={className} onDoubleClick={handleDoubleClick}>
                 {text}
-            </div>
+            </p>
         )
     }
 }

@@ -71,7 +71,7 @@ const Settings = ({isToggled, setIsToggled, setIsToggledRelative, isToggledRelat
     }
 
     return (
-        <SettingsContext.Provider value={[setIsToggled, setIsToggledRelative]}>
+        <SettingsContext.Provider value={[[isToggled, setIsToggled], [isToggledRelative, setIsToggledRelative]]}>
             <div className={isToggled ? 'w-2/5 flex flex-row h-screen bg-black-100 z-40 absolute' : isToggledRelative ? 'w-2/5 basis-2/5 flex flex-row h-screen bg-black-100 z-[1]' : 'basis-[5%] max-w-[5vw]'}>
                 <div className="flex flex-col min-h-screen w-full max-w-[5vw] border-t-primary border-t-[12px]">
                     <div className='flex bg-black-100 flex-col h-screen items-center'>

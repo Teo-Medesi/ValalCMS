@@ -3,7 +3,7 @@ import { SettingsContext } from "./Settings";
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
 
 const Layers = () => {
-    const [setIsToggled] = useContext(SettingsContext);
+    const [[isToggled, setIsToggled], _ignore] = useContext(SettingsContext);
     
     return (
         <>

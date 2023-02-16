@@ -17,7 +17,7 @@ export const ThisElementContext = createContext();
 export const ThisElementPositionContext = createContext();
 
 const Element = ({ elementData, isSubElement }) => {
-    const { isScreenOverlay, position, selectedElements, setSelectedElements } = useContext(ElementContext);
+    const { isScreenOverlay, visibleElementID, position, selectedElements, setSelectedElements } = useContext(ElementContext);
     const anchorData = useContext(ThisAnchorContext);
 
     const [isGroup, setIsGroup] = useState(false);
@@ -214,14 +214,14 @@ const Element = ({ elementData, isSubElement }) => {
 
     return (
         <ThisElementContext.Provider value={elementData}>
-            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} className={'cursor-pointer pointer-events-auto z-20 flex w-max h-max p-1 border-4 ' + ((isSelected && !isSubElement && isGroup) ? "border-valid " : (isSelected && !isSubElement) ? "border-tertiary " : "border-transparent ") + (position)}>
+            <div onAuxClick={() => setIsSettingsActive(true)} onClick={selectElement} ref={elementRef} style={{ userSelect: (isShiftPressed ? "none" : "auto"), maxWidth: ((elementData.component === "Paragraph1" && width !== 0) ? width : ""),  borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", maxHeight: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap, width: ((width != 0) ? width : "max-content"), height: ((height != 0) ? height : "max-content"), marginTop: marginTop + "%", marginLeft: marginLeft + "%" }} tabIndex={0} className={'cursor-pointer pointer-events-auto z-20 flex p-1 border-4 ' + ((isSelected && !isSubElement && isGroup) ? "border-valid " : (isSelected && !isSubElement) ? "border-tertiary " : "border-transparent ") + (position) + ((isScreenOverlay && visibleElementID !== elementData.id) ? " invisible w-max h-max" : " w-max h-max")}>
                 <div className={(isSelected && !isMultipleSelected && !isShiftPressed) ? "hidden" : "hidden"}>
                     <div onMouseDown={updateMarginTop} className="w-6 h-6 absolute left-[45%] bottom-full -top-[14px] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginRight} style={{ left: "calc(100% - 10px)" }} className="w-6 h-6 absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginBottom} style={{ top: "calc(100% - 10px)" }} className="w-6 h-6 absolute left-[45%] rounded-full bg-white border-[3px] border-tertiary"></div>
                     <div onMouseDown={updateMarginLeft} className="w-6 h-6 -left-[13px] absolute rounded-full bg-white border-[3px] border-tertiary"></div>
                 </div>
-                <div style={{ userSelect: (isShiftPressed ? "none" : "auto"), width: ((width != 0) ? width : "auto"), height: ((height != 0) ? width : "auto"), borderRadius: borderRadius + "px", background: background, fontFamily: font, fontSize: fontSize + "px", color: fontColor, paddingLeft: paddingX + "px", paddingRight: paddingX + "px", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", maxHeight: anchorData.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap }} tabIndex={0} className="flex"><ImportElement subElements={subElements} elementData={elementData} /></div>
+                <ImportElement subElements={subElements} elementData={elementData} />
             </div>
             <ThisElementPositionContext.Provider value={{ gap, setGap, justifyContent, setJustifyContent, alignItems, setAlignItems, flexDirection, setFlexDirection }}>
                 <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} widthProp={[width, setWidth]} heightProp={[height, setHeight]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
@@ -336,19 +336,19 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
                                 <div className='flex flex-row gap-1 justify-between'>
                                     <div className="flex flex-row w-full gap-1 justify-between items-center h-full">
                                         <h1 className=" text-black-900">width</h1>
-                                        <input type="number" value={width} onChange={event => setWidth(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                        <input type="text" value={width} onChange={event => setWidth(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
                                     </div>
                                     <div className="flex flex-row w-full gap-1 justify-between items-center h-full">
                                         <h1 className=" text-black-900">height</h1>
-                                        <input type="number" value={height} onChange={event => setHeight(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                        <input type="text" value={height} onChange={event => setHeight(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
                                     </div>
                                 </div>
 
                             </div>
                             <div className="basis-1/6 flex gap-2 flex-col justify-between p-6 ">
-                                <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-3 text-background rounded-md hover:brightness-90'>Remove Element</button>
                                 <button onClick={() => setIsTextSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Text settings</button>
                                 <button onClick={() => setIsPositionSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Position Settings</button>
+                                <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-2 text-background rounded-md hover:brightness-90'>Remove Element</button>
                             </div>
                             <div className="basis-1/5 p-4">
                             </div>

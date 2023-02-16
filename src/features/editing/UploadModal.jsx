@@ -5,7 +5,7 @@ import CloseIcon from "../../assets/svgs/closeIcon.svg"
 import { storage } from '../../firebase.config'
 import { ref, uploadBytes } from 'firebase/storage'
 
-const UploadModal = ({isActive, setIsActive, storagePath, appendFileName, fetchFile}) => {
+const UploadModal = ({isActive, setIsActive, storagePath, appendFileName, fetchFile, onUpload}) => {
 
     // How to use the upload modal? 
     // 1. include it in the jsx where you want to render it,
@@ -38,6 +38,11 @@ const UploadModal = ({isActive, setIsActive, storagePath, appendFileName, fetchF
             uploadBytes(storageRef, file).then(() => {
                 setUploadText("Uploaded")
                 setIsUploaded(true);
+                
+                if (onUpload != null)
+                {
+                    onUpload();
+                }
 
                 if (fetchFile != null)
                 {

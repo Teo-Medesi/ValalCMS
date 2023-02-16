@@ -252,9 +252,9 @@ const Anchor = ({ anchorData, component }) => {
 
                 <div className='relative'>
 
-                    <ElementContext.Provider value={{ updateOverlay, fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection, gap, setGap }}>
+                    <ElementContext.Provider value={{ isScreenOverlay, visibleElementID, updateOverlay, fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection, gap, setGap }}>
                         <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height + "px", flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap + "px"}} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute flex">
-                            {elementBasket.map((element, index) => <div className={(isScreenOverlay && visibleElementID !== element.id) ? "invisible" : ""}><Element elementData={element} key={index} /></div>)}
+                            {elementBasket.map((element, index) => <Element elementData={element} key={index} />)}
                         </div>
                         <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActiveProp={[isElementSettingsActive, setIsElementSettingsActive]} elementData={anchorData} context={ElementContext}/></div>
                     </ElementContext.Provider>

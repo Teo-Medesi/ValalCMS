@@ -150,7 +150,7 @@ const ActiveElement = ({ activeTab }) => {
 }
 
 const Sections = () => {
-    const [setIsToggled, setIsToggledRelative] = useContext(SettingsContext);
+    const [_ignore, [isToggledRelative, setIsToggledRelative]] = useContext(SettingsContext);
     const [activeTab, setActiveTab] = useState("Basic");
 
 

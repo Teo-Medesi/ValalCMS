@@ -9,7 +9,7 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 
 
 const Design = () => {
-    const [setIsToggled, setIsToggledRelative] = useContext(SettingsContext);
+    const [_ignoree, [isToggledRelative, setIsToggledRelative]] = useContext(SettingsContext);
     const [homePath, setHomePath] = useState("");
     const [__ignore, fetchHome] = useContext(HomeContext)
 
