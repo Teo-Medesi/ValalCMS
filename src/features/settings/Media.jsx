@@ -1,11 +1,44 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SettingsContext } from "./Settings";
 import CloseIcon from "../../assets/svgs/closeIcon.svg"
+import Drag from "../editing/Drag";
+
+const Embed = () => {
+    const [tempURL, setTempURL] = useState("");    
+    const [isDragging, setIsDragging] = useState(0);
+    const [toggled, _ignore] = useContext(SettingsContext);
+    const [isToggled, setIsToggled] = toggled;
+
+    useEffect(() => {
+      if (isDragging !== 0)
+      {
+        if (isDragging)
+        {
+            setIsToggled(false);
+        }
+      }
+    }, [isDragging])
+
+
+
+    if (tempURL != "" && tempURL.includes("http")) {
+        return <Drag setIsDragging={setIsDragging} component={"Embed"} type="element" properties={{url: tempURL, width: "450px", height: "300px"}}><iframe src={tempURL} className="h-64 rounded-md" /></Drag>
+    }
+    else {
+        return (
+            <div className="flex flex-col gap-3">
+                <h1 className="text-xl">Embed media</h1>
+                <div className="border p-3 border-black-600 w-full rounded-md h-64">
+                    <input onChange={event => setTempURL(event.target.value)} placeholder="enter your url here" className="text-2xl bg-transparent placeholder:italic outline-none text-black-600" />
+                </div>
+            </div>
+
+        )
+    }
+}
 
 const Media = () => {
     const [[isToggled, setIsToggled], _ignore] = useContext(SettingsContext);
-    const [tempURL, setTempURL] = useState(""); 
-
 
     return (
         <>
@@ -15,12 +48,7 @@ const Media = () => {
             </div>
             <div className="p-6 min-h-screen flex flex-col gap-6 overflow-y-scroll">
                 <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-3">
-                        <h1 className="text-xl">Embed media</h1>
-                        <div className="border p-3 border-black-600 w-full rounded-md h-64">
-                            <input placeholder="enter your url here" className="text-2xl bg-transparent placeholder:italic outline-none text-black-600" />
-                        </div>
-                    </div>
+                    <Embed />
 
                     <div className="flex flex-col gap-4">
                         <div>

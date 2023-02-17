@@ -4,6 +4,7 @@ import Paragraph1Preview from "./text/Paragraph1Preview";
 import Paragraph1BoldPreview from "./text/Paragraph1BoldPreview"
 import ImageElement from "./image/ImageElement";
 import ImageElementPreview from "./image/ImageElementPreview";
+import Embed from "./Embed";
 
 export {
     Paragraph1,
@@ -11,5 +12,6 @@ export {
     Paragraph1Preview,
     Paragraph1BoldPreview,
     ImageElement,
-    ImageElementPreview
+    ImageElementPreview,
+    Embed
 }

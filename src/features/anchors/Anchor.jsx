@@ -99,8 +99,7 @@ const Anchor = ({ anchorData, component }) => {
 
     const updateOverlay = (state, id) => {
 
-        if (state === true)
-        {
+        if (state === true) {
             setIsScreenOverlay(true);
             setVisibleElementID(id);
         }
@@ -143,7 +142,7 @@ const Anchor = ({ anchorData, component }) => {
             // element -> subElements -> the IDs of our selected elements
 
             const elementsRef = collection(db, `${anchorData.path}/elements`);
-                addDoc(elementsRef, { component: "Multiple", properties: {isGroup: true}, path: `${anchorData.path}/elements` }).then(docRef => {
+            addDoc(elementsRef, { component: "Multiple", properties: { isGroup: true }, path: `${anchorData.path}/elements` }).then(docRef => {
 
                 selectedElements.forEach((element, index) => {
                     deleteDoc(doc(db, `${element.path}/${element.id}`)).then(() => fetchElements());
@@ -222,12 +221,12 @@ const Anchor = ({ anchorData, component }) => {
     }
 
     const onResize = (event, { element, size, handle }) => {
-        setSize({ width: size.width, height: size.height });
+        setSize({ width: size.width + "px", height: size.height + "px" });
     };
 
     const onResizeStop = event => {
         const anchorRef = doc(db, anchorData.path);
-        updateDoc(anchorRef, { width: size.width, height: size.height }).then(() => fetchAnchors());
+        updateDoc(anchorRef, { width: size.width + "px", height: size.height + "px" }).then(() => fetchAnchors());
     }
 
     const handleSettingsClick = event => {
@@ -253,10 +252,10 @@ const Anchor = ({ anchorData, component }) => {
                 <div className='relative'>
 
                     <ElementContext.Provider value={{ isScreenOverlay, visibleElementID, updateOverlay, fetchElements, selectedElements, setSelectedElements, justifyContent, setJustifyContent, alignItems, setAlignItems, position, setPosition, setIsAnchorSelected, flexDirection, setFlexDirection, gap, setGap }}>
-                        <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: anchorData.height + "px", flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap + "px"}} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute flex">
+                        <div ref={elementBasketRef} style={{ flexWrap: "wrap", width: "100%", paddingTop: paddingY + "px", paddingBottom: paddingY + "px", paddingLeft: paddingX + "px", paddingRight: paddingX + "px", height: size.height, flexDirection: flexDirection, justifyContent: justifyContent, alignItems: alignItems, gap: gap + "px" }} onContextMenu={event => event.preventDefault()} className="bg-transparent pointer-events-none absolute flex">
                             {elementBasket.map((element, index) => <Element elementData={element} key={index} />)}
                         </div>
-                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActiveProp={[isElementSettingsActive, setIsElementSettingsActive]} elementData={anchorData} context={ElementContext}/></div>
+                        <div ref={positionSettingsRef}><PositionSettings className="absolute pointer-events-auto z-40" isActiveProp={[isElementSettingsActive, setIsElementSettingsActive]} elementData={anchorData} context={ElementContext} /></div>
                     </ElementContext.Provider>
 
                     <div className='pointer-events-auto z-50' ref={anchorRef}>
@@ -288,9 +287,7 @@ const Anchor = ({ anchorData, component }) => {
                             </div>
 
                             <AnchorSettings className="absolute z-40" sizeProp={[size, setSize]} paddingXProp={[paddingX, setPaddingX]} paddingYProp={[paddingY, setPaddingY]} background={[backgroundColor, setBackgroundColor]} setIsActive={setIsAnchorSettingsActive} isActive={isAnchorSettingsActive} />
-                            <ResizableBox onResize={onResize} onResizeStop={onResizeStop} height={size.height} handle={<div className={'flex justify-center w-full bg-secondary h-2 relative ' + (isAnchorSelected ? "" : "hidden")}><div className='w-8 h-8 absolute -top-3 cursor-pointer rounded-full border-secondary border-2 z-[2] bg-white'></div></div>}>
-                                <div className='w-full h-full' style={{ background: backgroundColor }} ref={elementRef}>{component}</div>
-                            </ResizableBox>
+                            <div className='w-full h-full' style={{ background: backgroundColor, height: size.height }} ref={elementRef}>{component}</div>
                         </div>
                     </div>
 
@@ -323,7 +320,7 @@ const AnchorSettings = ({ isActive, setIsActive, className, background, paddingX
         setIsActive(false);
 
         const anchorRef = doc(db, anchorData.path);
-        await updateDoc(anchorRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY, height: size.height});
+        await updateDoc(anchorRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY, height: size.height });
     }
 
     return (
@@ -376,7 +373,7 @@ const AnchorSettings = ({ isActive, setIsActive, className, background, paddingX
                                 <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>
                                     <p>height</p>
                                     <div className='flex flex-row items-center gap-1'>
-                                        <input onChange={event => setSize(current => ({...current, height: event.target.value}))} value={size.height} type="text" className='text-center p-1 w-full h-full text-black-900 outline-none border border-black-600 rounded' />
+                                        <input onChange={event => setSize(current => ({ ...current, height: event.target.value }))} value={size.height} type="text" className='text-center p-1 w-full h-full text-black-900 outline-none border border-black-600 rounded' />
                                     </div>
                                 </div>
                                 <div className='basis-[46%] flex gap-2 flex-row items-center justify-between'>

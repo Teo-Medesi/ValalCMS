@@ -350,7 +350,8 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
                                 <button onClick={() => setIsPositionSettingsActive(true)} className='basis-1/2 text-white rounded-md w-full h-full p-2 bg-primary hover:brightness-90'>Position Settings</button>
                                 <button onClick={deleteElement} className='bg-error basis-1/2 w-full h-full p-2 text-background rounded-md hover:brightness-90'>Remove Element</button>
                             </div>
-                            <div className="basis-1/5 p-4">
+                            <div onMouseDownCapture={() => setIsDraggable(true)} onMouseUp={() => setIsDraggable(false)} className="basis-1/5 cursor-pointer p-4">
+                            
                             </div>
                         </div>
 
