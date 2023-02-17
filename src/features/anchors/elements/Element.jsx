@@ -1,4 +1,4 @@
-import { doc, getDocs, updateDoc, collection, deleteDoc } from 'firebase/firestore'
+import { doc, getDocs, updateDoc, collection, deleteDoc, query, orderBy } from 'firebase/firestore'
 import React, { useContext, useState, createContext } from 'react'
 import { useRef } from 'react'
 import { useEffect } from 'react'
@@ -44,6 +44,8 @@ const Element = ({ elementData, isSubElement }) => {
     const [justifyContent, setJustifyContent] = useState("");
     const [alignItems, setAlignItems] = useState("");
     const [gap, setGap] = useState(0);
+
+    const [ID, setID] = useState(0);
 
     const [intervalId, setIntervalId] = useState("");
     const [marginToUpdate, setMarginToUpdate] = useState("");
@@ -117,7 +119,7 @@ const Element = ({ elementData, isSubElement }) => {
 
     const fetchSubElements = async () => {
         if (elementData.component === "Multiple") {
-            const subElementsRef = collection(db, `${elementData.path}/${elementData.id}/subElements`);
+            const subElementsRef = query(collection(db, `${elementData.path}/${elementData.id}/subElements`), orderBy("ID"));
             const subElementsSnap = await getDocs(subElementsRef);
             setSubElements(subElementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }));
         }
@@ -137,6 +139,7 @@ const Element = ({ elementData, isSubElement }) => {
             if (elementData.properties.fontSize != null) setFontSize(elementData.properties.fontSize);
             if (elementData.properties.width != null) setWidth(elementData.properties.width);
             if (elementData.properties.height != null) setHeight(elementData.properties.height);
+            if (elementData.ID != null) setID(elementData.ID);
 
             if (elementData.properties.position != null) {
 
@@ -224,7 +227,7 @@ const Element = ({ elementData, isSubElement }) => {
                 <ImportElement subElements={subElements} elementData={elementData} />
             </div>
             <ThisElementPositionContext.Provider value={{ gap, setGap, justifyContent, setJustifyContent, alignItems, setAlignItems, flexDirection, setFlexDirection }}>
-                <ElementSettings className="absolute z-40 pointer-events-auto" font={[font, setFont]} widthProp={[width, setWidth]} heightProp={[height, setHeight]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
+                <ElementSettings className="absolute z-40 pointer-events-auto" IDProp={[ID, setID]} font={[font, setFont]} widthProp={[width, setWidth]} heightProp={[height, setHeight]} fontColor={[fontColor, setFontColor]} fontSize={[fontSize, setFontSize]} elementData={elementData} isGroup={isGroup} borderRadiusProp={[borderRadius, setBorderRadius]} background={[background, setBackground]} paddingXProp={[paddingX, setPaddingX]} setIsActive={setIsSettingsActive} isActive={(isSubElement) ? false : isSettingsActive} paddingYProp={[paddingY, setPaddingY]} />
             </ThisElementPositionContext.Provider>
 
         </ThisElementContext.Provider>
@@ -245,7 +248,7 @@ const ImportElement = ({ elementData, subElements }) => {
 }
 
 
-const ElementSettings = ({ elementData, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp, isGroup, font, fontSize, fontColor, widthProp, heightProp }) => {
+const ElementSettings = ({ elementData, IDProp, isActive, setIsActive, className, background, paddingXProp, paddingYProp, borderRadiusProp, isGroup, font, fontSize, fontColor, widthProp, heightProp }) => {
     const { fetchElements } = useContext(ElementContext);
 
     const [isTextSettingsActive, setIsTextSettingsActive] = useState(false);
@@ -261,6 +264,7 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
     const [borderRadius, setBorderRadius] = borderRadiusProp;
     const [width, setWidth] = widthProp;
     const [height, setHeight] = heightProp;
+    const [ID, setID] = IDProp;
 
     const handleColorChange = event => {
         if (event.target.value.length === 7) {
@@ -268,11 +272,11 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
         }
     }
 
-    const handleClose = async () => {
+    const handleClose = () => {
         setIsActive(false);
 
         const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
-        await updateDoc(elementRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY, "properties.background": backgroundColor, "properties.borderRadius": borderRadius, "properties.width": width, "properties.height": height });
+        updateDoc(elementRef, { "properties.paddingX": paddingX, "properties.paddingY": paddingY, "properties.background": backgroundColor, "properties.borderRadius": borderRadius, "properties.width": width, "properties.height": height, ID: ID, Example: "?" }).then(() => fetchElements());
     }
 
     const deleteElement = () => {
@@ -329,9 +333,15 @@ const ElementSettings = ({ elementData, isActive, setIsActive, className, backgr
                                 </div>
                             </div>
                             <div className="basis-1/5 p-4 border-b flex-col flex gap-2  border-black-600">
-                                <div className="flex flex-row w-full gap-1 justify-between items-center h-full">
-                                    <h1 className=" text-black-900">radius</h1>
-                                    <input type="number" value={borderRadius} onChange={event => setBorderRadius(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                <div className="flex flex-row gap-2">
+                                    <div className="flex flex-row gap-1 justify-between items-center h-full">
+                                        <h1 className=" text-black-900">radius</h1>
+                                        <input type="number" value={borderRadius} onChange={event => setBorderRadius(event.target.value)} step={4} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                    </div>
+                                    <div className="flex flex-row gap-1 justify-between items-center h-full">
+                                        <h1 className=" text-black-900">ID</h1>
+                                        <input type="number" value={ID} onChange={event => setID(event.target.value)} className='py-1 text-black-800 px-3 w-full outline-none border border-black-600 rounded-md' />
+                                    </div>
                                 </div>
                                 <div className='flex flex-row gap-1 justify-between'>
                                     <div className="flex flex-row w-full gap-1 justify-between items-center h-full">

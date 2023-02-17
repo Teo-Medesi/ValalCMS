@@ -118,7 +118,7 @@ const Anchor = ({ anchorData, component }) => {
     }, [visibleElementID])
 
     const fetchElements = async () => {
-        const elementsRef = collection(db, `${anchorData.path}/elements`);
+        const elementsRef = query(collection(db, `${anchorData.path}/elements`), orderBy("ID"));
         const elementsSnap = await getDocs(elementsRef);
         setElementBasket(elementsSnap.docs.map(element => { return { ...element.data(), id: element.id } }));
         setIsTempPositionActive(false);
@@ -129,7 +129,7 @@ const Anchor = ({ anchorData, component }) => {
     const addElement = component => {
         if (component.componentName !== "" && component.properties != null) {
             const elementsRef = collection(db, `${anchorData.path}/elements`);
-            addDoc(elementsRef, { component: component.componentName, properties: component.properties, path: `${anchorData.path}/elements` }).then(() => fetchElements());
+            addDoc(elementsRef, { component: component.componentName, properties: component.properties, path: `${anchorData.path}/elements`, ID: 0 }).then(() => fetchElements());
         }
     }
 

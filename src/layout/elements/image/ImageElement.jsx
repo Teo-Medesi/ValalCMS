@@ -60,14 +60,10 @@ const ImageElement = () => {
     const handleOverlay = async () => {
         const elementRef = doc(db, `${elementData.path}/${elementData.id}`);
         const elementParentSnap = await getDoc(elementRef.parent.parent);
-        if (elementParentSnap.data().component === "Multiple")
+        if (elementParentSnap.data().component !== "Multiple")
         {
             updateOverlay(isActive, elementParentSnap.id);
         }
-        else {
-            updateOverlay(isActive, elementData.id);
-        }
-
 
     }
 
