@@ -5,7 +5,7 @@ import { getStorage } from "firebase/storage"
 import { getAuth, GoogleAuthProvider } from "firebase/auth"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAd4EiDf6OYFfN2hJp_CZ-Ofchnba6nrJc",
+  apiKey: process.env.API_KEY,
   authDomain: "carnetcms.firebaseapp.com",
   projectId: "carnetcms",
   storageBucket: "carnetcms.appspot.com",
